@@ -1,0 +1,145 @@
+# depslib dependency file v1.0
+1743151382 source:c:\cp - copy\project game\final_pacman\logstatus\logstatus.cpp
+	"logstatus.h"
+
+1743151382 c:\cp - copy\project game\final_pacman\logstatus\logstatus.h
+	<iostream>
+	<string>
+
+1743178371 source:c:\cp - copy\project game\final_pacman\main.cpp
+	<SDL.h>
+	<iostream>
+
+1743201066 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
+	"game_manager.h"
+	"../Object/ghost.h"
+	<SDL_mixer.h>
+	<SDL_image.h>
+	<sstream>
+
+1743211012 source:c:\cp - copy\project game\final_pacman\manager\sound_manager.cpp
+	"../Manager/sound_manager.h"
+
+1743210787 c:\cp - copy\project game\final_pacman\manager\sound_manager.h
+	<SDL_mixer.h>
+	"../LogStatus/logstatus.h"
+	<iostream>
+
+1743199448 source:c:\cp - copy\project game\final_pacman\map\map.cpp
+	"../Map/map.h"
+	<queue>
+
+1743199432 c:\cp - copy\project game\final_pacman\map\map.h
+	"../LogStatus/logstatus.h"
+	<iostream>
+	<fstream>
+	<algorithm>
+	<vector>
+	<SDL.h>
+
+1743203481 source:c:\cp - copy\project game\final_pacman\object\base_object.cpp
+	"../Object/base_object.h"
+
+1743203481 c:\cp - copy\project game\final_pacman\object\base_object.h
+	<iostream>
+	<algorithm>
+	<cmath>
+	<string>
+
+1743218402 source:c:\cp - copy\project game\final_pacman\object\ghost.cpp
+	"../Object/ghost.h"
+
+1743218387 c:\cp - copy\project game\final_pacman\object\ghost.h
+	"../Object/base_object.h"
+	<iostream>
+
+1743209309 source:c:\cp - copy\project game\final_pacman\object\item.cpp
+	"../Object/Item.h"
+
+1743209319 c:\cp - copy\project game\final_pacman\object\item.h
+	<SDL.h>
+	<SDL_image.h>
+	<string>
+
+1743208544 source:c:\cp - copy\project game\final_pacman\object\pacman.cpp
+	"../Object/pacman.h"
+
+1743151383 c:\cp - copy\project game\final_pacman\object\pacman.h
+	"../Object/base_object.h"
+
+1743208039 source:c:\cp - copy\project game\final_pacman\object\texture_source.cpp
+	"../Object/texture_source.h"
+
+1743151383 c:\cp - copy\project game\final_pacman\object\texture_screen.h
+	<SDL.h>
+	<SDL_image.h>
+	"../LogStatus/logstatus.h"
+
+1743178518 source:c:\cp - copy\project game\final_pacman\manager\text_manager.cpp
+	"text_manager.h"
+
+1743152814 c:\cp - copy\project game\final_pacman\manager\text_manager.h
+	<SDL.h>
+	<SDL_ttf.h>
+	<SDL_image.h>
+	<string>
+
+1743179410 source:c:\cp - copy\project game\final_pacman\menu\button.cpp
+	"Button.h"
+
+1743179447 c:\cp - copy\project game\final_pacman\menu\button.h
+	<SDL.h>
+	<string>
+	"../Manager/text_manager.h"
+
+1743200926 c:\cp - copy\project game\final_pacman\manager\game_manager.h
+	<SDL.h>
+	<string>
+	<vector>
+	"../Manager/text_manager.h"
+	"../Menu/button.h"
+	<SDL_mixer.h>
+
+1743182786 source:c:\cp - copy\project game\final_pacman\manager\tick_manager.cpp
+	"tick_manager.h"
+	<iostream>
+
+1743182577 c:\cp - copy\project game\final_pacman\manager\tick_manager.h
+	<SDL.h>
+	<vector>
+
+1743183171 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
+	"menu.h"
+	<stdio.h>
+
+1743183137 c:\cp - copy\project game\final_pacman\menu\menu.h
+	<SDL.h>
+	<SDL_mixer.h>
+	<vector>
+	"../Menu/Button.h"
+	"../Manager/text_manager.h"
+
+1743208024 c:\cp - copy\project game\final_pacman\object\texture_source.h
+	<SDL.h>
+	<SDL_image.h>
+	"../LogStatus/logstatus.h"
+	"../Map/map.h"
+
+1743208331 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+	"game_engine.h"
+	<limits>
+	<random>
+	<time.h>
+
+1743208544 c:\cp - copy\project game\final_pacman\core\game_engine.h
+	<SDL.h>
+	<SDL_mixer.h>
+	"../Map/Map.h"
+	"../Object/Pacman.h"
+	"../Object/Ghost.h"
+	"../Object/Item.h"
+	"../Object/texture_source.h"
+	"../Manager/tick_manager.h"
+	"../Manager/game_manager.h"
+	"../Manager/sound_manager.h"
+
