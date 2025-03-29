@@ -68,7 +68,7 @@ void Menu_button :: set_state(const int new_state)
     state = new_state;
 }
 
-void Menu_button :: toggle_sound_label(SDL_Renderer* &renderer)
+void Menu_button :: change_sound_button(SDL_Renderer* &renderer)
 {
     if(label_text == "Sound: ON")
     {

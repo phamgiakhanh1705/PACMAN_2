@@ -50,7 +50,7 @@ class Menu_button
         void set_state(const int new_state);
 
         //
-        void toggle_sound_label(SDL_Renderer* &renderer);
+        void change_sound_button(SDL_Renderer* &renderer);
 
         //
         bool is_mouse_over(const int &x , const int &y) const;

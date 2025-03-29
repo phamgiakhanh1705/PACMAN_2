@@ -597,3 +597,27 @@ void Engine :: ghost_move(Ghost* &ghost)
     }
     pacman_meat_ghost(ghost);
 }
+
+void Engine :: pacman_meat_ghost(Ghost* &ghost)
+{
+    if(ghost -> is_dead()) return;
+
+    int dx = pacman -> get_pos_x() - ghost -> get_pos_x();
+    int dy = pacman -> get_pos_y() - ghost -> get_pos_y();
+    int distance = dx * dx + dy * dy;
+
+    if(distance <= 9) {
+        if(ghost -> get_frightened_state()) {
+            game_manager -> defeat_ghost(ghost -> get_pos_x() , ghost -> get_pos_y());
+            ghost -> set_dead(true , "ghost");
+            ghost -> set_frightened_mode(false);
+            sound_manager -> queue_sound(Sound_manager :: ghost_eaten);
+            sound_manager -> queue_sound(Sound_manager :: ghost_home);
+        } else {
+            pacman -> set_dead(true , "pacman");
+            game_manager -> decrease_life();
+            sound_manager -> queue_sound(Sound_manager :: pacman_die);
+            tick_manager -> toggle_pause(true);
+        }
+    }
+}
