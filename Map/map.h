@@ -1,90 +1,82 @@
 #pragma once
-#ifndef MAP_H_
+
+#ifndef _MAP_H_
+#define _MAP_H_
 
 #include "../LogStatus/logstatus.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <algorithm>
 #include <vector>
-#include <SDL.h>
-
-struct position
-{
-    int x;
-    int y;
-    constexpr position() : x(0) , y(0) {}
-    constexpr position(int _x , int _y) : x(_x) , y(_y) {}
-    bool operator == (const position& other) const {
-        return x == other.x && y == other.y;
-    }
-    bool operator != (const position& other) const {
-        return x != other.x && y != other.y;
-    }
-};
 
 class Map
 {
-    public:
-        Map();
-        ~Map();
-
-        static const int up = 0;
-        static const int right = 1;
-        static const int down = 2;
-        static const int left = 3;
-
-        bool is_wall(std :: pair <int , int> pos);
-        bool is_cross_roads(std :: pair <int , int> pos);
-        bool check_range(int x , int y); //
-        bool can_change_direction(int x , int y , int new_direction);
-        bool beside_cross_is_wall(std :: pair <int , int> cross , int new_direction);
-
-        int get_tile(int x , int y) const;
-        int eat_coins(const int &pacman_x , const int &pacman_y);
-        int get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int begin_direction);
-        int get_map_width() const;
-        int get_map_height() const;
-        int get_type_tile(int x , int y) const;
-
-        void reset_map();
-
-        std :: pair <int , int> get_nxt_cross(int x , int y , int direction) const;
-
     private:
-        log_status* console = new log_status("Map"); /// thông tin trạng thái của bản đồ
 
-        const std :: string map_file = "Map/map.txt";
-        static const int map_width = 28; // chiều rộng bản đồ
-        static const int map_height = 31; // chiều cao bản đồ
-        static const int val_1 = 26;
-        static const int val_2 = 27;
-        static const int val_3 = 30;
-        static const int blocks = map_width * map_height; // kích thước bản đồ
-        static const int diff_block_types = 31; // số dạng blocks trong map
-        static const std :: pair <int , int> portal_1;
-        static const std :: pair <int , int> portal_2;
-        static const std :: pair <int , int> invalid_point;
+        static const int MAP_HEIGHT = 31; // Chiều ngang của map
+        static const int MAP_WIDTH = 28; // Chiều cao của map
+        const std :: string MAP_FILE = "Map/map.txt"; // Chứa dữ liệu của bản đồ gốc
 
-        std :: vector <std :: vector <int>> maze;
-        std :: vector <int> dist;
-        std :: vector <std :: vector <bool>> visited;
+        static const int NORMAL_COIN = 26;
+        static const int SUPER_COIN = 27;
+        static const int EMPTY_COIN = 30;
 
-        std :: vector <std :: vector <std :: vector <bool>>> is_cross;
-        std :: vector <std :: vector <std :: vector <std :: pair <int , int>>>> nxt_cross;
+        static const int INVALID_POINT = {-1 , -1};
 
-        std :: vector <std :: vector <int>> tile; // các giá trị của các ô
-        std :: vector <std :: vector <std :: vector <int>>> distance; // khoảng cách giữa các ô
+        log_status* console = new log_status("Map");
 
-        void finding_cross_roads();
-        void nearest_cross_roads();
+        std :: vector <std :: vector <int> > map_tile; // Map hiện tại
+        std :: vector <std :: vector <int> > original_map; // Map đọc từ file gốc
+        std :: vector <std :: vector <int> > visited_node; // Đánh dấu những ô đã được thăm
+        std :: vector <std :: vector <std :: vector <int> > > distance; // khoảng cách từ các ô tới nhau
+        std :: vector <std :: pair <int , int> > next_cross_id; // Lưu điểm rẽ gân nhất
+        std :: vector <std :: vector <std :: vector <bool> > > mark_cross; // Đánh dấu xem ô hiện tại có sang được 4 hướng hay không
+
+        // Tìm tất cả điểm rẽ trong map
+        void finding_all_cross_tile_id();
+        // Tính khoảng cách của các cặp điểm
         void calc_distance();
+        // Tìm điểm rẽ gần nhất từ một ô nào đó
+        void finding_nearest_cross_tile_id();
+
+    public:
+
+        // Các hướng đi
+        static const int UP = 0;
+        static const int RIGHT = 1;
+        static const int DOWN = 2;
+        static const int LEFT = 3;
+
+        static const std :: pair <int , int> PORTAL_1_TILE_ID = {0 , 14};
+        static const std :: pair <int , int> PORTAL_2_TILE_ID = {27 , 14};
+
+        Map();
+
+        ~Map() {
+            console = nullptr;
+            delete console;
+        }
+
+        // Trả về giá trị tại ô đó, xem ô đó là loại nào(wall,coin,...)
+        int get_tile_id(int x , int y) const;
+        // Cập nhật giá trị tile khi pacman ăn coin
+        int pacman_eat_coins(const int &pacman_tile_x , const int &pacman_tile_y) const;
+        // Trả về khoảng cách từ begin -> end
+        int get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int start_direction) const;
+        // Trả về ngã rẽ gần nhất nếu đi từ ô (x,y) với hướng đi direction
+        std :: pair <int , int> get_nearest_cross_tile_id(int x , int y , int direction) const;
+
+        // Kiểm tra xem ô này có phải là tường không
+        bool is_wall(std :: pair <int , int> tile_id);
+        // Kiểm tra xem ô này có phải ngã rẽ không
+        bool is_tile_cross(int y , int x);
+        // Kiểm tra xem ô (x,y) có đổi hướng sang new_direction được không
+        bool can_change_direction(int x , int y , int new_direction);
+        // Kiểm tra xem cạnh ngã rẽ có phải là tường với hướng đi new_direction không
+        bool is_beside_cross_is_wall(std :: pair <int , int> cross , int new_direction);
+        // Khôi phục lại bản đồ trạng thái ban đầu (dùng khi chơi lại)
+        void map_reset();
+
 };
 
-#endif // MAP_H_
-
-
-/*
-    trong map.txt, các ô:
-    1,2,3,4: 4 góc tường của map
-
-*/
+#endif // _MAP_H_

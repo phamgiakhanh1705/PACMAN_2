@@ -11,35 +11,33 @@
 #include "../LogStatus/logstatus.h"
 #include "Button.h"
 
-class Menu_manager
-{
+class Menu {
     private:
-        int alpha_mod = 1;
-        int arrow_hs_pos;
-        int current_button_id;
-        int current_menu_status;
-        int current_htp_id;
+        int alphaMod = 1;
+        int arrowHSPos;
+        int currentButtonID;
+        int currentMenuStatus;
+        int currentHTPid;
 
-        int total_button_;
-        int menu_button_width;
-        int menu_button_height;
-        int base_scr_pos_x;
-        int base_scr_pos_y;
+        int TOTAL_BUTTON;
+        int MENU_BUTTON_WIDTH;
+        int MENU_BUTTON_HEIGHT;
+        int baseScrPosX;
+        int baseScrPosY;
 
-        Text_manager *score_text = nullptr;
-        Mix_Chunk *navigation_sound = Mix_LoadWAV("Source/Assets/Sound/button.wav");
-        Mix_Chunk *selection_sound = Mix_LoadWAV("Source/Assets/Sound/button.wav");
-        SDL_Texture *menu_texture;
-        SDL_Texture *how_to_play_texture[3];
-        SDL_Texture *high_score_texture;
-        SDL_Texture *arrow_texture;
-        std :: vector <Menu_button*> menu_button;
+        TextManager* scoreText = nullptr;
+        Mix_Chunk* navigationSound = Mix_LoadWAV("Assets/Sound/button.wav");
+        Mix_Chunk* selectionSound = Mix_LoadWAV("Assets/Sound/button.wav");
+        SDL_Texture* menuTexture;
+        SDL_Texture* howToPlayTexture[3];
+        SDL_Texture* highScoreTexture;
+        SDL_Texture* arrowTexture;
+        std::vector<Button* > menuButton;
 
-        log_status *console = new log_status("Menu_manager");
+        log_status* console = new log_status("Menu");
         bool running = false;
 
-        SDL_Texture* load_image(SDL_Renderer* &renderer , const std :: string img_path);
-
+        SDL_Texture* loadImage(SDL_Renderer* &renderer, const std::string imgPath);
     public:
         static const int RESUME = 0;
         static const int RUNNING = 1;
@@ -50,18 +48,25 @@ class Menu_manager
         static const bool ON = true;
         static const bool OFF = false;
 
-        Menu_manager(const int base_scr_pos_x , const int base_scr_pos_y , const int total_button , const int button_width , const int button_height);
-        ~Menu_manager();
+        Menu(const int baseScrPosX, const int baseScrPosY, const int totalButton, const int buttonWidth, const int buttonHeight);
 
-        void init(SDL_Renderer* &renderer , const std :: string img_path , std :: vector <std :: string> &button_text);
-        void render(SDL_Renderer* &renderer , const std :: vector <std :: string> &score_data);
-        void handle_event(SDL_Event &e , SDL_Renderer* &renderer);
+        ~Menu();
 
-        bool is_running() const;
-        int get_status() const;
-        void re_open();
-        void change_run_status();
-        bool get_sound_state() const;
+        void init(SDL_Renderer* &renderer, const std::string imgPath, std::vector<std::string> &buttonText);
+
+        void render(SDL_Renderer* &renderer, const std::vector<std::string> &scoreData);
+
+        void handleEvent(SDL_Event &e, SDL_Renderer* &renderer);
+
+        bool isRunning() const;
+
+        int getStatus() const;
+
+        void reOpen();
+
+        void changeRunStatus();
+
+        bool getSoundState() const;
 };
 
 #endif // _MENU_H_

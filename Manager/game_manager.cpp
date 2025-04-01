@@ -1,226 +1,230 @@
 #include "game_manager.h"
-#include "../Object/ghost.h"
-#include <SDL_mixer.h>
-#include <SDL_image.h>
-#include <sstream>
+#include <iostream>
+#include <string>
 
-Game_manager :: Game_manager(SDL_Renderer* &renderer)
+GameManager :: GameManager(SDL_Renderer* &renderer)
 {
-    current_level = 1;
-    player_lives = 3;
-    coins_collected = 0;
-    ghosts_defeated = -1;
-    total_score = 0;
-    player_name = "Unknown";
-    menu_selection = STATE_WAITING;
-    current_button = 1;
+    level = 1;
+    life = 3;
+    eatenCoins = 0;
+    eatenGhost = -1;
+    scores = 0;
+    playername = "Unknown";
+    playerDecision = WAITING;
+    currentBut = 1;
+    PINKY_COIN_LIMIT = 5;
+    INKY_COIN_LIMIT = 30;
+    CLYDE_COIN_LIMIT = 90;
 
-    pinky_coin_trigger = 5;
-    inky_coin_trigger = 30;
-    clyde_coin_trigger = 90;
+    liveText = new TextManager(28);
+    liveText -> loadRenderText(renderer, "Lives:", {255 , 255 , 255 , 255});
+    scoreText = new TextManager(28);
+    scoreText -> loadRenderText(renderer, "Scores: 0", {255 , 255 , 255 , 255});
+    levelText = new TextManager(28);
+    levelText -> loadRenderText(renderer, "Level: 1", {255 , 255 , 255 , 255});
+    playerName = new TextManager(20);
+    playerName -> loadRenderText(renderer, playername.c_str(), {255 , 255 , 255 , 255});
 
-    life_text = new Text_manager(28);
-    score_text = new Text_manager(28);
-    level_text = new Text_manager(28);
-    player_name_text = new Text_manager(20);
+    egBoard = loadImage(renderer, "Assets/Menu Image/endgame.png");
+    hsBoard = loadImage(renderer, "Assets/Menu Image/newHighscore.png");
 
-    life_text -> load_render_text(renderer , "Lives:" , {255 , 255 , 255 , 255});
-    score_text -> load_render_text(renderer , "Scores: 0" , {255 , 255 , 255 , 255});
-    level_text -> load_render_text(renderer , "Level: 1" , {255 , 255 , 255 , 255});
-    player_name_text -> load_render_text(renderer , player_name.c_str() , {255 , 255 , 255 , 255});
-
-    endgame_screen = IMG_LoadTexture(renderer , "Source/Assets/Menu Image/endgame.png");
-    highscore_screen = IMG_LoadTexture(renderer , "Source/Assets/Menu Image/newHighscore.png");
-
-    confirm_button = new Menu_button(70 , 30 , 478 , 250);
-    confirm_button -> load_label(renderer , "Yes");
-    confirm_button -> set_state(Menu_button :: STATE_HOVERED);
-
-    cancel_button = new Menu_button(70 , 30 , 580 , 250);
-    cancel_button -> load_label(renderer , "No");
-    cancel_button -> set_state(Menu_button :: STATE_NORMAL);
-
-    navigation_sound = Mix_LoadWAV("Source/Sound/navigation.wav");
+    yesBut = new Button(70 , 30 , 478 , 250);
+    yesBut -> loadButton(renderer, "Yes");
+    yesBut -> setStatus(Button :: BUTTON_IN);
+    noBut = new Button(70 , 30 , 580 , 250);
+    noBut -> loadButton(renderer, "No");
+    noBut -> setStatus(Button :: BUTTON_OUT);
 }
 
-Game_manager :: ~Game_manager()
+GameManager :: ~GameManager()
 {
-    delete life_text;
-    delete score_text;
-    delete level_text;
-    delete player_name_text;
-    delete confirm_button;
-    delete cancel_button;
-
-    SDL_DestroyTexture(endgame_screen);
-    SDL_DestroyTexture(highscore_screen);
-
-    Mix_FreeChunk(navigation_sound);
-
-    life_text = nullptr;
-    score_text = nullptr;
-    level_text = nullptr;
-    player_name_text = nullptr;
-    confirm_button = nullptr;
-    cancel_button = nullptr;
-    endgame_screen = nullptr;
-    highscore_screen = nullptr;
-    navigation_sound = nullptr;
+    delete levelText; levelText = nullptr;
+    delete liveText; liveText = nullptr;
+    delete scoreText; scoreText = nullptr;
+    delete egBoard; egBoard = nullptr;
+    delete hsBoard; hsBoard = nullptr;
+    delete playerName; playerName = nullptr;
+    Mix_FreeChunk(navigationSound);
 }
 
-void Game_manager :: reset_game_state()
+SDL_Texture* GameManager :: loadImage(SDL_Renderer* &renderer, const std :: string imagePath)
 {
-    current_level = 1;
-    player_lives = 3;
-    coins_collected = 0;
-    ghosts_defeated = -1;
-    total_score = 0;
-    menu_selection = STATE_WAITING;
-    current_button = 1;
-    is_new_record = false;
-    score_insert_position = -1;
+    SDL_Surface* Image = IMG_Load(imagePath.c_str());
+    SDL_Texture* loadTexture = SDL_CreateTextureFromSurface(renderer, Image);
+    SDL_FreeSurface(Image);
+    return loadTexture;
 }
 
-void Game_manager :: advance_to_next_level()
+void GameManager :: reset()
 {
-    current_level++;
-    coins_collected = 0;
-    ghosts_defeated = -1;
-    current_button = 1;
-    menu_selection = STATE_WAITING;
+    level = 1; life = 3;
+    scores = 0; eatenCoins = 0; eatenGhost = -1;
+    currentBut = 1; pos = -1;
+    PINKY_COIN_LIMIT = 5;
+    INKY_COIN_LIMIT = 30;
+    CLYDE_COIN_LIMIT = 90;
+    playerDecision = WAITING;
+    yesBut -> setStatus(Button :: BUTTON_IN);
+    noBut -> setStatus(Button :: BUTTON_OUT);
+}
 
-    if(current_level <= 3) {
-        pinky_coin_trigger = 5;
-        inky_coin_trigger = 30;
-        clyde_coin_trigger = 90;
-    }
-    else if(current_level <= 5) {
-        pinky_coin_trigger = 0;
-        inky_coin_trigger  = 5;
-        clyde_coin_trigger = 10;
-    }
-    else {
-        pinky_coin_trigger = inky_coin_trigger = clyde_coin_trigger = 0;
+void GameManager :: eatCoins(const int typeOfCoin)
+{
+    ++eatenCoins;
+    if(typeOfCoin == normalCoin) scores += 10;
+    else if(typeOfCoin == superCoin){
+        eatenGhost = -1;
+        scores += 50;
     }
 }
 
-void Game_manager :: collect_coin(const int coin_type)
+void GameManager :: eatGhost(const int ghostTileX, const int ghostTileY)
 {
-    coins_collected++;
-    if(coin_type == NORMAL_COIN) total_score += 10;
-    else if(coin_type == SUPER_COIN) {
-        ghosts_defeated = -1;
-        total_score += 50;
+    (++eatenGhost) %= 4;
+    switch(eatenGhost){
+        case 0: scores += 200; break;
+        case 1: scores += 400; break;
+        case 2: scores += 800; break;
+        case 3: scores += 1600; break;
     }
+    ghostEatenPosX = ghostTileX;
+    ghostEatenPosY = ghostTileY;
 }
 
-void Game_manager :: defeat_ghost(const int ghost_tile_x , const int ghost_tile_y)
+void GameManager :: lostALife()
 {
-    (++ghosts_defeated) %= 4;
-    ghost_pos_x = ghost_tile_x;
-    ghost_pos_y = ghost_tile_y;
+    --life;
+}
 
-    switch(ghosts_defeated) {
-        case 0: total_score += 200; break;
-        case 1: total_score += 400; break;
-        case 2: total_score += 800; break;
-        case 3: total_score += 1600; break;
+void GameManager :: nextLevel()
+{
+    ++level;
+    eatenCoins = 0;
+    eatenGhost = -1;
+    currentBut = 1;
+    playerDecision = WAITING;
+    if(level <= 3){
+        PINKY_COIN_LIMIT = 5;
+        INKY_COIN_LIMIT = 30;
+        CLYDE_COIN_LIMIT = 90;
     }
+    else if(level <= 5){
+        PINKY_COIN_LIMIT = 0;
+        INKY_COIN_LIMIT = 5;
+        CLYDE_COIN_LIMIT = 10;
+    }
+    else PINKY_COIN_LIMIT = INKY_COIN_LIMIT = CLYDE_COIN_LIMIT = 0;
 }
 
-void Game_manager :: decrease_life()
+void GameManager :: handleGhostPos(Ghost* &pinky, Ghost* &inky, Ghost* &clyde, Ghost* &greendy)
 {
-    player_lives--;
+    if(pinky -> isInCage() && eatenCoins >= PINKY_COIN_LIMIT) pinky -> respawn(Ghost :: GHOST_START_TILE_X, Ghost :: GHOST_START_TILE_Y, false);
+    if(inky  -> isInCage() && eatenCoins >=  INKY_COIN_LIMIT) inky  -> respawn(Ghost :: GHOST_START_TILE_X, Ghost :: GHOST_START_TILE_Y, false);
+    if(clyde -> isInCage() && eatenCoins >= CLYDE_COIN_LIMIT) clyde -> respawn(Ghost :: GHOST_START_TILE_X, Ghost :: GHOST_START_TILE_Y, false);
+    if(getRemainCoin() < 100 && greendy != nullptr && greendy -> isInCage()) greendy -> respawn(Ghost :: GHOST_START_TILE_X, Ghost :: GHOST_START_TILE_Y, false);
 }
 
-int Game_manager :: get_ghost_streak() const { return ghosts_defeated; }
-int Game_manager :: get_eaten_ghost_pos_x() const { return ghost_pos_x; }
-int Game_manager :: get_eaten_ghost_pos_y() const { return ghost_pos_y; }
-int Game_manager :: get_remaining_lives() const { return player_lives; }
-int Game_manager :: get_current_level() const { return current_level; }
-int Game_manager :: get_menu_selection() const { return menu_selection; }
-int Game_manager :: get_remaining_coins() const { return TOTAL_COINS - coins_collected; }
-bool Game_manager :: is_all_coins_collected() const { return coins_collected == TOTAL_COINS; }
-
-void Game_manager :: update_ghost_positions(Ghost* &pinky , Ghost* &inky , Ghost* &clyde , Ghost* &greendy)
+void GameManager :: renderHUD(SDL_Renderer* &renderer)
 {
-    if(pinky -> inside_cage() && coins_collected >= pinky_coin_trigger)
-        pinky -> ghost_respawn(Ghost :: ghost_start_tile_x , Ghost :: ghost_start_tile_y , false);
-
-    if(inky -> inside_cage() && coins_collected >= inky_coin_trigger)
-        inky -> ghost_respawn(Ghost :: ghost_start_tile_x , Ghost :: ghost_start_tile_y , false);
-
-    if(clyde -> inside_cage() && coins_collected >= clyde_coin_trigger)
-        clyde -> ghost_respawn(Ghost :: ghost_start_tile_x , Ghost :: ghost_start_tile_y , false);
-
-    if(get_remaining_coins() < 100 && greendy != nullptr && greendy -> inside_cage())
-        greendy -> ghost_respawn(Ghost :: ghost_start_tile_x , Ghost :: ghost_start_tile_y , false);
+    levelText -> loadRenderText(renderer, "Level: " + std :: to_string(level), {255 , 255 , 255 , 255});
+    levelText -> renderText(renderer, 0 , 0 , TextManager :: LEFT);
+    liveText -> loadRenderText(renderer, "Life: " + std :: to_string(life), {255 , 255 , 255 , 255});
+    liveText -> renderText(renderer, 0 , 50 , TextManager :: LEFT);
+    scoreText -> loadRenderText(renderer, "Scores: " + std :: to_string(scores), {255 , 255 , 255 , 255});
+    scoreText -> renderText(renderer, 0 , 100 , TextManager :: LEFT);
 }
 
-void Game_manager :: render_hud(SDL_Renderer* &renderer)
+void GameManager :: runEGBoard(SDL_Renderer* &renderer)
 {
-    level_text -> load_render_text(renderer , "Level: " + std :: to_string(current_level) , {255 , 255 , 255 , 255});
-    level_text -> render_text(renderer , 0 , 0 , Text_manager :: LEFT);
-
-    life_text -> load_render_text(renderer , "Life: " + std :: to_string(player_lives) , {255 , 255 , 255 , 255});
-    life_text -> render_text(renderer , 0 , 50 , Text_manager :: LEFT);
-
-    score_text -> load_render_text(renderer , "Scores: " + std :: to_string(total_score) , {255 , 255 , 255 , 255});
-    score_text -> render_text(renderer , 0 , 100 , Text_manager :: LEFT);
-}
-
-void Game_manager :: handle_endgame_input(SDL_Event &e , std :: vector<std :: string> &score_data)
-{
-    if(e.type == SDL_KEYDOWN) {
-        Mix_PlayChannel(-1 , navigation_sound , 0);
-
-        switch(e.key.keysym.sym) {
-            case SDLK_LEFT:
-            case SDLK_a:
-                current_button = 1;
-                confirm_button -> set_state(Menu_button :: STATE_HOVERED);
-                cancel_button -> set_state(Menu_button :: STATE_NORMAL);
-                break;
-
-            case SDLK_RIGHT:
-            case SDLK_d:
-                current_button = 2;
-                confirm_button -> set_state(Menu_button :: STATE_NORMAL);
-                cancel_button -> set_state(Menu_button :: STATE_HOVERED);
-                break;
-
-            case SDLK_RETURN:
-                menu_selection = (current_button == 1) ? STATE_AGAIN : STATE_QUIT;
-                break;
+    SDL_Rect dsRect = {441 - 250 , 248 - 150 , 500 , 300};
+    SDL_RenderCopy(renderer, egBoard, nullptr, &dsRect);
+    yesBut -> renderButton(renderer);
+    noBut  -> renderButton(renderer);
+    if(newRecord){
+        SDL_RenderCopy(renderer, hsBoard, nullptr, &dsRect);
+        static int caretTime = 0;
+        SDL_Rect caret = {395 + playerName -> getTextWidth(), 265 , 2 , 20};
+        if(caretTime % 20 > 10) SDL_RenderFillRect(renderer, &caret);
+        ++caretTime; caretTime %= 20;
+        if(playername != ""){
+            playerName -> loadRenderText(renderer, playername.c_str(), {0 , 0 , 0 , 255});
+            playerName -> renderText(renderer, 395 , 268 , TextManager :: LEFT);
         }
     }
 }
 
-void Game_manager :: show_endgame_screen(SDL_Renderer* &renderer)
+void GameManager :: handleEGBoard(SDL_Event &e, std :: vector <std :: string> &scoreData)
 {
-    SDL_Rect screen_rect = {448 , 0 , 224 , 496};
-    SDL_RenderCopy(renderer , endgame_screen , nullptr , &screen_rect);
-    confirm_button -> button_render(renderer);
-    cancel_button -> button_render(renderer);
-
-    if(is_new_record) {
-        SDL_RenderCopy(renderer , highscore_screen , nullptr , &screen_rect);
-        SDL_Rect name_rect = {395 , 268 , player_name_text -> get_text_width() , 30};
-        player_name_text -> render_text(renderer , name_rect.x , name_rect.y , Text_manager :: LEFT);
+    if(newRecord){
+        if(e.type == SDL_KEYDOWN){
+            if(e.key.keysym.sym == SDLK_RETURN && playername.length() > 2){
+                Mix_PlayChannel(7, navigationSound, 0);
+                SDL_StopTextInput();
+                std :: string data = playername + ": " + std :: to_string(scores);
+                scoreData.emplace(scoreData.begin() + pos, data.c_str());
+                scoreData.pop_back();
+                newRecord = false;
+            }
+            if(e.key.keysym.sym == SDLK_BACKSPACE && playername.length() > 0){
+                playername.pop_back();
+            }
+            else if(e.key.keysym.sym == SDLK_c && (SDL_GetModState() & KMOD_CTRL)){
+                SDL_SetClipboardText(playername.c_str());
+            }
+            else if(e.key.keysym.sym == SDLK_v && (SDL_GetModState() & KMOD_CTRL)){
+                playername = SDL_GetClipboardText();
+            }
+        }
+        else if(e.type == SDL_TEXTINPUT){
+            if(!(SDL_GetModState() & KMOD_CTRL && (e.text.text[0] == 'c' || e.text.text[0] == 'C' || e.text.text[0] == 'v' || e.text.text[0] == 'V')) && playername.length() < 22){
+                if((e.text.text[0] >= 'a' && e.text.text[0] <= 'z') || (e.text.text[0] >= 'A' && e.text.text[0] <= 'Z') || (e.text.text[0] >= '0' && e.text.text[0] <= '9') || e.text.text[0] == ' ')
+                    playername += e.text.text;
+            }
+        }
+    }
+    else{
+        if(e.type == SDL_KEYDOWN){
+            Mix_PlayChannel(7, navigationSound, 0);
+            if(e.key.keysym.sym == SDLK_d || e.key.keysym.sym == SDLK_RIGHT){
+                currentBut = 2;
+                noBut -> setStatus(Button :: BUTTON_IN);
+                yesBut -> setStatus(Button :: BUTTON_OUT);
+            }
+            else if(e.key.keysym.sym == SDLK_a || e.key.keysym.sym == SDLK_LEFT){
+                currentBut = 1;
+                yesBut -> setStatus(Button :: BUTTON_IN);
+                noBut -> setStatus(Button :: BUTTON_OUT);
+            }
+            else if(e.key.keysym.sym == SDLK_RETURN){
+                if(currentBut == 1) playerDecision = AGAIN;
+                else playerDecision = QUIT;
+            }
+            return;
+        }
     }
 }
 
-void Game_manager :: check_score_data(const std :: vector<std :: string> &score_data)
+void GameManager :: checkScoreData(const std :: vector <std :: string> &scoreData)
 {
-    for(int i = 0; i < score_data.size(); i++) {
-        int extracted_score = 0;
-        int j = score_data[i].find_last_of(':') + 2;
-        while(j < score_data[i].size()) extracted_score = extracted_score * 10 + (score_data[i][j++] - '0');
-        if(total_score > extracted_score) {
-            is_new_record = true;
-            score_insert_position = i;
+    for(int i = 0;i < scoreData.size();++i){
+        int t = 0 , j = 0;
+        while(j < scoreData[i].length() && scoreData[i][j] != ':') ++j;
+        j += 2;
+        while(j < scoreData[i].length()) t = t * 10 + scoreData[i][j] - '0' , ++j;
+        if(scores > t){
+            newRecord = true;
             SDL_StartTextInput();
+            pos = i;
             break;
         }
     }
 }
+
+int GameManager :: getEatenGhostStreak() const { return eatenGhost; }
+int GameManager :: getEatenGhostPosX() const { return ghostEatenPosX; }
+int GameManager :: getEatenGhostPosY() const { return ghostEatenPosY; }
+int GameManager :: getRemainLife() const { return life; }
+int GameManager :: getLevel() const { return level; }
+int GameManager :: getPlayerDecision() const { return playerDecision; }
+int GameManager :: getRemainCoin() const { return TOTAL_COINS - eatenCoins; }
+bool GameManager :: clearAllCoins() const { return eatenCoins == TOTAL_COINS; }

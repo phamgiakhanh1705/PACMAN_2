@@ -1,106 +1,99 @@
-#include "../Object/base_object.h"
+#include "base_object.h"
+#include <iostream>
+#include <cmath>
 
+std :: pair <int , int> nextTileID;
 
-Object :: Object()
+Object :: Object(int tileX, int tileY, int velX, int velY)
 {
+    this -> tileX = tileX;
+    this -> tileY = tileY;
+    if(velX != 0) this -> velX = velX;
+    if(velY != 0) this -> velY = velY;
 
-}
-
-Object :: ~Object()
-{
-
-}
-
-Object :: Object(int new_tile_x , int new_tile_y , int new_velocity_x , int new_velocity_y)
-{
-    tile_x = new_tile_x;
-    tile_y = new_tile_y;
-    if(new_velocity_x) velocity_x = new_velocity_x;
-    if(new_velocity_y) velocity_y = new_velocity_y;
-    screen_pos_x = new_tile_x * tile_size + tile_center_offset;
-    screen_pos_y = new_tile_y * tile_size;
+    this -> scrPosX = tileX * 16 + 8;
+    this -> scrPosY = tileY * 16;
     dead = false;
-}
-
-void Object :: update_screen_pos_from_tile()
-{
-    screen_pos_x = tile_x * tile_size;
-    screen_pos_y = tile_y * tile_size;
-}
-
-void Object ::reset_object_tile(const int new_tile_x , const int new_tile_y)
-{
-    tile_x = new_tile_x;
-    tile_y = new_tile_y;
-    screen_pos_x = tile_x * tile_size;
-    screen_pos_y = tile_y * tile_size;
-    velocity_x = 0;
-    velocity_y = 0;
-    dead = false;
-
-}
-
-void Object :: update_velocity_direction(int new_velocity_x , int new_velocity_y , int new_direct)
-{
-    velocity_x = new_velocity_x;
-    velocity_y = new_velocity_y;
-    direct = new_direct;
-}
-
-void Object :: set_dead(bool status , std :: string entity)
-{
-    dead = status;
-    if(entity == "Ghost") {
-        screen_pos_x = tile_x * tile_size;
-        screen_pos_y = tile_y * tile_size;
-    }
 }
 
 void Object :: move()
 {
-    screen_pos_x += velocity_x;
-    screen_pos_y += velocity_y;
+    scrPosX += velX;
+    scrPosY += velY;
 
-    if(screen_pos_x % tile_size == 0) {
-        tile_x = screen_pos_x / tile_size;
-    }
-    else {
-        tile_x = (screen_pos_x + tile_center_offset) / tile_size;
-    }
+    if(scrPosX % 16 == 0) tileX = scrPosX / 16;
+    else tileX = (scrPosX + 8) / 16;
 
-     if(screen_pos_y % tile_size == 0) {
-        tile_y = screen_pos_y / tile_size;
-    }
-    else {
-        tile_y = (screen_pos_y + tile_center_offset) / tile_size;
-    }
+    if(scrPosY % 16 == 0) tileY = scrPosY / 16;
+    else tileY = (scrPosY + 8) / 16;
 }
 
-void Object :: stop()
+void Object :: reTilePos()
 {
-    velocity_x = 0;
-    velocity_y = 0;
+    scrPosX = tileX * 16;
+    scrPosY = tileY * 16;
 }
 
-void Object :: go_through_portal()
+void Object :: changeVelocityDir(int velX, int velY, int dir)
 {
-    if(screen_pos_y == portal_screen_pos_y) {
-        // portal_1 -> portal_2
-        if(screen_pos_x == portal_screen_pos_x_1 && direct == left) {
-            tile_x = portal_tile_pos_x_2;
-            screen_pos_x = portal_screen_pos_x_2;
+    this -> velX = velX;
+    this -> velY = velY;
+    this -> dir = dir;
+}
+
+void Object :: goThroughTunnel()
+{
+    if(scrPosY == 224){
+        if(dir == LEFT && scrPosX == 0){
+            tileX = 27;
+            scrPosX = 432;
         }
-        // portal_2 -> portal_1
-        else if(screen_pos_x == portal_screen_pos_x_2 && direct == right) {
-            tile_x = portal_tile_pos_x_1;
-            screen_pos_x = portal_screen_pos_x_1;
+        else if(dir == RIGHT && scrPosX == 432){
+            tileX = 0;
+            scrPosX = 0;
         }
     }
 }
 
-int Object :: get_tile_x() const { return tile_x; }
-int Object :: get_tile_y() const { return tile_y; }
-int Object :: get_pos_x() const { return screen_pos_x; }
-int Object :: get_pos_y() const { return screen_pos_y; }
+void Object :: setDead(bool status, int id)
+{
+    dead = status;
+    if(id == 1) return;
+    scrPosX = tileX * 16;
+    scrPosY = tileY * 16;
+}
 
-bool Object :: is_dead() const { return dead; }
+void Object :: resetObjectTile(const int tileX, const int tileY)
+{
+    this -> tileX = tileX;
+    this -> tileY = tileY;
+    dead = false;
+    velX = velY = 0;
+    scrPosX = tileX * 16;
+    scrPosY = tileY * 16;
+}
+
+bool Object :: isDead() const
+{
+    return dead;
+}
+
+int Object :: getTileX() const
+{
+    return tileX;
+}
+
+int Object :: getTileY() const
+{
+    return tileY;
+}
+
+int Object :: getPosX() const
+{
+    return scrPosX;
+}
+
+int Object :: getPosY() const
+{
+    return scrPosY;
+}

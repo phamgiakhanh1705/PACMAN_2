@@ -1,290 +1,178 @@
-#include "../Object/texture_source.h"
+#include "texture_source.h"
 
-Texture_source :: Texture_source()
+TextureSrc :: TextureSrc()
 {
-    logger = new log_status("texture_source");
-
-    tile_texture = nullptr;
-    entity_texture = nullptr;
-    ghost_score_texture = nullptr;
-
-    pacman_frame = 0;
-    for(int i = 0; i < 7; i++) {
-        ghost_frame[i] = 0;
-    }
+    tileTexture = nullptr;
+    entityTexture = nullptr;
+    ghostScore = nullptr;
+    pacmanFrame = 0;
+    for(int i = 0;i < 7;++i) ghostFrame[i] = 0;
 }
 
-Texture_source :: ~Texture_source()
+TextureSrc :: ~TextureSrc()
 {
-    if(tile_texture) {
-        SDL_DestroyTexture(tile_texture);
-        tile_texture = nullptr;
-    }
-    if(entity_texture) {
-        SDL_DestroyTexture(entity_texture);
-        entity_texture = nullptr;
-    }
-    if(ghost_score_texture) {
-        SDL_DestroyTexture(ghost_score_texture);
-        ghost_score_texture = nullptr;
-    }
-    for(int i = 0; i < 7; i++) {
-        ghost_frame[i] = 0;
-    }
+    SDL_DestroyTexture(tileTexture);
+    tileTexture = nullptr;
 
-    delete logger;
-    logger = nullptr;
+    SDL_DestroyTexture(entityTexture);
+    entityTexture = nullptr;
+
+    SDL_DestroyTexture(ghostScore);
+    ghostScore = nullptr;
+
+    for(int i = 0;i < 7;++i) ghostFrame[i] = 0;
 }
 
-bool Texture_source :: is_pacman_dead()
+bool TextureSrc :: pacmanIsDead()
 {
-    if(pacman_frame == 109) {
-        pacman_frame = 0;
-        return true;
+    if(pacmanFrame == 109){
+        pacmanFrame = 0; return true;
     }
     return false;
 }
 
-void Texture_source :: load_tile_texture(SDL_Renderer* &renderer)
+void TextureSrc :: loadTileTexture(SDL_Renderer* &renderer)
 {
-    SDL_Surface* image = IMG_Load("");
-    if(!image) {
-        logger -> status(IMG_GetError());
+    SDL_Surface* Image = IMG_Load("Assets/Entity Image/Pacman Tile Labyrinth.png");
+
+    if(Image == nullptr){
+        Console -> status(IMG_GetError());
     }
-    else {
-        tile_texture = SDL_CreateTextureFromSurface(renderer , image);
+    else{
+        tileTexture = SDL_CreateTextureFromSurface(renderer, Image);
 
         int x = 0 , y = 0;
-        for(int i = 0; i < 32; i++) {
-            tile_sprites[i] = {x , y , 16 , 16};
+        for(int i = 0;i < 32;++i){
+            tileSprite[i] = {x , y , 16 , 16};
             y += 17;
-            if (i % 4 == 3) {
-                x += 17;
-                y = 0;
-            }
+            if(i % 4 == 3) x += 17 , y = 0;
         }
-        logger -> status("Tile Texture loaded successfully!");
+
+        Console -> status("Tile Texture got successfully!");
     }
-    SDL_FreeSurface(image);
+
+    SDL_FreeSurface(Image);
+    Image = nullptr;
 }
 
-void Texture_source :: render_tile_texture(SDL_Renderer* &renderer , int tile_id , SDL_Rect* dst_rect)
+void TextureSrc :: renderTileTexture(SDL_Renderer* &renderer, int tileID, SDL_Rect* dsRect)
 {
-    SDL_RenderCopy(renderer , tile_texture , &tile_sprites[tile_id] , dst_rect);
+    SDL_RenderCopy(renderer, tileTexture, &tileSprite[tileID], dsRect);
 }
 
-void Texture_source :: load_pacman_and_ghost_texture(SDL_Renderer* &renderer)
+void TextureSrc :: loadPacmanAndGhostTexture(SDL_Renderer* &renderer)
 {
-    SDL_Surface* image = IMG_Load("");
-    if(!image) {
-        logger -> status(IMG_GetError());
+    SDL_Surface* Image = IMG_Load("Assets/Entity Image/Pacman and Ghost Texture.png");
+
+    if(Image == nullptr){
+        Console -> status(IMG_GetError());
     }
-    else {
-        entity_texture = SDL_CreateTextureFromSurface(renderer , image);
+    else{
+        entityTexture = SDL_CreateTextureFromSurface(renderer, Image);
 
-        int pos_tex_x = 0, pos_tex_y = 0;
-        for(int i = 0; i < 3; i++) {
-            pacman_up[i] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-        }
-        for(int i = 3; i < 6; i++) {
-            pacman_down[i % 3] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-        }
-        for(int i = 6; i < 9; i++) {
-            pacman_left[i % 3] = {pos_tex_x, pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-        }
-        for(int i = 9; i < 12; i++) {
-            pacman_right[i % 3] = {pos_tex_x, pos_tex_y, 30, 30};
-            pos_tex_x += 31;
-        }
+        int posTexX = 0 , posTexY = 0;
 
-        pos_tex_x = 0;
-        for (int i = 0; i < 11; i++) {
-            pacman_dead[i] = {pos_tex_x , 155 , 30 , 30};
-            pos_tex_x += 31;
-        }
+        for(int i = 0;i < 3;++i) pacmanUP[i] = {posTexX , posTexY , 30 , 30} , posTexX += 31;
+        for(int i = 3;i < 6;++i) pacmanDOWN[i % 3] = {posTexX , posTexY , 30 , 30} , posTexX += 31;
+        for(int i = 6;i < 9;++i) pacmanLEFT[i % 3] = {posTexX , posTexY , 30 , 30} , posTexX += 31;
+        for(int i = 9;i < 12;++i) pacmanRIGHT[i % 3] = {posTexX , posTexY , 30 , 30} , posTexX += 31;
 
-        logger -> status("Pacman Texture loaded successfully!");
+        posTexX = 0;
+        for(int i = 0;i < 11;++i) pacmanDEAD[i] = {posTexX , 155 , 30 , 30} , posTexX += 31;
 
-        pos_tex_x = 0;
-        pos_tex_y = 31;
-        for(int i = 0; i < total_ghost - 1; i++) {
-            ghost_sprite[i][up][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][up][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][down][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][down][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][left][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][left][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][right][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][right][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][frighten_ghost_1][0] = {pos_tex_x , 31 , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][frighten_ghost_1][1] = {pos_tex_x , 31 , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][frighten_ghost_2][0] = {pos_tex_x , 31 , 30 , 30};
-            pos_tex_x += 31;
-            ghost_sprite[i][frighten_ghost_2][1] = {pos_tex_x , 31 , 30 , 30};
-            pos_tex_x = 0;
-            pos_tex_y += 31;
-            if(i == 3) pos_tex_y += 31;
+        Console -> status("Pacman Texture got successfully!");
+
+        posTexX = 0 , posTexY = 31;
+        for(int i = 0;i < TOTAL_GHOST - 1;++i){
+            ghost[i][UP][0] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][UP][1] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][DOWN][0] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][DOWN][1] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][LEFT][0] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][LEFT][1] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][RIGHT][0] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][RIGHT][1] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+            ghost[i][FRIGHTEN_GHOST_1][0] = {posTexX , 31 , 30 , 30}; posTexX += 31;
+            ghost[i][FRIGHTEN_GHOST_1][1] = {posTexX , 31 , 30 , 30}; posTexX += 31;
+            ghost[i][FRIGHTEN_GHOST_2][0] = {posTexX , 31 , 30 , 30}; posTexX += 31;
+            ghost[i][FRIGHTEN_GHOST_2][1] = {posTexX , 31 , 30 , 30}; posTexX = 0;
+            posTexY += 31;
+            if(i == 3) posTexY += 31;
         }
 
-        pos_tex_x = 248;
-        pos_tex_y = 62;
-        ghost_sprite[ghost_spirit][up][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-        ghost_sprite[ghost_spirit][up][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-        pos_tex_x += 31;
-        ghost_sprite[ghost_spirit][down][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-        ghost_sprite[ghost_spirit][down][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-        pos_tex_x = 248;
-        pos_tex_y += 31;
-        ghost_sprite[ghost_spirit][left][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-        ghost_sprite[ghost_spirit][left][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-        pos_tex_x += 31;
-        ghost_sprite[ghost_spirit][right][0] = {pos_tex_x , pos_tex_y , 30 , 30};
-        ghost_sprite[ghost_spirit][right][1] = {pos_tex_x , pos_tex_y , 30 , 30};
-        pos_tex_x = pos_tex_y = 0;
+        posTexX = 248 , posTexY = 62;
+        ghost[GHOST_SPIRIT][UP][0] = {posTexX , posTexY , 30 , 30};
+        ghost[GHOST_SPIRIT][UP][1] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+        ghost[GHOST_SPIRIT][DOWN][0] = {posTexX , posTexY , 30 , 30};
+        ghost[GHOST_SPIRIT][DOWN][1] = {posTexX , posTexY , 30 , 30}; posTexX = 248 , posTexY += 31;
+        ghost[GHOST_SPIRIT][LEFT][0] = {posTexX , posTexY , 30 , 30};
+        ghost[GHOST_SPIRIT][LEFT][1] = {posTexX , posTexY , 30 , 30}; posTexX += 31;
+        ghost[GHOST_SPIRIT][RIGHT][0] = {posTexX , posTexY , 30 , 30};
+        ghost[GHOST_SPIRIT][RIGHT][1] = {posTexX , posTexY , 30 , 30}; posTexX = posTexY = 0;
 
-        SDL_FreeSurface(image);
-        image = IMG_Load("");
-        ghost_score_texture = SDL_CreateTextureFromSurface(renderer , image);
+        SDL_FreeSurface(Image);
+        Image = IMG_Load("Assets/Entity Image/ghostscore.png");
+        ghostScore = SDL_CreateTextureFromSurface(renderer, Image);
 
-        logger -> status("Ghost Texture loaded successfully!");
+        Console -> status("Ghost Texture got successfully!");
     }
 
-    SDL_FreeSurface(image);
-    image = nullptr;
+    SDL_FreeSurface(Image);
+    Image = nullptr;
 }
 
-void Texture_source :: render_pacman(SDL_Renderer* &renderer , int pos_x , int pos_y , int status)
+void TextureSrc :: renderPacmanTexture(SDL_Renderer* &renderer, int posX, int posY, int status)
 {
-    SDL_Rect src_rect , dst_rect;
+    SDL_Rect srcRect , dsRect;
+    dsRect = {posX - 7 + 217 , posY - 7 , 30 , 30};
+    ++pacmanFrame;
 
-    dst_rect = {pos_x - 7 + 217 , pos_y - 7 , 30 , 30};
-    ++pacman_frame;
+    if(status != DEAD_PACMAN && pacmanFrame == 30) pacmanFrame = 0;
 
-    if(status != dead_pacman && pacman_frame == 30) {
-        pacman_frame = 0;
+    switch(status){
+        case -1: srcRect = pacmanUP[0]; break;
+        case UP: srcRect = pacmanUP[pacmanFrame / 10]; break;
+        case RIGHT: srcRect = pacmanRIGHT[pacmanFrame / 10]; break;
+        case DOWN: srcRect = pacmanDOWN[pacmanFrame / 10]; break;
+        case LEFT: srcRect = pacmanLEFT[pacmanFrame / 10]; break;
+        case DEAD_PACMAN: srcRect = pacmanDEAD[pacmanFrame / 10]; break;
     }
 
-    switch(status)
-    {
-        case -1:
-            src_rect = pacman_up[0];
-            break;
-        case up:
-            src_rect = pacman_up[pacman_frame / 10];
-            break;
-        case right:
-            src_rect = pacman_right[pacman_frame / 10];
-            break;
-        case down:
-            src_rect = pacman_down[pacman_frame / 10];
-            break;
-        case left:
-            src_rect = pacman_left[pacman_frame / 10];
-            break;
-        case dead_pacman:
-            src_rect = pacman_dead[pacman_frame / 10];
-            break;
-        default:
-            src_rect = pacman_up[0];
-            break;
-    }
-
-    SDL_RenderCopy(renderer , entity_texture , &src_rect , &dst_rect);
+    SDL_RenderCopy(renderer, entityTexture, &srcRect, &dsRect);
 }
 
-void Texture_source :: render_ghost(SDL_Renderer* &renderer , int pos_x , int pos_y , int ghost_id , int status)
+void TextureSrc :: renderGhostTexture(SDL_Renderer* &renderer, int posX, int posY, int ghostID, int status)
 {
-    SDL_Rect src_rect , dst_rect;
-    dst_rect = {pos_x - 7 + 217 , pos_y - 7 , 30 , 30};
+    SDL_Rect srcRect , dsRect;
+    dsRect = {posX - 7 + 217 , posY - 7 , 30 , 30};
+    ++ghostFrame[ghostID];
 
-    ++ghost_frame[ghost_id];
-    if (ghost_frame[ghost_id] == 14) ghost_frame[ghost_id] = 0;
+    if(ghostFrame[ghostID] == 14) ghostFrame[ghostID] = 0;
 
-    int frame_index = ghost_frame[ghost_id] / 7;
-
-    switch(status)
-    {
-        case up:
-            src_rect = ghost_sprite[ghost_id][up][frame_index];
-            break;
-        case right:
-            src_rect = ghost_sprite[ghost_id][right][frame_index];
-            break;
-        case down:
-            src_rect = ghost_sprite[ghost_id][down][frame_index];
-            break;
-        case left:
-            src_rect = ghost_sprite[ghost_id][left][frame_index];
-            break;
-        case frighten_ghost_1:
-            src_rect = ghost_sprite[ghost_id][frighten_ghost_1][frame_index];
-            break;
-        case frighten_ghost_2:
-            if(frame_index == 0) {
-                src_rect = ghost_sprite[ghost_id][frighten_ghost_1][frame_index];
-            }
-            else {
-                src_rect = ghost_sprite[ghost_id][frighten_ghost_2][frame_index];
-            }
-            break;
-        default:
-            src_rect = ghost_sprite[ghost_id][up][0];
+    switch(status){
+        case UP: srcRect = ghost[ghostID][UP][ghostFrame[ghostID] / 7]; break;
+        case RIGHT: srcRect = ghost[ghostID][RIGHT][ghostFrame[ghostID] / 7]; break;
+        case DOWN: srcRect = ghost[ghostID][DOWN][ghostFrame[ghostID] / 7]; break;
+        case LEFT: srcRect = ghost[ghostID][LEFT][ghostFrame[ghostID] / 7]; break;
+        case FRIGHTEN_GHOST_1: srcRect = ghost[ghostID][FRIGHTEN_GHOST_1][ghostFrame[ghostID] / 7]; break;
+        case FRIGHTEN_GHOST_2:
+            if(ghostFrame[ghostID] / 7 == 0) srcRect = ghost[ghostID][FRIGHTEN_GHOST_1][ghostFrame[ghostID] / 7];
+            else srcRect = ghost[ghostID][FRIGHTEN_GHOST_2][ghostFrame[ghostID] / 7];
             break;
     }
 
-    SDL_RenderCopy(renderer , entity_texture , &src_rect , &dst_rect);
+    SDL_RenderCopy(renderer, entityTexture, &srcRect, &dsRect);
 }
 
-void Texture_source :: render_ghost_score(SDL_Renderer* &renderer , int eaten_ghost_x , int eaten_ghost_y , int eaten_ghost_streak)
+void TextureSrc :: renderGhostScore(SDL_Renderer* &renderer, const int eatenGhostPosX, const int eatenGhostPosY, const int eatenGhostStreak)
 {
-    SDL_Rect src_rect , dst_rect;
-
-    switch(eaten_ghost_streak)
-    {
-        case 0: src_rect = {0,  0, 50, 50}; break;
-        case 1: src_rect = {50, 0, 50, 50}; break;
-        case 2: src_rect = {0,  50, 50, 50}; break;
-        case 3: src_rect = {50, 50, 50, 50}; break;
-        default: src_rect = {0, 0, 50, 50}; break;
+    SDL_Rect srcRect , dsRect;
+    switch(eatenGhostStreak){
+        case 0: srcRect = {0 , 0 , 50 , 50}; break;
+        case 1: srcRect = {50 , 0 , 50 , 50}; break;
+        case 2: srcRect = {0 , 50 , 50 , 50}; break;
+        case 3: srcRect = {50 , 50 , 50 , 50}; break;
     }
-
-    dst_rect = {eaten_ghost_x + 210, eaten_ghost_y - 7, 30, 30};
-
-    SDL_RenderCopy(renderer, ghost_score_texture, &src_rect, &dst_rect);
+    dsRect = {eatenGhostPosX + 210 , eatenGhostPosY - 7 , 30 , 30};
+    SDL_RenderCopy(renderer, ghostScore, &srcRect, &dsRect);
 }
-
-void Texture_source :: render_map(SDL_Renderer* &renderer , Map* map)
-{
-    int height = map -> get_map_height();
-    int width = map -> get_map_width();
-
-    for(int row = 0; row < height; row++) {
-        for(int col = 0; col < width; col++) {
-            int tile_id = map -> get_type_tile(row , col);
-            SDL_Rect dst_rect = {col * 16 + 217 , row * 16 , 16 , 16};
-            render_tile_texture(renderer , tile_id , &dst_rect);
-        }
-    }
-}
-
-void Texture_source :: render_warning_effect(SDL_Renderer* &renderer)
-{
-    SDL_SetRenderDrawBlendMode(renderer , SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer , 255 , 255 , 255 , 60);
-    SDL_Rect full_screen = {217 , 0 , 448 , 496};
-    SDL_RenderFillRect(renderer , &full_screen);
-}
-

@@ -1,45 +1,61 @@
 #pragma once
+
 #ifndef _PACMAN_H_
 #define _PACMAN_H_
 
-#include "../Object/base_object.h"
+#include "base_object.h"
+#include <stack>
 
-class Pacman : public Object
-{
+class Pacman : public Object {
+    private:
+        std::stack<int> Direction;
+        std::stack< std::pair<int, std::pair<int, int> > > Special;
+
     public:
-
-        static const int up = 0;
-        static const int right = 1;
-        static const int down = 2;
-        static const int left = 3;
-        static const int none_dir = -1; // Pacman đứng yên
-
-        static const int pacman_start_tile_x = 13;
-        static const int pacman_start_tile_y = 23;
-        static const int pacman_speed = 2;
+        static const int pacmanVelocity = 2;
+        static const int PACMAN_START_TILE_X = 13;
+        static const int PACMAN_START_TILE_Y = 23;
 
         Pacman();
-        ~Pacman();
 
-        void handle_input(int new_direction);
-        void update();
+        ~Pacman() {
+            while (!Direction.empty()) Direction.pop();
+            while (!Special.empty()) Special.pop();
+        }
 
-        void plan_turn(int new_direction , std :: pair <int , int> at_tile);
-        void perform_planned_turn();
+        bool emptyDirStack() {
+            return Direction.empty();
+        }
 
-        void stop_moving();
-        void clear_turn_plan();
-        void respawn();
+        bool emptySpecial() {
+            return Special.empty();
+        }
 
-        int get_current_direction() const;
-        std :: pair <int , int> get_planned_turn_tile() const;
-        bool has_planned_turn() const;
+        void pushtoStack(int newDir);
 
-    private:
-        int cur_dir = none_dir; // hướng Pacman đang di chuyển
-        int planned_dir = none_dir; // Hướng Pacman sẽ chọn
-        std :: pair <int , int> planned_tile = {-1 , -1}; // vị trí tile mà tại đó pacman sẽ chuyển hướng
+        void pushSpecialStack(int newDir, std::pair<int, int> nextCross);
 
+        int getDir() const {
+            return Direction.top();
+        }
+
+        std::pair<int, int> getSpecial() {
+            return Special.top().second;
+        }
+
+        void moving();
+
+        void stopmoving();
+
+        void turn();
+
+        void eraseSpecial();
+
+        void respawn() {
+            resetObjectTile(PACMAN_START_TILE_X, PACMAN_START_TILE_Y);
+            while (!Direction.empty()) Direction.pop();
+            while (!Special.empty())   Special.pop();
+        }
 };
 
 #endif // _PACMAN_H_

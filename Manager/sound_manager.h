@@ -1,51 +1,48 @@
 #pragma once
 
-#ifndef _SOUND_MANAGER_H_
-#define _SOUND_MANAGER_H_
+#ifndef _SOUNDMANAGER_H_
+#define _SOUNDMANAGER_H_
 
 #include <SDL_mixer.h>
+#include <vector>
 #include "../LogStatus/logstatus.h"
-#include <iostream>
 
-class Sound_manager
-{
-    public:
-
-        static const int step_0 = 0;
-        static const int step_1 = 1;
-        static const int step_2 = 2;
-        static const int step_3 = 3;
-        static const int start = 4;
-        static const int chomp = 5;
-        static const int ghost_eaten = 6;
-        static const int ghost_turn_blue = 7;
-        static const int ghost_home = 8;
-        static const int pacman_die = 9;
-        static const int win_level = 10;
-        static const int normal_ghost = 11;
-        static const int revive_ghost = 12;
-        static const int total_sounds = 11;
-
-        Sound_manager();
-        ~Sound_manager();
-
-        void play_sound();
-        void load_sound();
-        void queue_sound(int sound_id);
-        void clear_status();
-
+class SoundManager {
     private:
+        bool dead;
+        bool ghostTurnBlue;
+        bool ghostGoHome;
+        int eatDotTime;
+        int oldMoveType, newMoveType;
+        log_status* Console = new log_status("Sound Manager");
+        Mix_Chunk* soundEffect[11];
+    public:
+        static const int MOVE_0 = 0;
+        static const int MOVE_1 = 1;
+        static const int MOVE_2 = 2;
+        static const int MOVE_3 = 3;
+        static const int START = 4;
+        static const int EAT_DOT = 5;
+        static const int EAT_GHOST = 6;
+        static const int GHOST_TURN_BLUE = 7;
+        static const int GHOST_GO_HOME = 8;
+        static const int DEAD = 9;
+        static const int WINNING = 10;
+        static const int TOTAL_SOUND_EFFECT = 11;
+        static const int NORMAL_GHOST = 11;
+        static const int REVIVAL_GHOST = 12;
 
-        bool is_dead;
-        bool ghost_frightened;
-        bool ghost_escaping;
-        int dot_timer;
-        int prev_move_sound;
-        int curr_move_sound;
+        SoundManager();
 
-        log_status* logger;
-        Mix_Chunk* sounds[13];
+        ~SoundManager();
 
+        void insertPlayList(const int soundID);
+
+        void loadSound();
+
+        void playSound();
+
+        void reset();
 };
 
-#endif //_SOUND_MANAGER_H_
+#endif // _SOUNDMANAGER_H_

@@ -1,59 +1,49 @@
-#include "../Object/Item.h"
+#include "Item.h"
 
-Item :: Item(SDL_Renderer* &renderer , const std :: string& image_path)
+Item :: Item(SDL_Renderer* &renderer, const std :: string imgPath)
 {
-    tile_x = 0;
-    tile_y = 0;
-    is_collected = true;
-
-    SDL_Surface* surface = IMG_Load(image_path.c_str());
-    texture = SDL_CreateTextureFromSurface(renderer , surface);
-    SDL_FreeSurface(surface);
+    tileX = 0; tileY = 0;
+    dead = true;
+    SDL_Surface* Image = IMG_Load(imgPath.c_str());
+    itemTexture = SDL_CreateTextureFromSurface(renderer, Image);
+    SDL_FreeSurface(Image);
 }
 
 Item :: ~Item()
 {
-    SDL_DestroyTexture(texture);
-    texture = nullptr;
+    SDL_DestroyTexture(itemTexture);
+    itemTexture = nullptr;
 }
 
-int Item :: get_tile_x() const
+int Item :: getPosX() const
 {
-    return tile_x;
+    return tileX;
 }
 
-int Item :: get_tile_y() const
+int Item :: getPosY() const
 {
-    return tile_y;
+    return tileY;
 }
 
-bool Item :: is_destroyed() const
+bool Item :: isDestroyed() const
 {
-    return is_collected;
+    return dead;
 }
 
-void Item :: spawn_at(int new_tile_x , int new_tile_y)
+void Item :: spawnAt(const int tileX, const int tileY)
 {
-    tile_x = new_tile_x;
-    tile_y = new_tile_y;
-    is_collected = false;
+    this -> tileX = tileX;
+    this -> tileY = tileY;
+    dead = false;
 }
 
-void Item :: destroy()
+void Item :: destroyItem()
 {
-    is_collected = true;
+    dead = true;
 }
 
-void Item :: render_item(SDL_Renderer* &renderer)
+void Item :: renderItem(SDL_Renderer* &renderer)
 {
-    if (is_collected) return;
-
-    SDL_Rect render_rect = {
-        tile_x * 16 + 210 ,
-        tile_y * 16 - 7 ,
-        30 ,
-        30
-    };
-
-    SDL_RenderCopy(renderer , texture , nullptr , &render_rect);
+    SDL_Rect dsRect = {tileX * 16 + 210 , tileY * 16 - 7 , 30 , 30};
+    SDL_RenderCopy(renderer, itemTexture, nullptr, &dsRect);
 }

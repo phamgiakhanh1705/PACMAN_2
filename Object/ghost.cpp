@@ -1,141 +1,106 @@
-#include "../Object/ghost.h"
+#include "Ghost.h"
+#include <random>
+#include <iostream>
 
-
-Ghost :: Ghost(int start_tile_x , int start_tile_y , bool start_in_cage)
-    : Object(start_tile_x , start_tile_y),
-      is_frightened(false) ,
-      is_in_scatter_mode(false) ,
-      is_in_cage(start_in_cage) ,
-      speed_multiplier(1) ,
-      ghost_speed(default_speed)
+Ghost :: Ghost(int tileX, int tileY, bool inCage) : Object(tileX , tileY)
 {
-    target_tile_x = start_tile_x;
-    target_tile_y = start_tile_y;
-    if(is_in_cage == true) {
-        direct = up;
-    }
-    else {
-        direct = right;
+    frighten = 0;
+    accele = 1;
+    ghostVelocity = 2;
+    scattering = false;
+    nextTileX = tileX , nextTileY = tileY;
+    this -> inCage = inCage;
+    if(inCage == false) ghostDir = RIGHT;
+    else ghostDir = UP;
+}
+
+int Ghost :: getNextTileX() const
+{
+    return nextTileX;
+}
+
+int Ghost :: getNextTileY() const
+{
+    return nextTileY;
+}
+
+int Ghost :: getGhostDir() const
+{
+    return ghostDir;
+}
+
+void Ghost :: setDir(int dir)
+{
+    ghostDir = dir;
+}
+
+void Ghost :: setFrighten(const bool status)
+{
+    if(isInCage()) return;
+    if(frighten != status) reTilePos();
+    frighten = status;
+    if(status){
+        ghostDir = (ghostDir + 2) % 4;
+        accele = 1;
     }
 }
 
-Ghost :: ~Ghost()
+void Ghost :: setScattering(const bool status)
 {
-
+    scattering = status;
 }
 
-void Ghost ::update_movement()
+bool Ghost :: isScattering()
 {
-    int vel_x = 0;
-    int vel_y = 0;
+    return scattering;
+}
 
-    if(speed_multiplier == 1) {
-        if(is_frightened == true) {
-            ghost_speed = frightened_speed;
-        }
-        else if(is_dead() == true) {
-            ghost_speed = returning_speed;
-        }
-        else {
-            ghost_speed = default_speed;
-        }
-    }
-    else {
-        ghost_speed = returning_speed;
-    }
+bool Ghost :: isFrighten()
+{
+    return frighten;
+}
 
-    switch(direct)
-    {
-        case up:
-            vel_y = -ghost_speed;
-            break;
-        case down:
-            vel_y = ghost_speed;
-            break;
-        case left:
-            vel_x = -ghost_speed;
-            break;
-        case right:
-            vel_x = ghost_speed;
-            break;
-        default:
-            break;
-    }
+void Ghost :: setDestination(int tilX, int tilY, int _accele)
+{
+    this -> accele = _accele;
+    nextTileX = tilX;
+    nextTileY = tilY;
+}
 
-    update_velocity_direction(vel_x , vel_y , direct);
+void Ghost :: moving()
+{
+    int velX , velY , dir;
+    velX = velY = 0; dir = -1;
+
+    if(accele == 1){
+        if(frighten) ghostVelocity = 1;
+        else if(isDead()) ghostVelocity = 4;
+        else ghostVelocity = 2;
+    }
+    else ghostVelocity = 4;
+
+    switch(ghostDir){
+        case UP: velY -= ghostVelocity; dir = UP; break;
+        case DOWN: velY += ghostVelocity; dir = DOWN; break;
+        case LEFT: velX -= ghostVelocity; dir = LEFT; break;
+        case RIGHT: velX += ghostVelocity; dir = RIGHT; break;
+    }
+    changeVelocityDir(velX , velY , dir);
     move();
 }
 
-void Ghost :: set_direction(int new_direction)
+void Ghost :: respawn(const int tileX, const int tileY, const bool inCage)
 {
-    direct = new_direction;
-}
-
-void Ghost :: reverse_direction()
-{
-    direct = (direct + 2) % 4;
-}
-
-void Ghost :: set_frightened_mode(const bool status)
-{
-    if(is_in_cage == true) return;
-    if(is_frightened == false) update_screen_pos_from_tile();
-    is_frightened = status;
-    if(status == false) return;
-    reverse_direction();
-    speed_multiplier = 1;
-}
-
-bool Ghost :: get_frightened_state() const
-{
-    return is_frightened;
-}
-
-void Ghost :: set_scatter_mode(bool enable)
-{
-    is_in_scatter_mode = enable;
-}
-
-bool Ghost :: get_scatter_mode() const
-{
-    return is_in_scatter_mode;
-}
-
-void Ghost :: set_target_tile(int tile_x , int tile_y , int multiplier)
-{
-    target_tile_x = tile_x;
-    target_tile_y = tile_y;
-    speed_multiplier = multiplier;
-}
-
-int Ghost :: get_target_tile_x() const
-{
-    return target_tile_x;
-}
-
-int Ghost :: get_target_tile_y() const
-{
-    return target_tile_y;
-}
-
-int Ghost :: get_ghost_direction() const
-{
-    return direct;
-}
-
-void Ghost :: ghost_respawn(int start_tile_x , int start_tile_y , bool to_cage)
-{
-    reset_object_tile(start_tile_x , start_tile_y);
-    is_in_cage = to_cage;
-    if(to_cage == true) {
-        direct = up;
+    resetObjectTile(tileX , tileY);
+    this -> inCage = inCage;
+    if(inCage == false){
+        if(rand() % 2 == 0) ghostDir = LEFT;
+        else ghostDir = RIGHT;
     }
-    else {
-        direct = (rand() % 2 == 0 ? right : left);
-    }
+    else ghostDir = UP;
 }
 
-bool Ghost :: inside_cage() const
+bool Ghost :: isInCage() const
 {
-    return is_in_cage;
+    return inCage;
 }

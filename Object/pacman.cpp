@@ -1,100 +1,64 @@
-#include "../Object/pacman.h"
+#include "Pacman.h"
+#include <iostream>
+#include <algorithm>
 
-Pacman :: Pacman() : Object(pacman_start_tile_x , pacman_start_tile_y)
+typedef std :: pair <int , std :: pair <int , int>> IP;
+
+Pacman :: Pacman() : Object(13 , 23)
 {
-    stop_moving();
-    clear_turn_plan();
+    while(!Direction.empty()) Direction.pop();
+    while(!Special.empty()) Special.pop();
 }
 
-Pacman :: ~Pacman()
+void Pacman :: pushtoStack(int newDir)
 {
-
+    if(!Direction.empty()) Direction.pop();
+    Direction.push(newDir);
 }
 
-void Pacman :: handle_input(int new_direction)
+void Pacman :: pushSpecialStack(int newDir, std :: pair <int , int> nextCross)
 {
-    planned_dir = new_direction;
-}
-
-void Pacman :: update()
-{
-    int tile_x = get_tile_x();
-    int tile_y = get_tile_y();
-    if(tile_x == planned_tile.first && tile_y == planned_tile.second) {
-        perform_planned_turn();
+    if(!Special.empty()){
+        if(Special.top().first != newDir){
+            Special.pop();
+            Special.push(IP(newDir , nextCross));
+        }
     }
-
-    int vel_x = 0;
-    int vel_y = 0;
-
-    switch(cur_dir)
-    {
-        case up:
-            vel_y = -pacman_speed;
-            break;
-        case down:
-            vel_y = pacman_speed;
-            break;
-        case left:
-            vel_x = -pacman_speed;
-            break;
-        case right:
-            vel_x = pacman_speed;
-            break;
-        default:
-            break;
-    }
-
-    update_velocity_direction(vel_x , vel_y , cur_dir);
-    move();
+    else Special.push(IP(newDir , nextCross));
 }
 
-void Pacman :: plan_turn(int new_direction , std :: pair <int , int> at_tile)
+void Pacman :: moving()
 {
-    planned_dir = new_direction;
-    planned_tile = at_tile;
-}
+    if(!Direction.empty()){
+        int velX = 0 , velY = 0 , dir = -1;
 
-void Pacman :: perform_planned_turn()
-{
-    if(planned_dir != none_dir) {
-        cur_dir = planned_dir;
-        planned_dir = none_dir;
-        planned_tile = std :: make_pair(-1 , -1);
+        switch(Direction.top()){
+            case UP: velX = 0; velY = -pacmanVelocity; dir = 0; break;
+            case DOWN: velX = 0; velY = pacmanVelocity; dir = 2; break;
+            case LEFT: velX = -pacmanVelocity; velY = 0; dir = 3; break;
+            case RIGHT: velX = pacmanVelocity; velY = 0; dir = 1; break;
+        }
+
+        changeVelocityDir(velX , velY , dir);
+
+        move();
     }
 }
 
-void Pacman :: stop_moving()
+void Pacman :: turn()
 {
-    cur_dir = none_dir;
-    velocity_x = 0;
-    velocity_y = 0;
+    if(!Direction.empty()) stopmoving();
+    Direction.push(Special.top().first);
+    Special.pop();
+    //moving();
 }
 
-void Pacman :: clear_turn_plan()
+void Pacman :: stopmoving()
 {
-    planned_dir = none_dir;
-    planned_tile = std :: make_pair(-1 , -1);
+    while(!Direction.empty()) Direction.pop();
 }
 
-void Pacman :: respawn()
+void Pacman :: eraseSpecial()
 {
-    reset_object_tile(pacman_start_tile_x , pacman_start_tile_y);
-    stop_moving();
-    clear_turn_plan();
-}
-
-int Pacman :: get_current_direction() const
-{
-    return cur_dir;
-}
-
-std :: pair <int , int> Pacman :: get_planned_turn_tile() const
-{
-    return planned_tile;
-}
-
-bool Pacman :: has_planned_turn() const
-{
-    return (planned_dir != none_dir);
+    while(!Special.empty()) Special.pop();
 }

@@ -1,140 +1,112 @@
-#include "../Manager/sound_manager.h"
+#include "sound_manager.h"
+#include <iostream>
 
-Sound_manager :: Sound_manager()
+using namespace std;
+
+SoundManager :: SoundManager()
 {
-    for(int i = 0; i < total_sounds; i++) {
-            sounds[i] = nullptr;
-    }
-    dot_timer = 0;
-    prev_move_sound = -1;
-    curr_move_sound = step_0;
-    ghost_frightened = false;
-    ghost_escaping = false;
-    is_dead = false;
-    logger = new log_status("Sound Manager");
+    for(int i = 0;i < 11;++i) soundEffect[i] = nullptr;
+    eatDotTime = 0;
+    oldMoveType = -1;
+    newMoveType = MOVE_0;
+    ghostTurnBlue = false;
+    ghostGoHome = false;
+    dead = false;
 }
 
-Sound_manager :: ~Sound_manager()
+SoundManager :: ~SoundManager()
 {
-    for(int i = 0; i < total_sounds; i++) {
-        if(sounds[i]) {
-            Mix_FreeChunk(sounds[i]);
-        }
-        sounds[i] = nullptr;
-    }
-    delete logger;
-}
-
-void Sound_manager :: queue_sound(int sound_id)
-{
-    switch(sound_id)
-    {
-        case chomp:
-            dot_timer = 16;
-            break;
-        case ghost_eaten:
-            Mix_PlayChannel(4 , sounds[ghost_eaten] , 0);
-            break;
-        case step_0: case step_1: case step_2: case step_3:
-            curr_move_sound = sound_id;
-            break;
-        case ghost_home:
-            ghost_escaping = true;
-            break;
-        case revive_ghost:
-            ghost_escaping = false;
-            break;
-        case ghost_turn_blue:
-            ghost_frightened = true;
-            break;
-        case normal_ghost:
-            ghost_frightened = false;
-            break;
-        case pacman_die:
-            is_dead = true;
-            Mix_Pause(6); ghost_escaping = false;
-            Mix_Pause(5); ghost_frightened = false;
-            Mix_Pause(3); dot_timer = 0;
-            Mix_Pause(1);
-            break;
-        case start:
-        case win_level:
-            is_dead = false;
-            Mix_Pause(6); ghost_escaping = false;
-            Mix_Pause(5); ghost_frightened = false;
-            Mix_Pause(3); dot_timer = 0;
-            Mix_Pause(1);
-            prev_move_sound = (sound_id == win_level ? step_0 : -1);
-            Mix_PlayChannel(2 , sounds[sound_id] , 0);
-            break;
-        default:
-            break;
+    for(int i = 0;i < 11;++i){
+        Mix_FreeChunk(soundEffect[i]);
+        soundEffect[i] = nullptr;
     }
 }
 
-void Sound_manager :: load_sound()
+void SoundManager :: insertPlayList(const int soundID)
 {
-    sounds[step_0] = Mix_LoadWAV("");
-    sounds[step_1] = Mix_LoadWAV("");
-    sounds[step_2] = Mix_LoadWAV("");
-    sounds[step_3] = Mix_LoadWAV("");
-    sounds[start]  = Mix_LoadWAV("");
-    sounds[pacman_die] = Mix_LoadWAV("");
-    sounds[chomp] = Mix_LoadWAV("");
-    sounds[ghost_eaten] = Mix_LoadWAV("");
-    sounds[win_level] = Mix_LoadWAV("");
-    sounds[ghost_turn_blue] = Mix_LoadWAV("");
-    sounds[ghost_home] = Mix_LoadWAV("");
+    if(soundID == EAT_DOT) eatDotTime = 16;
+    else if(soundID == EAT_GHOST) Mix_PlayChannel(4, soundEffect[EAT_GHOST], 0);
+    else if(soundID <= 3) newMoveType = soundID;
+    else if(soundID == GHOST_GO_HOME) ghostGoHome = true;
+    else if(soundID == REVIVAL_GHOST) ghostGoHome = false;
+    else if(soundID == GHOST_TURN_BLUE) ghostTurnBlue = true;
+    else if(soundID == NORMAL_GHOST) ghostTurnBlue = false;
+    else if(soundID == DEAD){
+        dead = true;
+        ghostGoHome = false; Mix_Pause(6);
+        ghostTurnBlue = false; Mix_Pause(5);
+        eatDotTime = 0; Mix_Pause(3);
+        Mix_Pause(1);
+    }
+    else if(soundID == START || soundID == WINNING){
+        dead = false;
+        ghostGoHome = false; Mix_Pause(6);
+        ghostTurnBlue = false; Mix_Pause(5);
+        eatDotTime = 0; Mix_Pause(3);
+        Mix_Pause(1);
+        if(soundID == WINNING) oldMoveType = MOVE_0;
+        else oldMoveType = -1;
+        Mix_PlayChannel(2, soundEffect[soundID], 0);
+    }
 }
 
-void Sound_manager :: play_sound()
+void SoundManager :: loadSound()
 {
-    // channel 2 - DEAD
-    if(is_dead) {
-        Mix_PlayChannel(2 , sounds[pacman_die] , 0);
-        is_dead = false;
-    }
+    soundEffect[MOVE_0] = Mix_LoadWAV("Assets/Sound/move 0.wav");
+    soundEffect[MOVE_1] = Mix_LoadWAV("Assets/Sound/move 1.wav");
+    soundEffect[MOVE_2] = Mix_LoadWAV("Assets/Sound/move 2.wav");
+    soundEffect[MOVE_3] = Mix_LoadWAV("Assets/Sound/move 3.wav");
+    soundEffect[START] = Mix_LoadWAV("Assets/Sound/start.wav");
+    soundEffect[DEAD] = Mix_LoadWAV("Assets/Sound/dead2.wav");
+    soundEffect[WINNING] = Mix_LoadWAV("Assets/Sound/next level.wav");
+    soundEffect[EAT_DOT] = Mix_LoadWAV("Assets/Sound/eat dot.wav");
+    soundEffect[EAT_GHOST] = Mix_LoadWAV("Assets/Sound/eat ghost.wav");
+    soundEffect[GHOST_GO_HOME] = Mix_LoadWAV("Assets/Sound/ghost go home.wav");
+    soundEffect[GHOST_TURN_BLUE] = Mix_LoadWAV("Assets/Sound/ghost turn blue.wav");
 
+    for(int i = 0;i < 11;++i)
+        if(soundEffect == nullptr) Console -> status(Mix_GetError());
+
+    Mix_PlayChannel(1, soundEffect[MOVE_0], -1); Mix_Pause(1);
+    Mix_PlayChannel(3, soundEffect[EAT_DOT], -1); Mix_Pause(3);
+    Mix_PlayChannel(5, soundEffect[GHOST_TURN_BLUE], -1); Mix_Pause(5);
+    Mix_PlayChannel(6, soundEffect[GHOST_GO_HOME], -1); Mix_Pause(6);
+    Mix_Pause(8);
+}
+
+void SoundManager :: playSound()
+{
+    if(dead){
+        Mix_PlayChannel(2, soundEffect[DEAD], 0);
+        dead = false;
+    }
     if(Mix_Playing(2)) return;
 
-    // channel 1 - MOVE
-    if(curr_move_sound != prev_move_sound) {
-        Mix_PlayChannel(1 , sounds[curr_move_sound] , -1);
-        prev_move_sound = curr_move_sound;
+    if(newMoveType != oldMoveType){
+        Mix_PlayChannel(1, soundEffect[newMoveType], -1);
+        oldMoveType = newMoveType;
     }
 
-    // channel 3 - EAT_DOT
-    if(dot_timer > 0) {
-        --dot_timer;
+    if(eatDotTime > 0){
+        --eatDotTime;
         Mix_Resume(3);
-    } else {
-        Mix_Pause(3);
     }
+    else Mix_Pause(3);
 
-    // channel 5 - GHOST_TURN_BLUE
-    if(ghost_turn_blue) {
-        Mix_Resume(5);
-    } else {
-        Mix_Pause(5);
-    }
+    if(ghostTurnBlue) Mix_Resume(5);
+    else Mix_Pause(5);
 
-    // channel 6 - GHOST_GO_HOME
-    if(ghost_escaping) {
+    if(ghostGoHome){
         Mix_Resume(6);
-        if(ghost_turn_blue) Mix_Pause(5);
-    } else {
+        if(ghostTurnBlue) Mix_Pause(5);
+    }
+    else{
         Mix_Pause(6);
-        if(ghost_turn_blue) Mix_Resume(5);
+        if(ghostTurnBlue) Mix_Resume(5);
     }
 }
 
-
-void Sound_manager :: clear_status()
+void SoundManager :: reset()
 {
-    is_dead = false;
-    ghost_frightened = false;
-    ghost_escaping = false;
-    dot_timer = 0;
-    prev_move_sound = -1;
-    curr_move_sound = step_0;
+    Mix_PlayChannel(1, soundEffect[oldMoveType], -1);
 }

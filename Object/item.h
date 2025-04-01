@@ -7,28 +7,27 @@
 #include <SDL_image.h>
 #include <string>
 
-class Item
-{
+class Item {
     private:
-
-        int tile_x;
-        int tile_y;
-        bool is_collected = false;
-        SDL_Texture* texture = nullptr;
-
+        int tileX, tileY;
+        bool dead = false;
+        SDL_Texture* itemTexture = nullptr;
     public:
+        Item(SDL_Renderer* &renderer, const std::string imgPath);
 
-        Item(SDL_Renderer* &renderer , const std :: string& image_path);
         ~Item();
 
-        int get_tile_x() const;
-        int get_tile_y() const;
+        int getPosX() const;
 
-        bool is_destroyed() const;
+        int getPosY() const;
 
-        void spawn_at(int new_tile_x , int new_tile_y);
-        void destroy();
-        void render_item(SDL_Renderer* &renderer);
+        bool isDestroyed() const;
+
+        void spawnAt(const int tileX, const int tileY);
+
+        void destroyItem();
+
+        void renderItem(SDL_Renderer* &renderer);
 };
-#endif // _ITEM_H_
 
+#endif // _ITEM_H_

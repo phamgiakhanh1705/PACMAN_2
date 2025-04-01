@@ -1,66 +1,61 @@
 #pragma once
 
-#ifndef _TICK_MANAGER_H_
-#define _TICK_MANAGER_H_
+#ifndef _TICKMANAGER_H_
+#define _TICKMANAGER_H_
 
 #include <SDL.h>
-#include <vector>
+#include <stack>
 
-using mode_entry_t = std :: pair<const int , double>;
+typedef std::pair<const int, double> CID;
 
-class Tick_manager
-{
+class TickManager {
     private:
+        Uint32 lastTick;
+        Uint32 FlastTick;
+        Uint32 GlastTick;
+        Uint32 lastFrame = 0;
 
-        unsigned int last_tick;
-        unsigned int frightened_tick;
-        unsigned int greendy_tick;
-        unsigned int last_frame = 0;
+        std::stack<CID> mode;
 
-        std :: vector <mode_entry_t> mode_timeline;
-
-        int last_status;
-        bool is_paused;
-
-        double frightened_duration = 5.0;
-        double scatter_duration = 7.0;
-        double chase_duration = 20.0;
-
+        int lastStatus;
+        bool pause;
+        double FRIGHTEN_TIME = 5.0;
+        double SCATTERING_TIME = 7.0;
+        double CHASING_TIME = 20.0;
     public:
+        const int FPS = 60;
+        const double FRIENDY_CHASE_TIME = 3.0;
+        const double GREENDY_CHASE_TIME = 2.0;
+        const int FRIGHTEN_MODE = 0;
+        const int SCATTERING_MODE = 1;
+        const int CHASING_MODE = 2;
+        const double oo = -1;
 
-        static const int FPS = 60;
-        static constexpr double FRIENDY_CHASE_DURATION = 3.0;
-        static constexpr double GREENDY_CHASE_DURATION = 2.0;
-        static const int MODE_FRIGHTENED = 0;
-        static const int MODE_SCATTER = 1;
-        static const int MODE_CHASE = 2;
-        static constexpr double TIME_INFINITY = -1.0;
+        TickManager();
 
-        Tick_manager();
+        double remainFrightenTime() const;
 
-        double get_remaining_frightened_time() const;
+        bool isFrightenTime() const;
 
-        bool is_frightened_time() const;
+        bool isScatteringTime() const;
 
-        bool is_scatter_time() const;
+        bool isFriendyChaseTime() const;
 
-        bool is_friendy_chase_time() const;
+        bool isGreendyChaseTime() const;
 
-        bool is_greendy_chase_time() const;
+        void friendyStartChasePacman();
 
-        void start_friendy_chase();
+        void greendyStartChasePacman();
 
-        void start_greendy_chase();
+        void setFrightenTime();
 
-        void activate_frightened_mode();
+        void resetTick(const int level);
 
-        void reset_tick(const int level);
+        void updateStatus();
 
-        void update_mode_status();
+        void stablizeFPS();
 
-        void stabilize_fps();
-
-        bool toggle_pause(const bool status);
+        bool pauseTick(const bool status);
 };
 
-#endif // _TICK_MANAGER_H_
+#endif // TIMEMANAGER_H_

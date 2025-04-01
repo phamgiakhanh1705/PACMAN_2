@@ -3,75 +3,68 @@
 #ifndef _GHOST_H_
 #define _GHOST_H_
 
-#include "../Object/base_object.h"
+#include "base_object.h"
 #include <iostream>
 
-class Ghost : public Object
-{
-    public:
-
-        static const int default_speed = 2;
-        static const int frightened_speed = 1;
-        static const int returning_speed = 4;
-
-        static const int ghost_start_tile_x = 13;
-        static const int ghost_start_tile_y = 11;
-
-        static const int default_blinky_tile_x = 26;
-        static const int default_blinky_tile_y = 1;
-        static const int blinky_start_tile_x = 13;
-        static const int blinky_start_tile_y = 11;
-
-        static const int default_pinky_tile_x = 1;
-        static const int default_pinky_tile_y = 1;
-        static const int pinky_start_tile_x = 13;
-        static const int pinky_start_tile_y = 14;
-
-        static const int default_inky_tile_x = 26;
-        static const int default_inky_tile_y = 29;
-        static const int inky_start_tile_x = 11;
-        static const int inky_start_tile_y = 14;
-
-        static const int default_clyde_tile_x = 1;
-        static const int default_clyde_tile_y = 29;
-        static const int clyde_start_tile_x = 15;
-        static const int clyde_start_tile_y = 14;
-
-        Ghost();
-        ~Ghost();
-
-        Ghost(int start_tile_x , int start_tile_y , bool start_in_cage);
-
-        void update_movement();
-        void set_direction(int new_direction);
-        void reverse_direction();
-
-        void set_frightened_mode(const bool status);
-        bool get_frightened_state() const;
-
-        void set_scatter_mode(bool enable);
-        bool get_scatter_mode() const;
-
-        void set_target_tile(int tile_x , int tile_y , int multiplier = 1);
-        int get_target_tile_x() const;
-        int get_target_tile_y() const;
-        int get_ghost_direction() const;
-
-        void ghost_respawn(int start_tile_x , int start_tile_y , bool to_cage);
-        bool inside_cage() const;
-
+class Ghost : public Object {
     private:
+        int nextTileX;
+        int nextTileY;
+        int ghostDir;
+        bool frighten;
+        bool scattering;
+        bool inCage;
+        int ghostVelocity;
+        int accele;
+    public:
+        static const int GHOST_START_TILE_X = 13;
+        static const int GHOST_START_TILE_Y = 11;
 
-        int target_tile_x;
-        int target_tile_y;
-        int direct;
+        static const int DEFAULT_BLINKY_TILE_X = 26;
+        static const int DEFAULT_BLINKY_TILE_Y = 1;
+        static const int BLINKY_START_TILE_X = 13;
+        static const int BLINKY_START_TILE_Y = 11;
 
-        bool is_frightened;
-        bool is_in_scatter_mode;
-        bool is_in_cage;
+        static const int DEFAULT_PINKY_TILE_X = 1;
+        static const int DEFAULT_PINKY_TILE_Y = 1;
+        static const int PINKY_START_TILE_X = 13;
+        static const int PINKY_START_TILE_Y = 14;
 
-        int ghost_speed;
-        int speed_multiplier;
+        static const int DEFAULT_INKY_TILE_X = 26;
+        static const int DEFAULT_INKY_TILE_Y = 29;
+        static const int INKY_START_TILE_X = 11;
+        static const int INKY_START_TILE_Y = 14;
+
+        static const int DEFAULT_CLYDE_TILE_X = 1;
+        static const int DEFAULT_CLYDE_TILE_Y = 29;
+        static const int CLYDE_START_TILE_X = 15;
+        static const int CLYDE_START_TILE_Y = 14;
+
+        Ghost(int tileX, int tileY, bool inCage);
+
+        int getNextTileX() const;
+
+        int getNextTileY() const;
+
+        int getGhostDir() const;
+
+        void setDir(int dir);
+
+        void setFrighten(const bool status);
+
+        void setScattering(const bool status);
+
+        bool isScattering();
+
+        bool isFrighten();
+
+        void setDestination(int tilX, int tilY, int _accele = 1);
+
+        void moving();
+
+        void respawn(const int tileX, const int tileY, const bool inCage);
+
+        bool isInCage() const;
 };
 
 #endif // _GHOST_H_

@@ -1,90 +1,96 @@
 #pragma once
 
-#ifndef _GAME_MANAGER_H_
-#define _GAME_MANAGER_H_
+#ifndef _GAMEMANAGER_H_
+#define _GAMEMANAGER_H_
 
 #include <SDL.h>
-#include <string>
-#include <vector>
-#include "../Manager/text_manager.h"
-#include "../Menu/button.h"
+#include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <vector>
+#include "../Object/Ghost.h"
+#include "text_manager.h"
+#include "../Menu/Button.h"
 
-class Game_manager
-{
-    public:
-
-        static const int STATE_WAITING = 0;
-        static const int STATE_AGAIN   = 1;
-        static const int STATE_QUIT    = 2;
-
-        static const int TOTAL_COINS   = 224;
-        static const int NORMAL_COIN   = 26;
-        static const int SUPER_COIN    = 27;
-        static const int NOT_A_COIN    = 0;
-
-        Game_manager(SDL_Renderer* &renderer);
-        ~Game_manager();
-
-        void reset_game_state();
-        void advance_to_next_level();
-
-        void collect_coin(const int coin_type);
-        void defeat_ghost(const int ghost_tile_x , const int ghost_tile_y);
-        void decrease_life();
-
-        int get_ghost_streak() const;
-        int get_eaten_ghost_pos_x() const;
-        int get_eaten_ghost_pos_y() const;
-        int get_remaining_lives() const;
-        int get_current_level() const;
-        int get_menu_selection() const;
-        int get_remaining_coins() const;
-
-        bool is_all_coins_collected() const;
-
-        void update_ghost_positions(class Ghost* &pinky , class Ghost* &inky , class Ghost* &clyde , class Ghost* &greendy);
-
-        void render_hud(SDL_Renderer* &renderer);
-        void handle_endgame_input(SDL_Event &event , std :: vector <std :: string> &score_data);
-        void show_endgame_screen(SDL_Renderer* &renderer);
-        void check_score_data(const std :: vector <std :: string> &score_data);
-
+class GameManager {
     private:
+        int level;
+        int life;
+        int eatenCoins;
+        int eatenGhost;
+        int scores;
+        int pos = -1;
+        std::string playername = "";
+        int playerDecision;
+        int currentBut;
+        bool newRecord = false;
+        int ghostEatenPosX;
+        int ghostEatenPosY;
 
-        int current_level;
-        int player_lives;
-        int coins_collected;
-        int ghosts_defeated;
-        int total_score;
+        int PINKY_COIN_LIMIT;
+        int INKY_COIN_LIMIT;
+        int CLYDE_COIN_LIMIT;
 
-        int ghost_pos_x;
-        int ghost_pos_y;
+        TextManager* levelText;
+        TextManager* liveText;
+        TextManager* scoreText;
+        TextManager* playerName;
 
-        int pinky_coin_trigger;
-        int inky_coin_trigger;
-        int clyde_coin_trigger;
+        SDL_Texture* egBoard;
+        SDL_Texture* hsBoard;
+        Button* yesBut;
+        Button* noBut;
+        Mix_Chunk* navigationSound = Mix_LoadWAV("Assets/Sound/button.wav");
+    protected:
+        SDL_Texture* loadImage(SDL_Renderer* &renderer, const std::string imagePath);
+    public:
+        const int TOTAL_COINS = 244;
+        static const int normalCoin = 26;
+        static const int superCoin = 27;
+        static const int notCoin = 0;
+        static const int pauseGame = 1;
+        static const int AGAIN = 2;
+        static const int QUIT  = 3;
+        static const int WAITING = 4;
 
-        int current_button;
-        int menu_selection;
-        int score_insert_position;
+        GameManager(SDL_Renderer* &renderer);
 
-        bool is_new_record = false;
+        ~GameManager();
 
-        std :: string player_name;
+        void reset();
 
-        Text_manager* life_text;
-        Text_manager* score_text;
-        Text_manager* level_text;
-        Text_manager* player_name_text;
+        void nextLevel();
 
-        SDL_Texture* endgame_screen;
-        SDL_Texture* highscore_screen;
+        void eatCoins(const int typeOfCoin);
 
-        Menu_button* confirm_button;
-        Menu_button* cancel_button;
+        void eatGhost(const int ghostTileX, const int ghostTileY);
 
-        Mix_Chunk* navigation_sound = nullptr;
+        void lostALife();
+
+        int getEatenGhostStreak() const;
+
+        int getEatenGhostPosX() const;
+
+        int getEatenGhostPosY() const;
+
+        int getRemainLife() const;
+
+        bool clearAllCoins() const;
+
+        int getLevel() const;
+
+        int getPlayerDecision() const;
+
+        int getRemainCoin() const;
+
+        void handleGhostPos(Ghost* &pinky, Ghost* &inky, Ghost* &clyde, Ghost* &greendy);
+
+        void handleEGBoard(SDL_Event &e, std::vector<std::string> &scoreData);
+
+        void renderHUD(SDL_Renderer* &renderer);
+
+        void runEGBoard(SDL_Renderer* &renderer);
+
+        void checkScoreData(const std::vector<std::string> &scoreData);
 };
 
-#endif // _GAME_MANAGER_H_
+#endif // GAMEMANAGER_H_
