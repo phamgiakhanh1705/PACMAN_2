@@ -60,7 +60,7 @@ void Pacman :: pacman_moving()
             dir = LEFT;
         }
 
-        changeVelocityDir(speed_col , speed_row , dir);
+        change_speed_and_direction(speed_col , speed_row , dir);
         move();
     }
 }
@@ -104,7 +104,7 @@ bool Pacman :: is_special_empty() const
 
 void Pacman :: pacman_respawn()
 {
-    resetObjectTile(PACMAN_START_TILE_COL , PACMAN_START_TILE_ROW);
+    reset_object_tile(PACMAN_START_TILE_COL , PACMAN_START_TILE_ROW);
     while((int) direction.size() > 0) direction.pop();
     while((int) special.size() > 0) special.pop();
 }

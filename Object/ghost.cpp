@@ -38,7 +38,7 @@ void Ghost :: set_ghost_direction(int direction)
 void Ghost :: set_ghost_frighten(const bool status)
 {
     if(is_ghost_in_cage()) return;
-    if(frighten_mode != status) reTilePos();
+    if(frighten_mode != status) update_screen_pos();
     frighten_mode = status;
     if(status) {
         ghost_direction = (ghost_direction + 2) % 4;
@@ -71,7 +71,7 @@ void Ghost :: set_ghost_destination(int tile_col , int tile_row , int _accele)
 void Ghost :: ghost_moving()
 {
     if(accele == 1) {
-        if(isDead()) ghost_speed = 4;
+        if(is_dead()) ghost_speed = 4;
         else if(is_ghost_frighten()) ghost_speed = 1;
         else ghost_speed = 2;
     }
@@ -102,13 +102,13 @@ void Ghost :: ghost_moving()
         dir = LEFT;
     }
 
-    changeVelocityDir(speed_col , speed_row , dir);
+    change_speed_and_direction(speed_col , speed_row , dir);
     move();
 }
 
 void Ghost :: ghost_respawn(const int tile_col, const int tile_row, const bool _in_cage)
 {
-    resetObjectTile(tile_col , tile_row);
+    reset_object_tile(tile_col , tile_row);
     in_cage = _in_cage;
     if(in_cage == false) {
         if(rand() % 2 == 0) ghost_direction = LEFT;

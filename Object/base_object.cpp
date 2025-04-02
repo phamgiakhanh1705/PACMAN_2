@@ -2,98 +2,102 @@
 #include <iostream>
 #include <cmath>
 
-std :: pair <int , int> nextTileID;
-
-Object :: Object(int tileX, int tileY, int velX, int velY)
+Object :: Object(int _tile_col , int _tile_row , int _speed_col , int _speed_row)
 {
-    this -> tileX = tileX;
-    this -> tileY = tileY;
-    if(velX != 0) this -> velX = velX;
-    if(velY != 0) this -> velY = velY;
+    tile_col = _tile_col;
+    tile_row = _tile_row;
 
-    this -> scrPosX = tileX * 16 + 8;
-    this -> scrPosY = tileY * 16;
+    if(speed_col != 0) speed_col = _speed_col;
+    if(speed_row != 0) speed_row = _speed_row;
+
+    screen_pos_col = tile_col * TILE_SIZE + TILE_SIZE / 2;
+    screen_pos_row = tile_row * TILE_SIZE;
+
     dead = false;
 }
 
 void Object :: move()
 {
-    scrPosX += velX;
-    scrPosY += velY;
+    screen_pos_col += speed_col;
+    screen_pos_row += speed_row;
 
-    if(scrPosX % 16 == 0) tileX = scrPosX / 16;
-    else tileX = (scrPosX + 8) / 16;
+    if(screen_pos_col % TILE_SIZE == 0) tile_col = screen_pos_col / TILE_SIZE;
+    else tile_col = (screen_pos_col + TILE_SIZE / 2) / TILE_SIZE;
 
-    if(scrPosY % 16 == 0) tileY = scrPosY / 16;
-    else tileY = (scrPosY + 8) / 16;
+    if(screen_pos_row % TILE_SIZE == 0) tile_row = screen_pos_row / TILE_SIZE;
+    else tile_row = (screen_pos_row + TILE_SIZE / 2) / TILE_SIZE;
 }
 
-void Object :: reTilePos()
+void Object :: update_screen_pos()
 {
-    scrPosX = tileX * 16;
-    scrPosY = tileY * 16;
+    screen_pos_col = tile_col * TILE_SIZE;
+    screen_pos_row = tile_row * TILE_SIZE;
 }
 
-void Object :: changeVelocityDir(int velX, int velY, int dir)
+void Object :: change_speed_and_direction(int _speed_col , int _speed_row , int new_direction)
 {
-    this -> velX = velX;
-    this -> velY = velY;
-    this -> dir = dir;
+    speed_col = _speed_col;
+    speed_row = _speed_row;
+    direction = new_direction;
 }
 
-void Object :: goThroughTunnel()
+void Object :: go_through_portal()
 {
-    if(scrPosY == 224){
-        if(dir == LEFT && scrPosX == 0){
-            tileX = 27;
-            scrPosX = 432;
+    // portal 1: (0 , 14)
+    // portal 2: (27 , 14)
+    if(screen_pos_row == 14 * TILE_SIZE) {
+        if(direction == LEFT && screen_pos_col == 0 * TILE_SIZE) { // portal 1 -> portal 2
+            tile_col = 27;
+            screen_pos_col = 27 * TILE_SIZE;
         }
-        else if(dir == RIGHT && scrPosX == 432){
-            tileX = 0;
-            scrPosX = 0;
+        else if(direction == RIGHT && screen_pos_col == 27 * TILE_SIZE) { // portal 2 -> portal 1
+            tile_col = 0;
+            screen_pos_col = 0 * TILE_SIZE;
         }
     }
 }
 
-void Object :: setDead(bool status, int id)
+void Object :: set_dead(bool status , int id)
 {
     dead = status;
     if(id == 1) return;
-    scrPosX = tileX * 16;
-    scrPosY = tileY * 16;
+    update_screen_pos();
 }
 
-void Object :: resetObjectTile(const int tileX, const int tileY)
+void Object :: reset_object_tile(const int _tile_col , const int _tile_row)
 {
-    this -> tileX = tileX;
-    this -> tileY = tileY;
+    tile_col = _tile_col;
+    tile_row = _tile_row;
+
+    speed_col = 0;
+    speed_row = 0;
+
+    update_screen_pos();
+
     dead = false;
-    velX = velY = 0;
-    scrPosX = tileX * 16;
-    scrPosY = tileY * 16;
 }
 
-bool Object :: isDead() const
+bool Object :: is_dead() const
 {
     return dead;
 }
 
-int Object :: getTileX() const
+int Object :: get_tile_col() const
 {
-    return tileX;
+    return tile_col;
 }
 
-int Object :: getTileY() const
+int Object :: get_tile_row() const
 {
-    return tileY;
+    return tile_row;
 }
 
-int Object :: getPosX() const
+int Object :: get_screen_pos_col() const
 {
-    return scrPosX;
+    return screen_pos_col;
 }
 
-int Object :: getPosY() const
+int Object :: get_screen_pos_row() const
 {
-    return scrPosY;
+    return screen_pos_row;
 }

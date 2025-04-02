@@ -34,16 +34,16 @@
 	<algorithm>
 	<vector>
 
-1743351979 source:c:\cp - copy\project game\final_pacman\object\base_object.cpp
+1743624938 source:c:\cp - copy\project game\final_pacman\object\base_object.cpp
 	"base_object.h"
 	<iostream>
 	<cmath>
 
-1743350295 c:\cp - copy\project game\final_pacman\object\base_object.h
+1743624177 c:\cp - copy\project game\final_pacman\object\base_object.h
 	<algorithm>
 
-1743621323 source:c:\cp - copy\project game\final_pacman\object\ghost.cpp
-	"Ghost.h"
+1743624988 source:c:\cp - copy\project game\final_pacman\object\ghost.cpp
+	"ghost.h"
 	<random>
 	<iostream>
 
@@ -59,7 +59,7 @@
 	<SDL_image.h>
 	<string>
 
-1743621210 source:c:\cp - copy\project game\final_pacman\object\pacman.cpp
+1743624962 source:c:\cp - copy\project game\final_pacman\object\pacman.cpp
 	"Pacman.h"
 	<iostream>
 	<algorithm>

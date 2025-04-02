@@ -90,7 +90,7 @@ void Engine :: respawnObject()
 void Engine :: handleEvent(SDL_Event &e , std :: vector<std :: string> &scoreData)
 {
     if(Mix_Playing(2) || Mix_Playing(4)) return;
-    if(pacman->isDead())
+    if(pacman->is_dead())
     {
         if(runningEGBoard) gameManager->handleEGBoard(e , scoreData);
         return;
@@ -101,10 +101,10 @@ void Engine :: handleEvent(SDL_Event &e , std :: vector<std :: string> &scoreDat
            e.key.keysym.sym == SDLK_s    || e.key.keysym.sym == SDLK_w  || e.key.keysym.sym == SDLK_a    || e.key.keysym.sym == SDLK_d    )
         {
             int newDir = -1 , lastDir = -1;
-            int pacmanTileX = pacman->getTileX();
-            int pacmanTileY = pacman->getTileY();
-            int pacmanPosX = pacman->getPosX();
-            int pacmanPosY = pacman->getPosY();
+            int pacmanTileX = pacman->get_tile_col();
+            int pacmanTileY = pacman->get_tile_row();
+            int pacmanPosX = pacman->get_screen_pos_col();
+            int pacmanPosY = pacman->get_screen_pos_row();
             if(!pacman->is_direction_empty()) lastDir = pacman->get_pacman_direction();
             if(e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w) newDir = 0;
             else if(e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d) newDir = 1;
@@ -175,7 +175,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
     {
         int dir = -1;
         if(!pacman->is_direction_empty()) dir = pacman->get_pacman_direction();
-        if(!pacman->isDead())
+        if(!pacman->is_dead())
         {
             renderGhost(renderer , blinky , TextureSrc :: BLINKY);
             renderGhost(renderer , pinky , TextureSrc :: PINKY);
@@ -189,7 +189,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
                 SDL_RenderCopy(renderer , ready , nullptr , &dsRect);
             }
         }
-        if(pacman->isDead())
+        if(pacman->is_dead())
         {
             if(objectTexture->pacmanIsDead())
             {
@@ -200,9 +200,9 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
                     gameManager->checkScoreData(scoreData);
                 }
             }
-            else objectTexture->renderPacmanTexture(renderer , pacman->getPosX() , pacman->getPosY() , TextureSrc :: DEAD_PACMAN);
+            else objectTexture->renderPacmanTexture(renderer , pacman->get_screen_pos_col() , pacman->get_screen_pos_row() , TextureSrc :: DEAD_PACMAN);
         }
-        else objectTexture->renderPacmanTexture(renderer , pacman->getPosX() , pacman->getPosY() , dir);
+        else objectTexture->renderPacmanTexture(renderer , pacman->get_screen_pos_col() , pacman->get_screen_pos_row() , dir);
         if(waitTime > 0)
         {
             dsRect = {441 - 97 , 248 - 52 , 194 , 104};
@@ -221,22 +221,22 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
 
 void Engine :: pacmanMeatGhost(Ghost* &ghost)
 {
-    if(ghost->isDead()) return;
-    int distance = (pacman->getPosX() - ghost->getPosX()) * (pacman->getPosX() - ghost->getPosX()) +
-                   (pacman->getPosY() - ghost->getPosY()) * (pacman->getPosY() - ghost->getPosY());
+    if(ghost->is_dead()) return;
+    int distance = (pacman->get_screen_pos_col() - ghost->get_screen_pos_col()) * (pacman->get_screen_pos_col() - ghost->get_screen_pos_col()) +
+                   (pacman->get_screen_pos_row() - ghost->get_screen_pos_row()) * (pacman->get_screen_pos_row() - ghost->get_screen_pos_row());
     if(distance <= 9)
     {
         if(ghost->is_ghost_frighten())
         {
-            gameManager->eatGhost(ghost->getPosX() , ghost->getPosY());
-            ghost->setDead(true);
+            gameManager->eatGhost(ghost->get_screen_pos_col() , ghost->get_screen_pos_row());
+            ghost->set_dead(true);
             ghost->set_ghost_frighten(false);
             soundManager->insertPlayList(SoundManager :: EAT_GHOST);
             soundManager->insertPlayList(SoundManager :: GHOST_GO_HOME);
         }
         else
         {
-            pacman->setDead(true , 1);
+            pacman->set_dead(true , 1);
             gameManager->lostALife();
             soundManager->insertPlayList(SoundManager :: DEAD);
             tickManager->pauseTick(true);
@@ -247,34 +247,34 @@ void Engine :: pacmanMeatGhost(Ghost* &ghost)
 void Engine :: renderGhost(SDL_Renderer* &renderer , Ghost* &ghost , int ghostID)
 {
     if(ghost == nullptr) return;
-    if(ghost->isDead())
+    if(ghost->is_dead())
     {
-        objectTexture->renderGhostTexture(renderer , ghost->getPosX() , ghost->getPosY() , TextureSrc :: GHOST_SPIRIT , ghost->get_ghost_direction());
+        objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , TextureSrc :: GHOST_SPIRIT , ghost->get_ghost_direction());
     }
     else if(ghost->is_ghost_frighten())
     {
         if(tickManager->remainFrightenTime() < 2.0)
         {
-            objectTexture->renderGhostTexture(renderer , ghost->getPosX() , ghost->getPosY() , ghostID , TextureSrc :: FRIGHTEN_GHOST_2);
+            objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , TextureSrc :: FRIGHTEN_GHOST_2);
         }
         else
         {
-            objectTexture->renderGhostTexture(renderer , ghost->getPosX() , ghost->getPosY() , ghostID , TextureSrc :: FRIGHTEN_GHOST_1);
+            objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , TextureSrc :: FRIGHTEN_GHOST_1);
         }
     }
     else
     {
-        objectTexture->renderGhostTexture(renderer , ghost->getPosX() , ghost->getPosY() , ghostID , ghost->get_ghost_direction());
+        objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , ghost->get_ghost_direction());
     }
 }
 
 void Engine :: ghostMove(Ghost* &ghost)
 {
     if(ghost == nullptr) return;
-    int ghostTileX = ghost->getTileX();
-    int ghostTileY = ghost->getTileY();
-    int ghostPosX = ghost->getPosX();
-    int ghostPosY = ghost->getPosY();
+    int ghostTileX = ghost->get_tile_col();
+    int ghostTileY = ghost->get_tile_row();
+    int ghostPosX = ghost->get_screen_pos_col();
+    int ghostPosY = ghost->get_screen_pos_row();
     int ghostOldDir = ghost->get_ghost_direction();
     int ghostNextTileX = ghost->get_target_tile_col();
     int ghostNextTileY = ghost->get_target_tile_row();
@@ -356,18 +356,18 @@ void Engine :: ghostMove(Ghost* &ghost)
             else if(ghostTileY * 16 == ghostPosY && ghostTileX * 16 != ghostPosX && ghost->get_ghost_direction() % 2 == 1) ghost->ghost_moving();
         }
     }
-    ghost->goThroughTunnel();
+    ghost->go_through_portal();
     if(ghostPosX == ghostNextTileX * 16 && ghostPosY == ghostNextTileY * 16)
     {
-        if(ghost->isDead())
+        if(ghost->is_dead())
         {
-            ghost->setDead(false);
+            ghost->set_dead(false);
             soundManager->insertPlayList(SoundManager :: REVIVAL_GHOST);
         }
         else if(ghost == greendy)
         {
             tickManager->greendyStartChasePacman();
-            ghost->resetObjectTile(ghostTileX , ghostTileY);
+            ghost->reset_object_tile(ghostTileX , ghostTileY);
             apple->destroyItem();
             eatGreenApple = true;
         }
@@ -394,7 +394,7 @@ void Engine :: loop(bool &exitToMenu)
         if(Mix_Playing(2)) tickManager->pauseTick(true);
         return;
     }
-    if(pacman->isDead())
+    if(pacman->is_dead())
     {
         int decision = gameManager->getPlayerDecision();
         if(runningEGBoard)
@@ -407,14 +407,14 @@ void Engine :: loop(bool &exitToMenu)
 
     tickManager->updateStatus();
 
-    int pacmanTileX = pacman->getTileX();
-    int pacmanTileY = pacman->getTileY();
-    int pacmanPosX = pacman->getPosX();
-    int pacmanPosY = pacman->getPosY();
+    int pacmanTileX = pacman->get_tile_col();
+    int pacmanTileY = pacman->get_tile_row();
+    int pacmanPosX = pacman->get_screen_pos_col();
+    int pacmanPosY = pacman->get_screen_pos_row();
     int lastDir = -1;
     if(!pacman->is_direction_empty()) lastDir = pacman->get_pacman_direction();
 
-    if(!pacman->isDead() && lastDir != -1)
+    if(!pacman->is_dead() && lastDir != -1)
     {
         if(pacmanTileX * 16 == pacmanPosX && pacmanTileY * 16 == pacmanPosY)
         {
@@ -443,8 +443,8 @@ void Engine :: loop(bool &exitToMenu)
     else if(remainCoin < 150) soundManager->insertPlayList(SoundManager :: MOVE_1);
     else soundManager->insertPlayList(SoundManager :: MOVE_0);
 
-    pacmanTileX = pacman->getTileX();
-    pacmanTileY = pacman->getTileY();
+    pacmanTileX = pacman->get_tile_col();
+    pacmanTileY = pacman->get_tile_row();
     int typeOfCoin = map->pacman_eat_coins(pacmanTileX , pacmanTileY);
     if(typeOfCoin != GameManager :: notCoin)
     {
@@ -454,11 +454,11 @@ void Engine :: loop(bool &exitToMenu)
         {
             tickManager->setFrightenTime();
             soundManager->insertPlayList(SoundManager :: GHOST_TURN_BLUE);
-            if(!blinky->isDead()) blinky->set_ghost_frighten(true);
-            if(!pinky ->isDead()) pinky ->set_ghost_frighten(true);
-            if(!inky  ->isDead()) inky  ->set_ghost_frighten(true);
-            if(!clyde ->isDead()) clyde ->set_ghost_frighten(true);
-            if(greendy != nullptr && !greendy->isDead()) greendy->set_ghost_frighten(true);
+            if(!blinky->is_dead()) blinky->set_ghost_frighten(true);
+            if(!pinky ->is_dead()) pinky ->set_ghost_frighten(true);
+            if(!inky  ->is_dead()) inky  ->set_ghost_frighten(true);
+            if(!clyde ->is_dead()) clyde ->set_ghost_frighten(true);
+            if(greendy != nullptr && !greendy->is_dead()) greendy->set_ghost_frighten(true);
             if(friendy != nullptr) tickManager->friendyStartChasePacman();
         }
     }
@@ -492,19 +492,19 @@ void Engine :: loop(bool &exitToMenu)
         else apple->spawnAt(1 , 29);
     }
 
-    pacmanPosX = pacman->getPosX();
-    pacmanPosY = pacman->getPosY();
+    pacmanPosX = pacman->get_screen_pos_col();
+    pacmanPosY = pacman->get_screen_pos_row();
     lastDir = -1;
     if(!pacman->is_direction_empty()) lastDir = pacman->get_pacman_direction();
 
-    if(!pacman->isDead())
+    if(!pacman->is_dead())
     {
         tickManager->pauseTick(false);
-        if(blinky->isDead()) blinky->set_ghost_destination(13 , 11);
+        if(blinky->is_dead()) blinky->set_ghost_destination(13 , 11);
         else if(!blinky->is_ghost_scatter()) blinky->set_ghost_destination(pacmanTileX , pacmanTileY);
         else blinky->set_ghost_destination(Ghost :: DEFAULT_BLINKY_TILE_COL , Ghost :: DEFAULT_BLINKY_TILE_ROW);
 
-        if(pinky->isDead()) pinky->set_ghost_destination(13 , 11);
+        if(pinky->is_dead()) pinky->set_ghost_destination(13 , 11);
         else if(!pinky->is_ghost_scatter())
         {
             if(lastDir == Map :: UP) pinky->set_ghost_destination(pacmanTileX , pacmanTileY - 4);
@@ -514,15 +514,15 @@ void Engine :: loop(bool &exitToMenu)
         }
         else pinky->set_ghost_destination(Ghost :: DEFAULT_PINKY_TILE_COL , Ghost :: DEFAULT_PINKY_TILE_ROW);
 
-        if(inky->isDead()) inky->set_ghost_destination(13 , 11);
-        else if(!inky->is_ghost_scatter()) inky->set_ghost_destination(2 * pacmanTileX - blinky->getTileX() , 2 * pacmanTileY - blinky->getTileY());
+        if(inky->is_dead()) inky->set_ghost_destination(13 , 11);
+        else if(!inky->is_ghost_scatter()) inky->set_ghost_destination(2 * pacmanTileX - blinky->get_tile_col() , 2 * pacmanTileY - blinky->get_tile_row());
         else inky->set_ghost_destination(Ghost :: DEFAULT_INKY_TILE_COL , Ghost :: DEFAULT_INKY_TILE_ROW);
 
-        if(clyde->isDead()) clyde->set_ghost_destination(13 , 11);
+        if(clyde->is_dead()) clyde->set_ghost_destination(13 , 11);
         else if(!clyde->is_ghost_scatter())
         {
-            int dx = pacmanTileX - clyde->getTileX();
-            int dy = pacmanTileY - clyde->getTileY();
+            int dx = pacmanTileX - clyde->get_tile_col();
+            int dy = pacmanTileY - clyde->get_tile_row();
             if(dx * dx + dy * dy <= 64) clyde->set_ghost_destination(Ghost :: DEFAULT_CLYDE_TILE_COL , Ghost :: DEFAULT_CLYDE_TILE_ROW);
             else clyde->set_ghost_destination(pacmanTileX , pacmanTileY);
         }
@@ -530,7 +530,7 @@ void Engine :: loop(bool &exitToMenu)
 
         if(greendy != nullptr)
         {
-            if(greendy->isDead()) greendy->set_ghost_destination(13 , 11);
+            if(greendy->is_dead()) greendy->set_ghost_destination(13 , 11);
             else if(!eatGreenApple) greendy->set_ghost_destination(apple->getPosX() , apple->getPosY());
             else if(!greendy->is_ghost_frighten()) greendy->set_ghost_destination(pacmanTileX , pacmanTileY , 2);
         }
@@ -541,7 +541,7 @@ void Engine :: loop(bool &exitToMenu)
         }
     }
 
-    pacman->goThroughTunnel();
+    pacman->go_through_portal();
     ghostMove(blinky);
     ghostMove(pinky);
     ghostMove(inky);
