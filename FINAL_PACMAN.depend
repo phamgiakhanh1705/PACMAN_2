@@ -23,11 +23,11 @@
 	<vector>
 	"../LogStatus/logstatus.h"
 
-1743352206 source:c:\cp - copy\project game\final_pacman\map\map.cpp
+1743616431 source:c:\cp - copy\project game\final_pacman\map\map.cpp
 	"Map.h"
 	<queue>
 
-1743413608 c:\cp - copy\project game\final_pacman\map\map.h
+1743615168 c:\cp - copy\project game\final_pacman\map\map.h
 	"../LogStatus/logstatus.h"
 	<fstream>
 	<iostream>
@@ -59,12 +59,12 @@
 	<SDL_image.h>
 	<string>
 
-1743351848 source:c:\cp - copy\project game\final_pacman\object\pacman.cpp
+1743618689 source:c:\cp - copy\project game\final_pacman\object\pacman.cpp
 	"Pacman.h"
 	<iostream>
 	<algorithm>
 
-1743350637 c:\cp - copy\project game\final_pacman\object\pacman.h
+1743618689 c:\cp - copy\project game\final_pacman\object\pacman.h
 	"base_object.h"
 	<stack>
 
@@ -126,7 +126,7 @@
 	<SDL_image.h>
 	"../LogStatus/logstatus.h"
 
-1743357450 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1743618709 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>
@@ -156,7 +156,7 @@
 	"../Menu/button.h"
 	"../Menu/menu.h"
 
-1743353795 source:c:\cp - copy\project game\final_pacman\core\window.cpp
+1743614934 source:c:\cp - copy\project game\final_pacman\core\window.cpp
 	"window.h"
 	"../LogStatus/logstatus.h"
 

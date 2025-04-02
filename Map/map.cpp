@@ -1,7 +1,9 @@
 #include "Map.h"
 #include <queue>
 
-typedef std :: pair <int , int> II;
+const std :: pair <int , int> Map :: INVALID_POINT = {-1 , -1};
+const std :: pair <int , int> Map :: PORTAL_1_TILE_ID = {0 , 14};
+const std :: pair <int , int> Map :: PORTAL_2_TILE_ID = {27 , 14};
 
 const int drow[] = {-1 , 0 , 1 , 0};
 const int dcol[] = {0 , 1 , 0 , -1};
@@ -29,7 +31,7 @@ Map :: Map()
         else console -> status("Error reading file!");
     }
 
-    map_tile.resize(MAP_HEIGHT , vector <int> (MAP_WIDTH));
+    map_tile.resize(MAP_HEIGHT , std :: vector <int> (MAP_WIDTH));
     for(int row = 0; row < MAP_HEIGHT; row++) {
         for(int col = 0; col < MAP_WIDTH; col++) {
             map_tile[row][col] = original_map[row][col];
@@ -43,6 +45,7 @@ Map :: Map()
 
 void Map :: finding_all_cross_tile_id()
 {
+    mark_cross.resize(MAP_HEIGHT , std :: vector <std :: vector <bool>> (MAP_WIDTH , std :: vector <bool> (4)));
     for(int row = 0; row < MAP_HEIGHT; row++) {
         for(int col = 0; col < MAP_WIDTH; col++) {
 
@@ -50,9 +53,9 @@ void Map :: finding_all_cross_tile_id()
                 mark_cross[row][col][dir] = false;
             }
 
-            if(map_tile[new_row][new_col] != NORMAL_COIN &&
-               map_tile[new_row][new_col] != SUPER_COIN  &&
-               map_tile[new_row][new_col] != EMPTY_COIN) continue;
+            if(map_tile[row][col] != NORMAL_COIN &&
+               map_tile[row][col] != SUPER_COIN  &&
+               map_tile[row][col] != EMPTY_COIN) continue;
 
             for(int dir = 0; dir < 4; dir++) {
 
@@ -111,8 +114,8 @@ bool Map :: is_wall(std :: pair <int , int> tile_id)
     int col = tile_id.first;
     int row = tile_id.second;
 
-    if(0 > col && col > MAP_WIDTH - 1) return false;
-    if(0 > row && row > MAP_HEIGHT - 1) return false;
+    if(0 > col || col > MAP_WIDTH - 1) return true;
+    if(0 > row || row > MAP_HEIGHT - 1) return true;
 
     if(map_tile[row][col] == NORMAL_COIN) return false;
     if(map_tile[row][col] == SUPER_COIN) return false;
@@ -136,20 +139,20 @@ std :: pair <int , int> Map :: get_nearest_cross_tile_id(int col , int row , int
     return next_cross_id[row][col][direction];
 }
 
-int Map :: pacman_eat_coins(const int &pacman_tile_col , const int &pacman_tile_row) const
+int Map :: pacman_eat_coins(const int &pacman_tile_col , const int &pacman_tile_row)
 {
-    if(tile[pacman_tile_row][pacman_tile_col] == NORMAL_COIN) {
-        tile[pacman_tile_row][pacman_tile_col] = EMPTY_COIN;
+    if(map_tile[pacman_tile_row][pacman_tile_col] == NORMAL_COIN) {
+        map_tile[pacman_tile_row][pacman_tile_col] = EMPTY_COIN;
         return NORMAL_COIN;
     }
-    if(tile[pacman_tile_row][pacman_tile_col] == SUPER_COIN) {
-        tile[pacman_tile_row][pacman_tile_col] = EMPTY_COIN;
+    if(map_tile[pacman_tile_row][pacman_tile_col] == SUPER_COIN) {
+        map_tile[pacman_tile_row][pacman_tile_col] = EMPTY_COIN;
         return SUPER_COIN;
     }
     return 0;
 }
 
-int Map :: get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int start_direction) const
+int Map :: get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int start_direction)
 {
     int euclid_distance = (begin.first - end.first) * (begin.first - end.first) + (begin.second - end.second) * (begin.second - end.second);
     if(is_wall(end) == true) {
@@ -174,7 +177,7 @@ void Map :: map_reset()
 
 void Map :: finding_nearest_cross_tile_id()
 {
-    next_cross_id.resize(MAP_HEIGHT , std :: vector <int> (MAP_WIDTH , std :: vector <int> (4)));
+    next_cross_id.resize(MAP_HEIGHT , std :: vector <std :: vector <std :: pair <int , int>>> (MAP_WIDTH , std :: vector <std :: pair <int , int>> (4)));
     for(int row = 0; row < MAP_HEIGHT; row++) {
 
         next_cross_id[row][0][LEFT] = INVALID_POINT;
@@ -230,48 +233,62 @@ void Map :: finding_nearest_cross_tile_id()
     }
 }
 
-void Map :: calculateDistance()
+void Map :: calc_distance()
 {
-    int id = 0;
-    int dh[4] = {0 , 1 , 0 , -1};
-    int dc[4] = {-1 , 0 , 1 , 0};
-    dist.resize(MAP_WIDTH * MAP_HEIGHT , std :: vector <std :: vector <int>> (MAP_WIDTH * MAP_HEIGHT , std :: vector <int> (4 , -1)));
-    std :: vector <int> dis;
-    dis.resize(MAP_WIDTH * MAP_HEIGHT);
-    std :: queue <std :: pair <int , int>> visitNode;
-    for(int x = 0;x < MAP_WIDTH;++x){
-        for(int y = 0;y < MAP_HEIGHT;++y){
-            if(isWall(std :: pair <int , int> (x , y))) continue;
-            if(y == 14 && (x == 0 || x == 27)) continue;
-            for(int startDir = 0;startDir < 4;++startDir){
-                int xn = x + dh[startDir] , yn = y + dc[startDir];
-                if(isWall(std :: pair <int , int> (xn , yn))) continue;
-                for(int i = 0;i < MAP_HEIGHT * MAP_WIDTH;i++) dis[i] = -1;
-                i++d;
-                color[yn][xn] = id;
-                dis[xn * MAP_HEIGHT + yn] = 0;
-                visitNode.push(std :: pair <int , int> (yn * MAP_WIDTH + xn , startDir));
-                while(!visitNode.empty()){
-                    int curx = visitNode.front().first % MAP_WIDTH,
-                        cury = visitNode.front().first / MAP_WIDTH,
-                        lasDir = visitNode.front().second;
-                    visitNode.pop();
-                    if(cury == 14 && (curx == 0 || curx == 27)) continue;
-                    for(int dir = 0;dir < 4;++dir){
-                        int u = curx + dh[dir] , v = cury + dc[dir];
-                        if(lasDir % 2 == dir % 2 && dir != lasDir) continue;
-                        if(isWall(std :: pair <int , int> (u , v))) continue;
-                        if(color[v][u] != id){
-                            color[v][u] = id;
-                            dis[u * MAP_HEIGHT + v] = dis[curx * MAP_HEIGHT + cury] + 1;
-                            visitNode.push(std :: pair <int , int> (v * MAP_WIDTH + u , dir));
-                        }
+    int cnt = 0;
+    distance.resize(MAP_HEIGHT * MAP_WIDTH , std :: vector <std :: vector <int>> (MAP_HEIGHT * MAP_WIDTH , std :: vector <int> (4 , -1)));
+    visited_node.resize(MAP_HEIGHT , std :: vector <int> (MAP_WIDTH , 0));
+    std :: vector <int> dist(MAP_HEIGHT * MAP_WIDTH);
+    std :: queue <std :: pair <std :: pair <int , int> , int > > current_node;
+
+    for(int col = 0; col < MAP_WIDTH; col++) {
+        for(int row = 0; row < MAP_HEIGHT; row++) {
+
+            if(is_wall({col , row})) continue;
+            if(std :: make_pair(col , row) == PORTAL_1_TILE_ID || std :: make_pair(col , row) == PORTAL_2_TILE_ID) continue;
+
+            for(int start_dir = 0; start_dir < 4; start_dir++) {
+
+                int start_row = row + drow[start_dir];
+                int start_col = col + dcol[start_dir];
+
+                if(is_wall({start_col , start_row})) continue;
+
+                for(int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++) dist[i] = -1;
+                visited_node[start_row][start_col] = ++cnt;
+                dist[start_col * MAP_HEIGHT + start_row] = 0;
+                current_node.push({{start_col , start_row} , start_dir});
+
+                while((int) current_node.size() > 0) {
+
+                    int current_col = current_node.front().first.first;
+                    int current_row = current_node.front().first.second;
+                    int last_dir = current_node.front().second;
+                    current_node.pop();
+
+                    if(std :: make_pair(current_col , current_row) == PORTAL_1_TILE_ID) continue;
+                    if(std :: make_pair(current_col , current_row) == PORTAL_2_TILE_ID) continue;
+
+                    for(int current_dir = 0; current_dir < 4; current_dir++) {
+
+                        int new_col = current_col + dcol[current_dir];
+                        int new_row = current_row + drow[current_dir];
+
+                        if(is_wall({new_col , new_row})) continue;
+                        if((current_dir == UP && last_dir == DOWN) || (current_dir == DOWN && last_dir == UP)) continue;
+                        if((current_dir == RIGHT && last_dir == LEFT) || (current_dir == LEFT && last_dir == RIGHT)) continue;
+                        if(visited_node[new_row][new_col] == cnt) continue;
+
+                        visited_node[new_row][new_col] = cnt;
+                        dist[new_col * MAP_HEIGHT + new_row] = dist[current_col * MAP_HEIGHT + current_row] + 1;
+                        current_node.push({{new_col , new_col} , current_dir});
                     }
                 }
-                for(int i = 0;i < MAP_WIDTH * MAP_HEIGHT;i++)
-                    dist[xn * MAP_HEIGHT + yn][i][startDir] = dis[i];
+
+                for(int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++) {
+                    distance[start_col * MAP_HEIGHT + start_col][i][start_dir] = dist[i];
+                }
             }
         }
     }
-    std :: cout << "Done!";
 }

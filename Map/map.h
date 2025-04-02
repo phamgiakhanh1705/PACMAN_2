@@ -21,7 +21,6 @@ class Map
         static const int SUPER_COIN = 27;
         static const int EMPTY_COIN = 30;
 
-        static const int INVALID_POINT = {-1 , -1};
 
         log_status* console = new log_status("Map");
 
@@ -29,7 +28,7 @@ class Map
         std :: vector <std :: vector <int> > original_map; // Map đọc từ file gốc
         std :: vector <std :: vector <int> > visited_node; // Đánh dấu những ô đã được thăm
         std :: vector <std :: vector <std :: vector <int> > > distance; // khoảng cách từ các ô tới nhau
-        std :: vector <std :: pair <int , int> > next_cross_id; // Lưu điểm rẽ gân nhất
+        std :: vector <std :: vector <std :: vector <std :: pair <int , int>> > > next_cross_id; // Lưu điểm rẽ gân nhất
         std :: vector <std :: vector <std :: vector <bool> > > mark_cross; // Đánh dấu xem ô hiện tại có sang được 4 hướng hay không
 
         // Tìm tất cả điểm rẽ trong map
@@ -47,8 +46,9 @@ class Map
         static const int DOWN = 2;
         static const int LEFT = 3;
 
-        static const std :: pair <int , int> PORTAL_1_TILE_ID = {0 , 14};
-        static const std :: pair <int , int> PORTAL_2_TILE_ID = {27 , 14};
+        static const std :: pair <int , int> INVALID_POINT;
+        static const std :: pair <int , int> PORTAL_1_TILE_ID;
+        static const std :: pair <int , int> PORTAL_2_TILE_ID;
 
         Map();
 
@@ -60,9 +60,9 @@ class Map
         // Trả về giá trị tại ô đó, xem ô đó là loại nào(wall,coin,...)
         int get_tile_id(int x , int y) const;
         // Cập nhật giá trị tile khi pacman ăn coin
-        int pacman_eat_coins(const int &pacman_tile_x , const int &pacman_tile_y) const;
+        int pacman_eat_coins(const int &pacman_tile_x , const int &pacman_tile_y);
         // Trả về khoảng cách từ begin -> end
-        int get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int start_direction) const;
+        int get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int start_direction);
         // Trả về ngã rẽ gần nhất nếu đi từ ô (x,y) với hướng đi direction
         std :: pair <int , int> get_nearest_cross_tile_id(int x , int y , int direction) const;
 

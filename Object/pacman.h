@@ -6,56 +6,46 @@
 #include "base_object.h"
 #include <stack>
 
-class Pacman : public Object {
-    private:
-        std::stack<int> Direction;
-        std::stack< std::pair<int, std::pair<int, int> > > Special;
-
+class Pacman : public Object
+{
     public:
-        static const int pacmanVelocity = 2;
-        static const int PACMAN_START_TILE_X = 13;
-        static const int PACMAN_START_TILE_Y = 23;
+
+        static const int PACMAN_START_TILE_COL = 13;
+        static const int PACMAN_START_TILE_ROW = 23;
+        static const int PACMAN_SPEED = 2;
 
         Pacman();
+        ~Pacman();
 
-        ~Pacman() {
-            while (!Direction.empty()) Direction.pop();
-            while (!Special.empty()) Special.pop();
-        }
+        //
+        bool is_direction_empty() const;
+        //
+        bool is_special_empty() const;
 
-        bool emptyDirStack() {
-            return Direction.empty();
-        }
+        //
+        void push_to_direction(int new_direction);
+        //
+        void push_to_special(int new_direction , std :: pair <int , int> next_cross_id);
+        //
+        void pacman_moving();
+        //
+        void pacman_stopmoving();
+        //
+        void pacman_turn();
+        //
+        void clear_special();
+        //
+        void pacman_respawn();
 
-        bool emptySpecial() {
-            return Special.empty();
-        }
+        //
+        int get_pacman_direction() const;
+        //
+        std :: pair <int , int> get_pacman_special_cross_id() const;
 
-        void pushtoStack(int newDir);
+    private:
 
-        void pushSpecialStack(int newDir, std::pair<int, int> nextCross);
-
-        int getDir() const {
-            return Direction.top();
-        }
-
-        std::pair<int, int> getSpecial() {
-            return Special.top().second;
-        }
-
-        void moving();
-
-        void stopmoving();
-
-        void turn();
-
-        void eraseSpecial();
-
-        void respawn() {
-            resetObjectTile(PACMAN_START_TILE_X, PACMAN_START_TILE_Y);
-            while (!Direction.empty()) Direction.pop();
-            while (!Special.empty())   Special.pop();
-        }
+        std :: stack <int> direction;
+        std :: stack <std :: pair <int , std :: pair <int , int> > > special;
 };
 
 #endif // _PACMAN_H_

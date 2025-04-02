@@ -1,6 +1,7 @@
 #include "window.h"
 #include "../LogStatus/logstatus.h"
 
+// Khởi tạo các con trỏ và trạng thái ban đầu
 Window :: Window()
 {
     window = nullptr;
@@ -10,6 +11,7 @@ Window :: Window()
     runningMenu = false;
 }
 
+// Giải phóng bộ nhớ và hủy renderer/window nếu tồn tại
 Window :: ~Window()
 {
     delete playState;
@@ -18,31 +20,35 @@ Window :: ~Window()
     delete startMenu;
     startMenu = nullptr;
 
-    if(renderer != nullptr){
+    if(renderer != nullptr) {
         SDL_DestroyRenderer(renderer);
         renderer = nullptr;
     }
 
-    if(window != nullptr){
+    if(window != nullptr) {
         SDL_DestroyWindow(window);
         window = nullptr;
     }
 }
 
+
+// Khởi tạo SDL
 void Window :: initSDL()
 {
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
+    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         Console -> status(SDL_GetError());
     }
     else{
+        // Tạo cửa sổ game: tiểu đề , vị trí , kích thước , chế độ hiển thị
         window = SDL_CreateWindow(WINDOW_TITTLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         Console -> status("Window opened successfully!");
         Running = true;
 
-        if(window == nullptr){
+        if(window == nullptr) { // Tạp cửa sổ lỗi
             Console -> status(SDL_GetError());
         }
         else{
+            // Tạo renderer để vẽ lên window
             renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
             Console -> status("Renderer created successfully!");
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");

@@ -4,61 +4,106 @@
 
 typedef std :: pair <int , std :: pair <int , int>> IP;
 
-Pacman :: Pacman() : Object(13 , 23)
+Pacman :: Pacman() : Object(PACMAN_START_TILE_COL , PACMAN_START_TILE_ROW)
 {
-    while(!Direction.empty()) Direction.pop();
-    while(!Special.empty()) Special.pop();
+    while((int) direction.size() > 0) direction.pop();
+    while((int) special.size() > 0) special.pop();
 }
 
-void Pacman :: pushtoStack(int newDir)
+Pacman :: ~Pacman()
 {
-    if(!Direction.empty()) Direction.pop();
-    Direction.push(newDir);
+    while((int) direction.size() > 0) direction.pop();
+    while((int) special.size() > 0) special.pop();
 }
 
-void Pacman :: pushSpecialStack(int newDir, std :: pair <int , int> nextCross)
+void Pacman :: push_to_direction(int new_direction)
 {
-    if(!Special.empty()){
-        if(Special.top().first != newDir){
-            Special.pop();
-            Special.push(IP(newDir , nextCross));
+    if((int) direction.size() > 0) direction.pop();
+    direction.push(new_direction);
+}
+
+void Pacman :: push_to_special(int new_direction , std :: pair <int , int> next_cross_id)
+{
+    if((int) special.size() > 0){
+        if(special.top().first != new_direction){
+            special.pop();
+            special.push({new_direction , next_cross_id});
         }
     }
-    else Special.push(IP(newDir , nextCross));
+    else special.push({new_direction , next_cross_id});
 }
 
-void Pacman :: moving()
+void Pacman :: pacman_moving()
 {
-    if(!Direction.empty()){
-        int velX = 0 , velY = 0 , dir = -1;
+    if((int) direction.size() > 0){
+        int speed_row = 0;
+        int speed_col = 0;
+        int current_dir = direction.top();
 
-        switch(Direction.top()){
-            case UP: velX = 0; velY = -pacmanVelocity; dir = 0; break;
-            case DOWN: velX = 0; velY = pacmanVelocity; dir = 2; break;
-            case LEFT: velX = -pacmanVelocity; velY = 0; dir = 3; break;
-            case RIGHT: velX = pacmanVelocity; velY = 0; dir = 1; break;
+        if(current_dir == UP) {
+            speed_row = (-1) * PACMAN_SPEED;
+            speed_col = 0;
         }
+        else if(current_dir == DOWN) {
+            speed_row = (+1) * PACMAN_SPEED;
+            speed_col = 0;
+        }
+        else if(current_dir == RIGHT) {
+            speed_row = 0;
+            speed_col = (+1) * PACMAN_SPEED;
+        }
+        else if(current_dir == LEFT) {
+            speed_row = 0;
+            speed_col = (-1) * PACMAN_SPEED;
+        }
+        else current_dir = -1;
 
-        changeVelocityDir(velX , velY , dir);
+        changeVelocityDir(speed_col , speed_row , current_dir);
 
         move();
     }
 }
 
-void Pacman :: turn()
+void Pacman :: pacman_turn()
 {
-    if(!Direction.empty()) stopmoving();
-    Direction.push(Special.top().first);
-    Special.pop();
-    //moving();
+    if((int) direction.size() > 0) pacman_stopmoving();
+    direction.push(special.top().first);
+    special.pop();
 }
 
-void Pacman :: stopmoving()
+void Pacman :: pacman_stopmoving()
 {
-    while(!Direction.empty()) Direction.pop();
+    while((int) direction.size() > 0) direction.pop();
 }
 
-void Pacman :: eraseSpecial()
+void Pacman :: clear_special()
 {
-    while(!Special.empty()) Special.pop();
+    while((int) special.size() > 0) special.pop();
+}
+
+int Pacman :: get_pacman_direction() const
+{
+    return direction.top();
+}
+
+std :: pair <int , int> Pacman :: get_pacman_special_cross_id() const
+{
+    return special.top().second;
+}
+
+bool Pacman :: is_direction_empty() const
+{
+    return direction.empty();
+}
+
+bool Pacman :: is_special_empty() const
+{
+    return special.empty();
+}
+
+void Pacman :: pacman_respawn()
+{
+    resetObjectTile(PACMAN_START_TILE_COL , PACMAN_START_TILE_ROW);
+    while((int) direction.size() > 0) direction.pop();
+    while((int) special.size() > 0) special.pop();
 }
