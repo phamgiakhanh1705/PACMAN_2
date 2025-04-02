@@ -7,64 +7,75 @@
 #include <iostream>
 
 class Ghost : public Object {
+
     private:
-        int nextTileX;
-        int nextTileY;
-        int ghostDir;
-        bool frighten;
-        bool scattering;
-        bool inCage;
-        int ghostVelocity;
+
+        int target_tile_col;
+        int target_tile_row;
+
+        int ghost_direction;
+        int ghost_speed;
         int accele;
+
+        bool frighten_mode;
+        bool scatter_mode;
+        bool in_cage;
+
     public:
-        static const int GHOST_START_TILE_X = 13;
-        static const int GHOST_START_TILE_Y = 11;
 
-        static const int DEFAULT_BLINKY_TILE_X = 26;
-        static const int DEFAULT_BLINKY_TILE_Y = 1;
-        static const int BLINKY_START_TILE_X = 13;
-        static const int BLINKY_START_TILE_Y = 11;
+        static const int GHOST_START_TILE_COL = 13;
+        static const int GHOST_START_TILE_ROW = 11;
 
-        static const int DEFAULT_PINKY_TILE_X = 1;
-        static const int DEFAULT_PINKY_TILE_Y = 1;
-        static const int PINKY_START_TILE_X = 13;
-        static const int PINKY_START_TILE_Y = 14;
+        static const int DEFAULT_BLINKY_TILE_COL = 26;
+        static const int DEFAULT_BLINKY_TILE_ROW = 1;
+        static const int BLINKY_START_TILE_COL = 13;
+        static const int BLINKY_START_TILE_ROW = 11;
 
-        static const int DEFAULT_INKY_TILE_X = 26;
-        static const int DEFAULT_INKY_TILE_Y = 29;
-        static const int INKY_START_TILE_X = 11;
-        static const int INKY_START_TILE_Y = 14;
+        static const int DEFAULT_PINKY_TILE_COL = 1;
+        static const int DEFAULT_PINKY_TILE_ROW = 1;
+        static const int PINKY_START_TILE_COL = 13;
+        static const int PINKY_START_TILE_ROW = 14;
 
-        static const int DEFAULT_CLYDE_TILE_X = 1;
-        static const int DEFAULT_CLYDE_TILE_Y = 29;
-        static const int CLYDE_START_TILE_X = 15;
-        static const int CLYDE_START_TILE_Y = 14;
+        static const int DEFAULT_INKY_TILE_COL = 26;
+        static const int DEFAULT_INKY_TILE_ROW = 29;
+        static const int INKY_START_TILE_COL = 11;
+        static const int INKY_START_TILE_ROW = 14;
 
-        Ghost(int tileX, int tileY, bool inCage);
+        static const int DEFAULT_CLYDE_TILE_COL = 1;
+        static const int DEFAULT_CLYDE_TILE_ROW = 29;
+        static const int CLYDE_START_TILE_COL = 15;
+        static const int CLYDE_START_TILE_ROW = 14;
 
-        int getNextTileX() const;
+        Ghost(int start_tile_col , int start_tile_row , bool _in_cage);
+        ~Ghost() {};
 
-        int getNextTileY() const;
+        //
+        int get_target_tile_col() const;
+        //
+        int get_target_tile_row() const;
+        //
+        int get_ghost_direction() const;
 
-        int getGhostDir() const;
+        //
+        void set_ghost_direction(int direction);
+        //
+        void set_ghost_frighten(const bool status);
+        //
+        void set_ghost_scatter(const bool status);
+        //
+        void set_ghost_destination(int tile_col , int tile_row , int _accele = 1);
+        //
+        void ghost_moving();
+        //
+        void ghost_respawn(const int tile_col , const int tile_row , const bool _in_cage);
 
-        void setDir(int dir);
+        //
+        bool is_ghost_scatter() const;
+        //
+        bool is_ghost_frighten() const;
+        //
+        bool is_ghost_in_cage() const;
 
-        void setFrighten(const bool status);
-
-        void setScattering(const bool status);
-
-        bool isScattering();
-
-        bool isFrighten();
-
-        void setDestination(int tilX, int tilY, int _accele = 1);
-
-        void moving();
-
-        void respawn(const int tileX, const int tileY, const bool inCage);
-
-        bool isInCage() const;
 };
 
 #endif // _GHOST_H_

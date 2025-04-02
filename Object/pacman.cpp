@@ -2,8 +2,6 @@
 #include <iostream>
 #include <algorithm>
 
-typedef std :: pair <int , std :: pair <int , int>> IP;
-
 Pacman :: Pacman() : Object(PACMAN_START_TILE_COL , PACMAN_START_TILE_ROW)
 {
     while((int) direction.size() > 0) direction.pop();
@@ -24,7 +22,7 @@ void Pacman :: push_to_direction(int new_direction)
 
 void Pacman :: push_to_special(int new_direction , std :: pair <int , int> next_cross_id)
 {
-    if((int) special.size() > 0){
+    if((int) special.size() > 0) {
         if(special.top().first != new_direction){
             special.pop();
             special.push({new_direction , next_cross_id});
@@ -35,31 +33,34 @@ void Pacman :: push_to_special(int new_direction , std :: pair <int , int> next_
 
 void Pacman :: pacman_moving()
 {
-    if((int) direction.size() > 0){
+    if((int) direction.size() > 0) {
         int speed_row = 0;
         int speed_col = 0;
+        int dir = -1;
         int current_dir = direction.top();
 
         if(current_dir == UP) {
             speed_row = (-1) * PACMAN_SPEED;
             speed_col = 0;
+            dir = UP;
         }
-        else if(current_dir == DOWN) {
+        if(current_dir == DOWN) {
             speed_row = (+1) * PACMAN_SPEED;
             speed_col = 0;
+            dir = DOWN;
         }
-        else if(current_dir == RIGHT) {
+        if(current_dir == RIGHT) {
             speed_row = 0;
             speed_col = (+1) * PACMAN_SPEED;
+            dir = RIGHT;
         }
-        else if(current_dir == LEFT) {
+        if(current_dir == LEFT) {
             speed_row = 0;
             speed_col = (-1) * PACMAN_SPEED;
+            dir = LEFT;
         }
-        else current_dir = -1;
 
-        changeVelocityDir(speed_col , speed_row , current_dir);
-
+        changeVelocityDir(speed_col , speed_row , dir);
         move();
     }
 }

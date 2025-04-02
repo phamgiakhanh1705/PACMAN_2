@@ -1,106 +1,123 @@
-#include "Ghost.h"
+#include "ghost.h"
 #include <random>
 #include <iostream>
 
-Ghost :: Ghost(int tileX, int tileY, bool inCage) : Object(tileX , tileY)
+Ghost :: Ghost(int start_tile_col , int start_tile_row , bool _in_cage) : Object(start_tile_col , start_tile_row)
 {
-    frighten = 0;
+    frighten_mode = 0;
     accele = 1;
-    ghostVelocity = 2;
-    scattering = false;
-    nextTileX = tileX , nextTileY = tileY;
-    this -> inCage = inCage;
-    if(inCage == false) ghostDir = RIGHT;
-    else ghostDir = UP;
+    ghost_speed = 2;
+    scatter_mode = false;
+    target_tile_col = start_tile_col;
+    target_tile_row = start_tile_row;
+    in_cage = _in_cage;
+    if(in_cage == false) ghost_direction = RIGHT;
+    else ghost_direction = UP;
 }
 
-int Ghost :: getNextTileX() const
+int Ghost :: get_target_tile_col() const
 {
-    return nextTileX;
+    return target_tile_col;
 }
 
-int Ghost :: getNextTileY() const
+int Ghost :: get_target_tile_row() const
 {
-    return nextTileY;
+    return target_tile_row;
 }
 
-int Ghost :: getGhostDir() const
+int Ghost :: get_ghost_direction() const
 {
-    return ghostDir;
+    return ghost_direction;
 }
 
-void Ghost :: setDir(int dir)
+void Ghost :: set_ghost_direction(int direction)
 {
-    ghostDir = dir;
+    ghost_direction = direction;
 }
 
-void Ghost :: setFrighten(const bool status)
+void Ghost :: set_ghost_frighten(const bool status)
 {
-    if(isInCage()) return;
-    if(frighten != status) reTilePos();
-    frighten = status;
-    if(status){
-        ghostDir = (ghostDir + 2) % 4;
+    if(is_ghost_in_cage()) return;
+    if(frighten_mode != status) reTilePos();
+    frighten_mode = status;
+    if(status) {
+        ghost_direction = (ghost_direction + 2) % 4;
         accele = 1;
     }
 }
 
-void Ghost :: setScattering(const bool status)
+void Ghost :: set_ghost_scatter(const bool status)
 {
-    scattering = status;
+    scatter_mode = status;
 }
 
-bool Ghost :: isScattering()
+bool Ghost :: is_ghost_scatter() const
 {
-    return scattering;
+    return scatter_mode;
 }
 
-bool Ghost :: isFrighten()
+bool Ghost :: is_ghost_frighten() const
 {
-    return frighten;
+    return frighten_mode;
 }
 
-void Ghost :: setDestination(int tilX, int tilY, int _accele)
+void Ghost :: set_ghost_destination(int tile_col , int tile_row , int _accele)
 {
-    this -> accele = _accele;
-    nextTileX = tilX;
-    nextTileY = tilY;
+    accele = _accele;
+    target_tile_col = tile_col;
+    target_tile_row = tile_row;
 }
 
-void Ghost :: moving()
+void Ghost :: ghost_moving()
 {
-    int velX , velY , dir;
-    velX = velY = 0; dir = -1;
-
-    if(accele == 1){
-        if(frighten) ghostVelocity = 1;
-        else if(isDead()) ghostVelocity = 4;
-        else ghostVelocity = 2;
+    if(accele == 1) {
+        if(isDead()) ghost_speed = 4;
+        else if(is_ghost_frighten()) ghost_speed = 1;
+        else ghost_speed = 2;
     }
-    else ghostVelocity = 4;
+    else ghost_speed = 4;
 
-    switch(ghostDir){
-        case UP: velY -= ghostVelocity; dir = UP; break;
-        case DOWN: velY += ghostVelocity; dir = DOWN; break;
-        case LEFT: velX -= ghostVelocity; dir = LEFT; break;
-        case RIGHT: velX += ghostVelocity; dir = RIGHT; break;
+    int speed_col = 0;
+    int speed_row = 0;
+    int dir = -1;
+
+    if(ghost_direction == UP) {
+        speed_row = (-1) * ghost_speed;
+        speed_col = 0;
+        dir = UP;
     }
-    changeVelocityDir(velX , velY , dir);
+    if(ghost_direction == DOWN) {
+        speed_row = (+1) * ghost_speed;
+        speed_col = 0;
+        dir = DOWN;
+    }
+    if(ghost_direction == RIGHT) {
+        speed_row = 0;
+        speed_col = (+1) * ghost_speed;
+        dir = RIGHT;
+    }
+    if(ghost_direction == LEFT) {
+        speed_row = 0;
+        speed_col = (-1) * ghost_speed;
+        dir = LEFT;
+    }
+
+    changeVelocityDir(speed_col , speed_row , dir);
     move();
 }
 
-void Ghost :: respawn(const int tileX, const int tileY, const bool inCage)
+void Ghost :: ghost_respawn(const int tile_col, const int tile_row, const bool _in_cage)
 {
-    resetObjectTile(tileX , tileY);
-    this -> inCage = inCage;
-    if(inCage == false){
-        if(rand() % 2 == 0) ghostDir = LEFT;
-        else ghostDir = RIGHT;
+    resetObjectTile(tile_col , tile_row);
+    in_cage = _in_cage;
+    if(in_cage == false) {
+        if(rand() % 2 == 0) ghost_direction = LEFT;
+        else ghost_direction = RIGHT;
     }
-    else ghostDir = UP;
+    else ghost_direction = UP;
 }
 
-bool Ghost :: isInCage() const
+bool Ghost :: is_ghost_in_cage() const
 {
-    return inCage;
+    return in_cage;
 }
