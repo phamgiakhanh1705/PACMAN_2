@@ -38,27 +38,31 @@ bool TextureSrc :: is_pacman_dead()
     return false;
 }
 
-void TextureSrc::load_tile_texture(SDL_Renderer* &renderer) {
-    SDL_Surface* Image = IMG_Load("Assets/Entity Image/Pacman Tile Labyrinth.png");
+void TextureSrc :: load_tile_texture(SDL_Renderer* &renderer) {
+    SDL_Surface* image = IMG_Load("Assets/Entity Image/Pacman Tile Labyrinth.png");
 
-    if (Image == nullptr) {
-        Console->status( IMG_GetError() );
+    if(image == nullptr) {
+        Console -> status( IMG_GetError() );
     }
     else {
-        tile_texture = SDL_CreateTextureFromSurface(renderer, Image);
+        tile_texture = SDL_CreateTextureFromSurface(renderer , image);
 
-        int x = 0, y = 0;
-        for (int i = 0; i < 32; ++i) {
-            tile_sprite[i] = {x, y, 16, 16};
-            y += 17;
-            if (i % 4 == 3) x += 17, y = 0;
+        int col = 0;
+        int row = 0;
+        for(int i = 0; i < 32; i++) {
+            tile_sprite[i] = {col , row , TILE_SIZE , TILE_SIZE};
+            row += TILE_SIZE + 1;
+            if (i % 4 == 3) {
+                col += TILE_SIZE + 1;
+                row = 0;
+            }
         }
 
-        Console->status("Tile Texture got successfully!");
+        Console -> status("Tile Texture got successfully!");
     }
 
-    SDL_FreeSurface(Image);
-    Image = nullptr;
+    SDL_FreeSurface(image);
+    image = nullptr;
 }
 
 void TextureSrc :: render_tile_texture(SDL_Renderer* &renderer , int tile_id , SDL_Rect* display_rect)

@@ -29,11 +29,11 @@ GameManager :: GameManager(SDL_Renderer* &renderer)
     hsBoard = loadImage(renderer, "Assets/Menu Image/newHighscore.png");
 
     yesBut = new Button(70 , 30 , 478 , 250);
-    yesBut -> loadButton(renderer, "Yes");
-    yesBut -> setStatus(Button :: BUTTON_IN);
+    yesBut -> load_button(renderer, "Yes");
+    yesBut -> set_status(Button :: BUTTON_IN);
     noBut = new Button(70 , 30 , 580 , 250);
-    noBut -> loadButton(renderer, "No");
-    noBut -> setStatus(Button :: BUTTON_OUT);
+    noBut -> load_button(renderer, "No");
+    noBut -> set_status(Button :: BUTTON_OUT);
 }
 
 GameManager :: ~GameManager()
@@ -64,8 +64,8 @@ void GameManager :: reset()
     INKY_COIN_LIMIT = 30;
     CLYDE_COIN_LIMIT = 90;
     playerDecision = WAITING;
-    yesBut -> setStatus(Button :: BUTTON_IN);
-    noBut -> setStatus(Button :: BUTTON_OUT);
+    yesBut -> set_status(Button :: BUTTON_IN);
+    noBut -> set_status(Button :: BUTTON_OUT);
 }
 
 void GameManager :: eatCoins(const int typeOfCoin)
@@ -138,8 +138,8 @@ void GameManager :: runEGBoard(SDL_Renderer* &renderer)
 {
     SDL_Rect dsRect = {441 - 250 , 248 - 150 , 500 , 300};
     SDL_RenderCopy(renderer, egBoard, nullptr, &dsRect);
-    yesBut -> renderButton(renderer);
-    noBut  -> renderButton(renderer);
+    yesBut -> render_button(renderer);
+    noBut  -> render_button(renderer);
     if(newRecord){
         SDL_RenderCopy(renderer, hsBoard, nullptr, &dsRect);
         static int caretTime = 0;
@@ -187,13 +187,13 @@ void GameManager :: handleEGBoard(SDL_Event &e, std :: vector <std :: string> &s
             Mix_PlayChannel(7, navigationSound, 0);
             if(e.key.keysym.sym == SDLK_d || e.key.keysym.sym == SDLK_RIGHT){
                 currentBut = 2;
-                noBut -> setStatus(Button :: BUTTON_IN);
-                yesBut -> setStatus(Button :: BUTTON_OUT);
+                noBut -> set_status(Button :: BUTTON_IN);
+                yesBut -> set_status(Button :: BUTTON_OUT);
             }
             else if(e.key.keysym.sym == SDLK_a || e.key.keysym.sym == SDLK_LEFT){
                 currentBut = 1;
-                yesBut -> setStatus(Button :: BUTTON_IN);
-                noBut -> setStatus(Button :: BUTTON_OUT);
+                yesBut -> set_status(Button :: BUTTON_IN);
+                noBut -> set_status(Button :: BUTTON_OUT);
             }
             else if(e.key.keysym.sym == SDLK_RETURN){
                 if(currentBut == 1) playerDecision = AGAIN;

@@ -63,7 +63,7 @@ void Menu :: render(SDL_Renderer* &renderer, const std :: vector <std :: string>
     else{
         SDL_RenderCopy(renderer, menuTexture, nullptr, nullptr);
         for(int i = 0;i < TOTAL_BUTTON;++i)
-            menuButton[i] -> renderButton(renderer);
+            menuButton[i] -> render_button(renderer);
     }
 }
 
@@ -90,10 +90,10 @@ void Menu :: init(SDL_Renderer* &renderer, const std :: string imgPath, std :: v
             if(buttonText[i] == "Sound: ON"){
                 if(Mix_Volume(-1 , -1) == 0) buttonText[i] = "Sound: OFF";
             }
-            menuButton[i] -> loadButton(renderer, buttonText[i]);
-            menuButton[i] -> setStatus(Button :: BUTTON_OUT);
+            menuButton[i] -> load_button(renderer, buttonText[i]);
+            menuButton[i] -> set_status(Button :: BUTTON_OUT);
         }
-        menuButton[0] -> setStatus(Button :: BUTTON_IN);
+        menuButton[0] -> set_status(Button :: BUTTON_IN);
         currentButtonID = 0;
         currentMenuStatus = RUNNING;
     }
@@ -108,9 +108,9 @@ void Menu :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer)
                 if(arrowHSPos < 3) ++arrowHSPos;
             }
             else{
-                menuButton[currentButtonID] -> setStatus(Button :: BUTTON_OUT);
+                menuButton[currentButtonID] -> set_status(Button :: BUTTON_OUT);
                 (currentButtonID += 1) %= TOTAL_BUTTON;
-                menuButton[currentButtonID] -> setStatus(Button :: BUTTON_IN);
+                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
             }
         }
         else if(e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w){
@@ -119,9 +119,9 @@ void Menu :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer)
                 if(arrowHSPos > 0) --arrowHSPos;
             }
             else{
-                menuButton[currentButtonID] -> setStatus(Button :: BUTTON_OUT);
+                menuButton[currentButtonID] -> set_status(Button :: BUTTON_OUT);
                 (currentButtonID += TOTAL_BUTTON - 1) %= TOTAL_BUTTON;
-                menuButton[currentButtonID] -> setStatus(Button :: BUTTON_IN);
+                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
             }
         }
         else if(e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a){
@@ -139,22 +139,22 @@ void Menu :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer)
         else if(e.key.keysym.sym == SDLK_RETURN){
             Mix_PlayChannel(7, navigationSound, 0);
             if(currentMenuStatus == HOW_TO_PLAY || currentMenuStatus == HIGH_SCORES){
-                menuButton[currentButtonID] -> setStatus(Button :: BUTTON_IN);
+                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
                 currentMenuStatus = RUNNING;
             }
             else{
-                menuButton[currentButtonID] -> setStatus(Button :: BUTTON_IN);
-                std :: string menuText = menuButton[currentButtonID] -> getText();
+                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
+                std :: string menuText = menuButton[currentButtonID] -> get_text();
                 if(menuText == "New Game") currentMenuStatus = PLAY_BUTTON_PRESSED;
                 else if(menuText == "Resume") currentMenuStatus = RESUME;
                 else if(menuText == "Exit") currentMenuStatus = EXIT_BUTTON_PRESSED;
                 else if(menuText == "Exit to Start Menu") currentMenuStatus = EXIT_BUTTON_PRESSED;
                 else if(menuText == "Sound: ON"){
-                    menuButton[currentButtonID] -> changeSoundButton(renderer);
+                    menuButton[currentButtonID] -> change_sound_button(renderer);
                     Mix_Volume(-1 , 0);
                 }
                 else if(menuText == "Sound: OFF"){
-                    menuButton[currentButtonID] -> changeSoundButton(renderer);
+                    menuButton[currentButtonID] -> change_sound_button(renderer);
                     Mix_Volume(-1 , MIX_MAX_VOLUME);
                 }
                 else if(menuText == "How to Play"){
@@ -183,7 +183,7 @@ int Menu :: getStatus() const
 void Menu :: reOpen()
 {
     currentMenuStatus = RUNNING;
-    menuButton[currentButtonID] -> setStatus(Button :: BUTTON_IN);
+    menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
 }
 
 void Menu :: changeRunStatus()

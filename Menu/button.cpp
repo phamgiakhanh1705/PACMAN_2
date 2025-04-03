@@ -1,78 +1,95 @@
 #include "Button.h"
 
-Button :: Button(int Width, int Height, int scrPosX, int scrPosY)
+Button :: Button(int width , int height , int screen_pos_col , int screen_pos_row)
 {
-    buttonRect = {scrPosX , scrPosY , Width , Height};
-    normalText = new TextManager(24);
-    selectText = new TextManager(24);
-    selectTextDetail = new TextManager(18);
+    button_rect = {screen_pos_col , screen_pos_row , width , height};
+    normal_text = new TextManager(24);
+    select_text = new TextManager(24);
+    select_text_detail = new TextManager(18);
 }
 
-void Button :: setStatus(const int status)
+void Button :: set_status(const int status)
 {
-    buttonStatus = status;
+    button_status = status;
 }
 
-void Button :: changeSoundButton(SDL_Renderer* &renderer)
+void Button :: change_sound_button(SDL_Renderer* &renderer)
 {
-    if(bText == "Sound: ON") bText = "Sound: OFF";
-    else bText = "Sound: ON";
-    normalText -> loadRenderText(renderer, bText, normalColor);
-    selectText -> loadRenderText(renderer, bText, selectColor);
-    buttonStatus = BUTTON_IN;
+    if(button_text == "Sound: ON") button_text = "Sound: OFF";
+    else button_text = "Sound: ON";
+    normal_text -> loadRenderText(renderer , button_text , normal_color);
+    select_text -> loadRenderText(renderer , button_text , select_color);
+    button_status = BUTTON_IN;
 }
 
-void Button :: renderButton(SDL_Renderer* &renderer)
+void Button :: render_button(SDL_Renderer* &renderer)
 {
-    if(buttonStatus == BUTTON_IN){
-        SDL_SetRenderDrawColor(renderer, 251 , 69 , 152 , 255);
-        SDL_RenderFillRect(renderer, &buttonRect);
+    if(button_status == BUTTON_IN) {
+        SDL_SetRenderDrawColor(renderer , 251 , 69 , 152 , 255);
+        SDL_RenderFillRect(renderer , &button_rect);
 
-        SDL_SetRenderDrawColor(renderer, selectColor.r , selectColor.g , selectColor.b , selectColor.a);
-        selectText -> renderText(renderer, buttonRect.x + buttonRect.w / 2, buttonRect.y + buttonRect.h / 2, TextManager :: CENTER);
+        SDL_SetRenderDrawColor(renderer , select_color.r , select_color.g , select_color.b , select_color.a);
+        select_text -> renderText(renderer , button_rect.x + button_rect.w / 2 , button_rect.y + button_rect.h / 2 , TextManager :: CENTER);
 
-        if(selectTextDetail != nullptr){
-            SDL_SetRenderDrawColor(renderer, normalColor.r , normalColor.g , normalColor.b , normalColor.a);
-            selectTextDetail -> renderText(renderer, 441, 400, TextManager :: CENTER);
+        if(select_text_detail != nullptr) {
+            SDL_SetRenderDrawColor(renderer , normal_color.r , normal_color.g , normal_color.b , normal_color.a);
+            select_text_detail -> renderText(renderer , 441 , 400 , TextManager :: CENTER);
         }
     }
-    else if(buttonStatus == BUTTON_OUT){
-        SDL_SetRenderDrawColor(renderer, normalColor.r , normalColor.g , normalColor.b , normalColor.a);
-        normalText -> renderText(renderer, buttonRect.x + buttonRect.w / 2, buttonRect.y + buttonRect.h / 2, TextManager :: CENTER);
+    else if(button_status == BUTTON_OUT) {
+        SDL_SetRenderDrawColor(renderer , normal_color.r , normal_color.g , normal_color.b , normal_color.a);
+        normal_text -> renderText(renderer , button_rect.x + button_rect.w / 2 , button_rect.y + button_rect.h / 2 , TextManager :: CENTER);
     }
 }
 
-void Button :: loadButton(SDL_Renderer* &renderer, std :: string text)
+void Button :: load_button(SDL_Renderer* &renderer , std :: string text)
 {
     if(text == "") return;
-    normalText -> loadRenderText(renderer, text, normalColor);
-    selectText -> loadRenderText(renderer, text, selectColor);
-    bText = text;
+    normal_text -> loadRenderText(renderer , text , normal_color);
+    select_text -> loadRenderText(renderer , text , select_color);
 
-    if(text == "New Game") bDetail = "Press Enter to play a new game.";
-    else if(text == "Resume") bDetail = "Press Enter to continue the game.";
-    else if(text == "How to Play") bDetail = "Press Enter for instructions on how to play.";
-    else if(text == "High Scores") bDetail = "Press Enter for High score.";
-    else if(text == "Sound: ON") bDetail = "Press Enter to change sound status.";
-    else if(text == "Exit") bDetail = "Press Enter to quit the game.";
-    else if(text == "Exit to Start Menu") bDetail = "Press Enter to return to the Start Menu.";
-    else bDetail = "";
+    button_text = text;
+    button_detail = "";
 
-    if(bDetail != "") selectTextDetail -> loadRenderText(renderer, bDetail, normalColor);
-    else{
-        delete selectTextDetail;
-        selectTextDetail = nullptr;
+    if (button_text == "New Game") {
+        button_detail = "Press Enter to play a new game.";
+    }
+    if (button_text == "Resume") {
+        button_detail = "Press Enter to continue the game.";
+    }
+    if (button_text == "How to Play") {
+        button_detail = "Press Enter for instructions on how to play.";
+    }
+    if (button_text == "High Scores") {
+        button_detail = "Press Enter for High score.";
+    }
+    if (button_text == "Sound: ON") {
+        button_detail = "Press Enter to change sound status.";
+    }
+    if (button_text == "Exit") {
+        button_detail = "Press Enter to quit the game.";
+    }
+    if (button_text == "Exit to Start Menu") {
+        button_detail = "Press Enter to return to the Start Menu.";
+    }
+
+    if(button_detail != "") {
+        select_text_detail -> loadRenderText(renderer , button_detail , normal_color);
+    }
+    else {
+        delete select_text_detail;
+        select_text_detail = nullptr;
     }
 }
 
-bool Button :: checkMousePos(const int &x, const int &y) const
+bool Button :: check_mouse_pos(const int &col, const int &row) const
 {
-    if(x < buttonRect.x || x > buttonRect.x + buttonRect.w) return false;
-    if(y < buttonRect.y || y > buttonRect.y + buttonRect.h) return false;
+    if(col < button_rect.x || col > button_rect.x + button_rect.w) return false;
+    if(row < button_rect.y || row > button_rect.y + button_rect.h) return false;
     return true;
 }
 
-std :: string Button :: getText() const
+std :: string Button :: get_text() const
 {
-    return bText;
+    return button_text;
 }
