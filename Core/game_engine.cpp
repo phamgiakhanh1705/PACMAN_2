@@ -12,8 +12,8 @@ void Engine :: init(SDL_Renderer* &renderer)
 {
     map = new Map();
     objectTexture = new TextureSrc();
-    objectTexture->loadTileTexture(renderer);
-    objectTexture->loadPacmanAndGhostTexture(renderer);
+    objectTexture->load_tile_texture(renderer);
+    objectTexture->load_pacman_and_ghost_texture(renderer);
     tickManager = new TickManager();
     gameManager = new GameManager(renderer);
     soundManager = new SoundManager();
@@ -166,7 +166,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
         for(int j = 0; j < 31; ++j)
         {
             dsRect = {i * 16 + 217 , j * 16 , 16 , 16};
-            objectTexture->renderTileTexture(renderer , map->get_tile_id(i , j) , &dsRect);
+            objectTexture->render_tile_texture(renderer , map->get_tile_id(i , j) , &dsRect);
         }
     }
     if(gameManager->getLevel() >= 3 && !apple->is_destroyed()) apple->render_item(renderer);
@@ -191,7 +191,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
         }
         if(pacman->is_dead())
         {
-            if(objectTexture->pacmanIsDead())
+            if(objectTexture->is_pacman_dead())
             {
                 if(gameManager->getRemainLife() > 0) respawnObject();
                 else
@@ -200,9 +200,9 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
                     gameManager->checkScoreData(scoreData);
                 }
             }
-            else objectTexture->renderPacmanTexture(renderer , pacman->get_screen_pos_col() , pacman->get_screen_pos_row() , TextureSrc :: DEAD_PACMAN);
+            else objectTexture->render_pacman_texture(renderer , pacman->get_screen_pos_col() , pacman->get_screen_pos_row() , TextureSrc :: DEAD_PACMAN);
         }
-        else objectTexture->renderPacmanTexture(renderer , pacman->get_screen_pos_col() , pacman->get_screen_pos_row() , dir);
+        else objectTexture->render_pacman_texture(renderer , pacman->get_screen_pos_col() , pacman->get_screen_pos_row() , dir);
         if(waitTime > 0)
         {
             dsRect = {441 - 97 , 248 - 52 , 194 , 104};
@@ -210,7 +210,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
         }
         if(Mix_Playing(4))
         {
-            objectTexture->renderGhostScore(renderer , gameManager->getEatenGhostPosX() , gameManager->getEatenGhostPosY() , gameManager->getEatenGhostStreak());
+            objectTexture->render_ghost_score(renderer , gameManager->getEatenGhostPosX() , gameManager->getEatenGhostPosY() , gameManager->getEatenGhostStreak());
         }
         soundManager->playSound();
     }
@@ -249,22 +249,22 @@ void Engine :: renderGhost(SDL_Renderer* &renderer , Ghost* &ghost , int ghostID
     if(ghost == nullptr) return;
     if(ghost->is_dead())
     {
-        objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , TextureSrc :: GHOST_SPIRIT , ghost->get_ghost_direction());
+        objectTexture->render_ghost_texture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , TextureSrc :: GHOST_SPIRIT , ghost->get_ghost_direction());
     }
     else if(ghost->is_ghost_frighten())
     {
         if(tickManager->remainFrightenTime() < 2.0)
         {
-            objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , TextureSrc :: FRIGHTEN_GHOST_2);
+            objectTexture->render_ghost_texture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , TextureSrc :: FRIGHTEN_GHOST_2);
         }
         else
         {
-            objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , TextureSrc :: FRIGHTEN_GHOST_1);
+            objectTexture->render_ghost_texture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , TextureSrc :: FRIGHTEN_GHOST_1);
         }
     }
     else
     {
-        objectTexture->renderGhostTexture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , ghost->get_ghost_direction());
+        objectTexture->render_ghost_texture(renderer , ghost->get_screen_pos_col() , ghost->get_screen_pos_row() , ghostID , ghost->get_ghost_direction());
     }
 }
 

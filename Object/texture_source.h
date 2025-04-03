@@ -6,10 +6,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "../LogStatus/logstatus.h"
+#include <vector>
 
 class TextureSrc
 {
     public:
+
         static const int UP = 0;
         static const int RIGHT = 1;
         static const int DOWN = 2;
@@ -26,44 +28,48 @@ class TextureSrc
         static const int GREENDY = 4;
         static const int FRIENDY = 5;
         static const int GHOST_SPIRIT = 6;
-        static const int TOTAL_GHOST = 7;
+        static const int TOTAL_GHOST = 6;
+
+        static const int TILE_SIZE = 16;
+        static const int ENTITY_SIZE = 30;
 
         TextureSrc();
-
         ~TextureSrc();
 
-        bool pacmanIsDead();
+        bool is_pacman_dead();
 
-        void loadTileTexture(SDL_Renderer* &renderer);
+        void load_tile_texture(SDL_Renderer* &renderer);
 
-        void renderTileTexture(SDL_Renderer* &renderer, int tileID, SDL_Rect* dsRect);
+        void render_tile_texture(SDL_Renderer* &renderer , int tile_id , SDL_Rect* display_rect);
 
-        void loadPacmanAndGhostTexture(SDL_Renderer* &renderer);
+        void load_pacman_and_ghost_texture(SDL_Renderer* &renderer);
 
-        void renderPacmanTexture(SDL_Renderer* &renderer, int posX, int posY, int status);
+        void render_pacman_texture(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , int status);
 
-        void renderGhostTexture(SDL_Renderer* &renderer, int posX, int posY, int ghostID, int status);
+        void render_ghost_texture(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , int ghost_id , int status);
 
-        void renderGhostScore(SDL_Renderer* &renderer, const int eatenGhostPosX, const int eantenGhostPosY, const int eatenGhostStreak);
+        void render_ghost_score(SDL_Renderer* &renderer , const int eaten_ghost_pos_col , const int eaten_ghost_pos_row , const int eaten_ghost_streak);
 
     private:
+
         log_status* Console = new log_status("TextureSrc");
 
-        SDL_Texture* tileTexture;
-        SDL_Rect tileSprite[32];
+        SDL_Texture* tile_texture;
+        SDL_Rect tile_sprite[32];
 
-        SDL_Texture* entityTexture;
-        SDL_Texture* ghostScore;
+        SDL_Texture* entity_texture;
+        SDL_Texture* ghost_score;
 
-        SDL_Rect pacmanUP[3];
-        SDL_Rect pacmanDOWN[3];
-        SDL_Rect pacmanLEFT[3];
-        SDL_Rect pacmanRIGHT[3];
-        SDL_Rect pacmanDEAD[11];
+        SDL_Rect pacman_UP[3];
+        SDL_Rect pacman_DOWN[3];
+        SDL_Rect pacman_LEFT[3];
+        SDL_Rect pacman_RIGHT[3];
+        SDL_Rect pacman_DEAD[11];
         SDL_Rect ghost[7][6][2];
 
-        int pacmanFrame;
-        int ghostFrame[7];
+        int pacman_frame;
+        int ghost_frame[7];
+
 };
 
 #endif // _TEXTURE_SOURCE

@@ -45,6 +45,6 @@ void Item :: destroy_item()
 
 void Item :: render_item(SDL_Renderer* &renderer)
 {
-    SDL_Rect dsRect = {tile_col * 16 + 210 , tile_row * 16 - 7 , 30 , 30};
-    SDL_RenderCopy(renderer , item_texture , nullptr , &dsRect);
+    SDL_Rect display_rect = {tile_col * 16 + 210 , tile_row * 16 - 7 , 30 , 30};
+    SDL_RenderCopy(renderer , item_texture , nullptr , &display_rect);
 }
