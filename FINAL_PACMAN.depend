@@ -76,14 +76,14 @@
 	<SDL_image.h>
 	"../LogStatus/logstatus.h"
 
-1743353163 source:c:\cp - copy\project game\final_pacman\manager\text_manager.cpp
+1743705935 source:c:\cp - copy\project game\final_pacman\manager\text_manager.cpp
 	"text_manager.h"
 
-1743351009 c:\cp - copy\project game\final_pacman\manager\text_manager.h
+1743705917 c:\cp - copy\project game\final_pacman\manager\text_manager.h
 	<SDL_ttf.h>
 	<string>
 
-1743702969 source:c:\cp - copy\project game\final_pacman\menu\button.cpp
+1743705964 source:c:\cp - copy\project game\final_pacman\menu\button.cpp
 	"Button.h"
 
 1743701432 c:\cp - copy\project game\final_pacman\menu\button.h
@@ -108,7 +108,7 @@
 	<SDL.h>
 	<stack>
 
-1743352044 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
+1743705977 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
 	"Menu.h"
 	<stdio.h>
 

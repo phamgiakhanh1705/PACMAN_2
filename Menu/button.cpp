@@ -17,8 +17,8 @@ void Button :: change_sound_button(SDL_Renderer* &renderer)
 {
     if(button_text == "Sound: ON") button_text = "Sound: OFF";
     else button_text = "Sound: ON";
-    normal_text -> loadRenderText(renderer , button_text , normal_color);
-    select_text -> loadRenderText(renderer , button_text , select_color);
+    normal_text -> load_render_text(renderer , button_text , normal_color);
+    select_text -> load_render_text(renderer , button_text , select_color);
     button_status = BUTTON_IN;
 }
 
@@ -29,24 +29,24 @@ void Button :: render_button(SDL_Renderer* &renderer)
         SDL_RenderFillRect(renderer , &button_rect);
 
         SDL_SetRenderDrawColor(renderer , select_color.r , select_color.g , select_color.b , select_color.a);
-        select_text -> renderText(renderer , button_rect.x + button_rect.w / 2 , button_rect.y + button_rect.h / 2 , TextManager :: CENTER);
+        select_text -> render_text(renderer , button_rect.x + button_rect.w / 2 , button_rect.y + button_rect.h / 2 , TextManager :: CENTER);
 
         if(select_text_detail != nullptr) {
             SDL_SetRenderDrawColor(renderer , normal_color.r , normal_color.g , normal_color.b , normal_color.a);
-            select_text_detail -> renderText(renderer , 441 , 400 , TextManager :: CENTER);
+            select_text_detail -> render_text(renderer , 441 , 400 , TextManager :: CENTER);
         }
     }
     else if(button_status == BUTTON_OUT) {
         SDL_SetRenderDrawColor(renderer , normal_color.r , normal_color.g , normal_color.b , normal_color.a);
-        normal_text -> renderText(renderer , button_rect.x + button_rect.w / 2 , button_rect.y + button_rect.h / 2 , TextManager :: CENTER);
+        normal_text -> render_text(renderer , button_rect.x + button_rect.w / 2 , button_rect.y + button_rect.h / 2 , TextManager :: CENTER);
     }
 }
 
 void Button :: load_button(SDL_Renderer* &renderer , std :: string text)
 {
     if(text == "") return;
-    normal_text -> loadRenderText(renderer , text , normal_color);
-    select_text -> loadRenderText(renderer , text , select_color);
+    normal_text -> load_render_text(renderer , text , normal_color);
+    select_text -> load_render_text(renderer , text , select_color);
 
     button_text = text;
     button_detail = "";
@@ -74,7 +74,7 @@ void Button :: load_button(SDL_Renderer* &renderer , std :: string text)
     }
 
     if(button_detail != "") {
-        select_text_detail -> loadRenderText(renderer , button_detail , normal_color);
+        select_text_detail -> load_render_text(renderer , button_detail , normal_color);
     }
     else {
         delete select_text_detail;

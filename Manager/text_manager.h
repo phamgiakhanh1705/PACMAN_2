@@ -6,27 +6,30 @@
 #include <SDL_ttf.h>
 #include <string>
 
-class TextManager {
+class TextManager
+{
     private:
-        SDL_Rect dsRect;
 
+        SDL_Rect display_rect;
         TTF_Font* font;
-        SDL_Texture* textTexture;
-        SDL_Surface* textSurface;
+        SDL_Texture* text_texture;
+        SDL_Surface* text_surface;
+
     public:
-        const std::string FONT_NAME = "Assets/Font/Blogger Sans-Bold.ttf";
+
+        const std :: string FONT_NAME = "Assets/Font/Blogger Sans-Bold.ttf";
         static const int CENTER = 0;
         static const int LEFT = 1;
 
-        TextManager(int fontSize);
-
+        TextManager(int font_size);
         ~TextManager();
 
-        int getTextWidth() const;
+        int get_text_length() const;
 
-        void loadRenderText(SDL_Renderer* &renderer, std::string text, SDL_Color textColor);
+        void load_render_text(SDL_Renderer* &renderer , std :: string text , SDL_Color text_color);
 
-        void renderText(SDL_Renderer* &renderer, int x, int y, const int type);
+        void render_text(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , const int type);
+
 };
 
 #endif // _TEXTMANAGER_H_

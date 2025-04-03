@@ -56,8 +56,8 @@ void Menu :: render(SDL_Renderer* &renderer, const std :: vector <std :: string>
         SDL_RenderCopy(renderer, arrowTexture, &srcUP, &dstUP);
         SDL_RenderCopy(renderer, arrowTexture, &srcDOWN, &dstDOWN);
         for(int i = arrowHSPos;i < arrowHSPos + 7;++i){
-            scoreText -> loadRenderText(renderer, scoreData[i], {0 , 0 , 0 , 255});
-            scoreText -> renderText(renderer, 441, 160 + 40 * (i - arrowHSPos), TextManager :: CENTER);
+            scoreText -> load_render_text(renderer, scoreData[i], {0 , 0 , 0 , 255});
+            scoreText -> render_text(renderer, 441, 160 + 40 * (i - arrowHSPos), TextManager :: CENTER);
         }
     }
     else{

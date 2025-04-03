@@ -17,13 +17,13 @@ GameManager :: GameManager(SDL_Renderer* &renderer)
     CLYDE_COIN_LIMIT = 90;
 
     liveText = new TextManager(28);
-    liveText -> loadRenderText(renderer, "Lives:", {255 , 255 , 255 , 255});
+    liveText -> load_render_text(renderer, "Lives:", {255 , 255 , 255 , 255});
     scoreText = new TextManager(28);
-    scoreText -> loadRenderText(renderer, "Scores: 0", {255 , 255 , 255 , 255});
+    scoreText -> load_render_text(renderer, "Scores: 0", {255 , 255 , 255 , 255});
     levelText = new TextManager(28);
-    levelText -> loadRenderText(renderer, "Level: 1", {255 , 255 , 255 , 255});
+    levelText -> load_render_text(renderer, "Level: 1", {255 , 255 , 255 , 255});
     playerName = new TextManager(20);
-    playerName -> loadRenderText(renderer, playername.c_str(), {255 , 255 , 255 , 255});
+    playerName -> load_render_text(renderer, playername.c_str(), {255 , 255 , 255 , 255});
 
     egBoard = loadImage(renderer, "Assets/Menu Image/endgame.png");
     hsBoard = loadImage(renderer, "Assets/Menu Image/newHighscore.png");
@@ -126,12 +126,12 @@ void GameManager :: handleGhostPos(Ghost* &pinky, Ghost* &inky, Ghost* &clyde, G
 
 void GameManager :: renderHUD(SDL_Renderer* &renderer)
 {
-    levelText -> loadRenderText(renderer, "Level: " + std :: to_string(level), {255 , 255 , 255 , 255});
-    levelText -> renderText(renderer, 0 , 0 , TextManager :: LEFT);
-    liveText -> loadRenderText(renderer, "Life: " + std :: to_string(life), {255 , 255 , 255 , 255});
-    liveText -> renderText(renderer, 0 , 50 , TextManager :: LEFT);
-    scoreText -> loadRenderText(renderer, "Scores: " + std :: to_string(scores), {255 , 255 , 255 , 255});
-    scoreText -> renderText(renderer, 0 , 100 , TextManager :: LEFT);
+    levelText -> load_render_text(renderer, "Level: " + std :: to_string(level), {255 , 255 , 255 , 255});
+    levelText -> render_text(renderer, 0 , 0 , TextManager :: LEFT);
+    liveText -> load_render_text(renderer, "Life: " + std :: to_string(life), {255 , 255 , 255 , 255});
+    liveText -> render_text(renderer, 0 , 50 , TextManager :: LEFT);
+    scoreText -> load_render_text(renderer, "Scores: " + std :: to_string(scores), {255 , 255 , 255 , 255});
+    scoreText -> render_text(renderer, 0 , 100 , TextManager :: LEFT);
 }
 
 void GameManager :: runEGBoard(SDL_Renderer* &renderer)
@@ -143,12 +143,12 @@ void GameManager :: runEGBoard(SDL_Renderer* &renderer)
     if(newRecord){
         SDL_RenderCopy(renderer, hsBoard, nullptr, &dsRect);
         static int caretTime = 0;
-        SDL_Rect caret = {395 + playerName -> getTextWidth(), 265 , 2 , 20};
+        SDL_Rect caret = {395 + playerName -> get_text_length(), 265 , 2 , 20};
         if(caretTime % 20 > 10) SDL_RenderFillRect(renderer, &caret);
         ++caretTime; caretTime %= 20;
         if(playername != ""){
-            playerName -> loadRenderText(renderer, playername.c_str(), {0 , 0 , 0 , 255});
-            playerName -> renderText(renderer, 395 , 268 , TextManager :: LEFT);
+            playerName -> load_render_text(renderer, playername.c_str(), {0 , 0 , 0 , 255});
+            playerName -> render_text(renderer, 395 , 268 , TextManager :: LEFT);
         }
     }
 }
