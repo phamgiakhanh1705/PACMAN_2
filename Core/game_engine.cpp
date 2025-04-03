@@ -46,7 +46,7 @@ void Engine :: newGame()
     clyde = new Ghost(15 , 14 , true);
     if(gameManager->getLevel() >= 1)
     {
-        apple->spawnAt(1 , 1);
+        apple->spawn_at(1 , 1);
         delete greendy;
         greendy = new Ghost(12 , 15 , true);
     }
@@ -169,7 +169,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
             objectTexture->renderTileTexture(renderer , map->get_tile_id(i , j) , &dsRect);
         }
     }
-    if(gameManager->getLevel() >= 3 && !apple->isDestroyed()) apple->renderItem(renderer);
+    if(gameManager->getLevel() >= 3 && !apple->is_destroyed()) apple->render_item(renderer);
 
     if(!runningEGBoard)
     {
@@ -368,7 +368,7 @@ void Engine :: ghostMove(Ghost* &ghost)
         {
             tickManager->greendyStartChasePacman();
             ghost->reset_object_tile(ghostTileX , ghostTileY);
-            apple->destroyItem();
+            apple->destroy_item();
             eatGreenApple = true;
         }
     }
@@ -483,13 +483,13 @@ void Engine :: loop(bool &exitToMenu)
     {
         eatGreenApple = false;
     }
-    else if(apple->isDestroyed())
+    else if(apple->is_destroyed())
     {
         int r = rand() % 4;
-        if(r == 0) apple->spawnAt(1 , 1);
-        else if(r == 1) apple->spawnAt(26 , 1);
-        else if(r == 2) apple->spawnAt(26 , 29);
-        else apple->spawnAt(1 , 29);
+        if(r == 0) apple->spawn_at(1 , 1);
+        else if(r == 1) apple->spawn_at(26 , 1);
+        else if(r == 2) apple->spawn_at(26 , 29);
+        else apple->spawn_at(1 , 29);
     }
 
     pacmanPosX = pacman->get_screen_pos_col();
@@ -531,7 +531,7 @@ void Engine :: loop(bool &exitToMenu)
         if(greendy != nullptr)
         {
             if(greendy->is_dead()) greendy->set_ghost_destination(13 , 11);
-            else if(!eatGreenApple) greendy->set_ghost_destination(apple->getPosX() , apple->getPosY());
+            else if(!eatGreenApple) greendy->set_ghost_destination(apple->get_tile_col() , apple->get_tile_row());
             else if(!greendy->is_ghost_frighten()) greendy->set_ghost_destination(pacmanTileX , pacmanTileY , 2);
         }
 

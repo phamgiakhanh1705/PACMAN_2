@@ -51,10 +51,10 @@
 	"base_object.h"
 	<iostream>
 
-1743351884 source:c:\cp - copy\project game\final_pacman\object\item.cpp
+1743662911 source:c:\cp - copy\project game\final_pacman\object\item.cpp
 	"Item.h"
 
-1743350409 c:\cp - copy\project game\final_pacman\object\item.h
+1743662911 c:\cp - copy\project game\final_pacman\object\item.h
 	<SDL.h>
 	<SDL_image.h>
 	<string>
@@ -126,7 +126,7 @@
 	<SDL_image.h>
 	"../LogStatus/logstatus.h"
 
-1743621581 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1743625105 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>
