@@ -9,16 +9,16 @@
 1743357450 source:c:\cp - copy\project game\final_pacman\main.cpp
 	"Core/Window.h"
 
-1743703004 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
+1743706004 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
 	"game_manager.h"
 	<iostream>
 	<string>
 
-1743353317 source:c:\cp - copy\project game\final_pacman\manager\sound_manager.cpp
+1743752396 source:c:\cp - copy\project game\final_pacman\manager\sound_manager.cpp
 	"sound_manager.h"
 	<iostream>
 
-1743350959 c:\cp - copy\project game\final_pacman\manager\sound_manager.h
+1743752354 c:\cp - copy\project game\final_pacman\manager\sound_manager.h
 	<SDL_mixer.h>
 	<vector>
 	"../LogStatus/logstatus.h"
@@ -68,7 +68,7 @@
 	"base_object.h"
 	<stack>
 
-1743700898 source:c:\cp - copy\project game\final_pacman\object\texture_source.cpp
+1743707007 source:c:\cp - copy\project game\final_pacman\object\texture_source.cpp
 	"texture_source.h"
 
 1743151383 c:\cp - copy\project game\final_pacman\object\texture_screen.h
@@ -127,7 +127,7 @@
 	"../LogStatus/logstatus.h"
 	<vector>
 
-1743700326 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1743752447 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>

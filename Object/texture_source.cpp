@@ -139,43 +139,42 @@ void TextureSrc :: load_pacman_and_ghost_texture(SDL_Renderer* &renderer)
 
             pos_texture_row += ENTITY_SIZE + 1;
             if(i == 3) pos_texture_row += ENTITY_SIZE + 1;
-
         }
 
-        pos_texture_col = 0;
+        pos_texture_col = 8 * (ENTITY_SIZE + 1);
         pos_texture_row = ENTITY_SIZE + 1;
         for(int i = 0; i < TOTAL_GHOST; i++) {
-            pos_texture_col = 0;
+            pos_texture_col = 8 * (ENTITY_SIZE + 1);
 
-            ghost[i][FRIGHTEN_GHOST_1][0] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+            ghost[i][FRIGHTEN_GHOST_1][0] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
             pos_texture_col += ENTITY_SIZE + 1;
-            ghost[i][FRIGHTEN_GHOST_1][1] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+            ghost[i][FRIGHTEN_GHOST_1][1] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
             pos_texture_col += ENTITY_SIZE + 1;
 
-            ghost[i][FRIGHTEN_GHOST_2][0] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+            ghost[i][FRIGHTEN_GHOST_2][0] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
             pos_texture_col += ENTITY_SIZE + 1;
-            ghost[i][FRIGHTEN_GHOST_2][1] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+            ghost[i][FRIGHTEN_GHOST_2][1] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
             pos_texture_col += ENTITY_SIZE + 1;
         }
 
         pos_texture_col = 8 * (ENTITY_SIZE + 1);
         pos_texture_row = 2 * (ENTITY_SIZE + 1);
 
-        ghost[GHOST_SPIRIT][UP][0] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
-        ghost[GHOST_SPIRIT][UP][1] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+        ghost[GHOST_SPIRIT][UP][0] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
+        ghost[GHOST_SPIRIT][UP][1] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
         pos_texture_col += ENTITY_SIZE + 1;
 
-        ghost[GHOST_SPIRIT][DOWN][0] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
-        ghost[GHOST_SPIRIT][DOWN][1] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+        ghost[GHOST_SPIRIT][DOWN][0] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
+        ghost[GHOST_SPIRIT][DOWN][1] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
         pos_texture_col += 8 * (ENTITY_SIZE + 1);
         pos_texture_col += ENTITY_SIZE + 1;
 
-        ghost[GHOST_SPIRIT][LEFT][0] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
-        ghost[GHOST_SPIRIT][LEFT][1] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+        ghost[GHOST_SPIRIT][LEFT][0] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
+        ghost[GHOST_SPIRIT][LEFT][1] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
         pos_texture_col += ENTITY_SIZE + 1;
 
-        ghost[GHOST_SPIRIT][RIGHT][0] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
-        ghost[GHOST_SPIRIT][RIGHT][1] = {pos_texture_col , pos_texture_row , TILE_SIZE , TILE_SIZE};
+        ghost[GHOST_SPIRIT][RIGHT][0] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
+        ghost[GHOST_SPIRIT][RIGHT][1] = {pos_texture_col , pos_texture_row , ENTITY_SIZE , ENTITY_SIZE};
 
 
         SDL_FreeSurface(image);

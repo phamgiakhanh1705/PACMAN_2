@@ -17,7 +17,7 @@ void Engine :: init(SDL_Renderer* &renderer)
     tickManager = new TickManager();
     gameManager = new GameManager(renderer);
     soundManager = new SoundManager();
-    soundManager->loadSound();
+    soundManager->load_sound();
     srand(time(nullptr));
     apple = new Item(renderer , "Assets/Entity Image/greenapple.png");
     newGame();
@@ -55,7 +55,7 @@ void Engine :: newGame()
         delete friendy;
         friendy = new Ghost(14 , 11 , false);
     }
-    soundManager->insertPlayList(SoundManager :: START);
+    soundManager->insert_playlist(SoundManager :: START);
     tickManager->resetTick(gameManager->getLevel());
     tickManager->pauseTick(true);
     runningEGBoard = false;
@@ -83,7 +83,7 @@ void Engine :: respawnObject()
         delete friendy;
         friendy = new Ghost(14 , 11 , false);
     }
-    soundManager->reset();
+    soundManager->reset_sound();
     tickManager->pauseTick(false);
 }
 
@@ -212,7 +212,7 @@ void Engine :: render(SDL_Renderer* &renderer , const std :: vector<std :: strin
         {
             objectTexture->render_ghost_score(renderer , gameManager->getEatenGhostPosX() , gameManager->getEatenGhostPosY() , gameManager->getEatenGhostStreak());
         }
-        soundManager->playSound();
+        soundManager->play_sound();
     }
 
     if(runningEGBoard) gameManager->runEGBoard(renderer);
@@ -231,14 +231,14 @@ void Engine :: pacmanMeatGhost(Ghost* &ghost)
             gameManager->eatGhost(ghost->get_screen_pos_col() , ghost->get_screen_pos_row());
             ghost->set_dead(true);
             ghost->set_ghost_frighten(false);
-            soundManager->insertPlayList(SoundManager :: EAT_GHOST);
-            soundManager->insertPlayList(SoundManager :: GHOST_GO_HOME);
+            soundManager->insert_playlist(SoundManager :: EAT_GHOST);
+            soundManager->insert_playlist(SoundManager :: GHOST_GO_HOME);
         }
         else
         {
             pacman->set_dead(true , 1);
             gameManager->lostALife();
-            soundManager->insertPlayList(SoundManager :: DEAD);
+            soundManager->insert_playlist(SoundManager :: DEAD);
             tickManager->pauseTick(true);
         }
     }
@@ -362,7 +362,7 @@ void Engine :: ghostMove(Ghost* &ghost)
         if(ghost->is_dead())
         {
             ghost->set_dead(false);
-            soundManager->insertPlayList(SoundManager :: REVIVAL_GHOST);
+            soundManager->insert_playlist(SoundManager :: REVIVAL_GHOST);
         }
         else if(ghost == greendy)
         {
@@ -438,10 +438,10 @@ void Engine :: loop(bool &exitToMenu)
     }
 
     int remainCoin = gameManager->getRemainCoin();
-    if(remainCoin < 50) soundManager->insertPlayList(SoundManager :: MOVE_3);
-    else if(remainCoin < 100) soundManager->insertPlayList(SoundManager :: MOVE_2);
-    else if(remainCoin < 150) soundManager->insertPlayList(SoundManager :: MOVE_1);
-    else soundManager->insertPlayList(SoundManager :: MOVE_0);
+    if(remainCoin < 50) soundManager->insert_playlist(SoundManager :: MOVE_3);
+    else if(remainCoin < 100) soundManager->insert_playlist(SoundManager :: MOVE_2);
+    else if(remainCoin < 150) soundManager->insert_playlist(SoundManager :: MOVE_1);
+    else soundManager->insert_playlist(SoundManager :: MOVE_0);
 
     pacmanTileX = pacman->get_tile_col();
     pacmanTileY = pacman->get_tile_row();
@@ -449,11 +449,11 @@ void Engine :: loop(bool &exitToMenu)
     if(typeOfCoin != GameManager :: notCoin)
     {
         gameManager->eatCoins(typeOfCoin);
-        soundManager->insertPlayList(SoundManager :: EAT_DOT);
+        soundManager->insert_playlist(SoundManager :: EAT_DOT);
         if(typeOfCoin == GameManager :: superCoin)
         {
             tickManager->setFrightenTime();
-            soundManager->insertPlayList(SoundManager :: GHOST_TURN_BLUE);
+            soundManager->insert_playlist(SoundManager :: GHOST_TURN_FRIGHTEN);
             if(!blinky->is_dead()) blinky->set_ghost_frighten(true);
             if(!pinky ->is_dead()) pinky ->set_ghost_frighten(true);
             if(!inky  ->is_dead()) inky  ->set_ghost_frighten(true);
@@ -465,7 +465,7 @@ void Engine :: loop(bool &exitToMenu)
 
     if(!tickManager->isFrightenTime())
     {
-        soundManager->insertPlayList(SoundManager :: NORMAL_GHOST);
+        soundManager->insert_playlist(SoundManager :: NORMAL_GHOST);
         blinky->set_ghost_frighten(false);
         pinky ->set_ghost_frighten(false);
         inky  ->set_ghost_frighten(false);
@@ -553,7 +553,7 @@ void Engine :: loop(bool &exitToMenu)
 
     if(gameManager->clearAllCoins())
     {
-        soundManager->insertPlayList(SoundManager :: WINNING);
+        soundManager->insert_playlist(SoundManager :: WINNING);
         waitTime = 100;
     }
 }
