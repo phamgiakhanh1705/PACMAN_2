@@ -13,27 +13,28 @@
 class PlayStateManager
 {
     public:
-        std :: vector<std :: string> pauseMenuButtonText = {"Resume" , "New Game" , "How to Play" , "Sound: ON" , "Exit to Start Menu"};
+
+        std :: vector <std :: string> pause_menu_button_text = {"Resume" , "New Game" , "How to Play" , "Sound: ON" , "Exit to Start Menu"};
 
         PlayStateManager();
-
         ~PlayStateManager();
 
-        void handleEvent(SDL_Event &e , SDL_Renderer* &renderer , bool &runningMain , std :: vector<std :: string> &scoreData);
+        void handle_event(SDL_Event &event , SDL_Renderer* &renderer , bool &runningMain , std :: vector <std :: string> &score_data);
 
-        void newGame(SDL_Renderer* &renderer);
+        void new_game(SDL_Renderer* &renderer);
 
-        void runGame(bool &exitToMenu);
+        void run_game(bool &exit_to_menu);
 
-        void render(SDL_Renderer* &renderer , const std :: vector<std :: string> &scoreData);
+        void render(SDL_Renderer* &renderer , const std :: vector <std :: string> &score_data);
 
     private:
-        std :: vector<std :: string> scoreData;
-        std :: vector<int> muteChannel;
+
+        std :: vector <std :: string> scoreData;
+        std :: vector <int> mute_channel;
         Engine* engine = nullptr;
-        Menu* pauseMenu = nullptr;
+        Menu* pause_menu = nullptr;
         bool running = true;
-        bool runPauseMenu = false;
+        bool running_menu_pause = false;
 };
 
 #endif // _PLAY_STATE_MANAGER_H_

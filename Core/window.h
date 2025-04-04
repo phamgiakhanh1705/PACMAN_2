@@ -16,28 +16,28 @@ class Window
     public:
         static const int SCREEN_WIDTH = 882;
         static const int SCREEN_HEIGHT = 496;
-        const std :: string WINDOW_TITTLE = "Pacman";
-        std :: vector<std :: string> startMenuButtonText = {"New Game" , "How to Play" , "High Scores" , "Sound: ON" , "Exit"};
+        const std :: string WINDOW_TITLE = "Pacman";
+        std :: vector <std :: string> start_menu_button_text = {"New Game" , "How to Play" , "High Scores" , "Sound: ON" , "Exit"};
 
         Window();
-
         ~Window();
 
-        void initSDL();
+        void init_SDL();
 
-        void quitSDL();
+        void quit_SDL();
 
-        void runGame();
+        void start_running_game();
 
     private:
+
         SDL_Window* window = nullptr;
         SDL_Renderer* renderer = nullptr;
-        Menu* startMenu = nullptr;
-        PlayStateManager* playState = nullptr;
+        Menu* start_menu = nullptr;
+        PlayStateManager* play_state = nullptr;
         log_status* Console = new log_status("Window");
-        std :: vector<std :: string> highScore;
-        bool Running = false;
-        bool runningMenu = false;
+        std :: vector <std :: string> highscores;
+        bool running = false;
+        bool menu_running = false;
 };
 
 #endif // _WINDOW_H_

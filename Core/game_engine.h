@@ -17,6 +17,13 @@
 class Engine
 {
     public:
+
+        static const int UP = 0;
+        static const int RIGHT = 1;
+        static const int DOWN = 2;
+        static const int LEFT = 3;
+        static const int TILE_SIZE = 16;
+
         Engine()
         {
             map = nullptr;
@@ -28,57 +35,72 @@ class Engine
             greendy = nullptr;
             friendy = nullptr;
             apple = nullptr;
-            objectTexture = nullptr;
-            tickManager = nullptr;
-            gameManager = nullptr;
-            soundManager = nullptr;
+            object_texture = nullptr;
+            tick_manager = nullptr;
+            game_manager = nullptr;
+            sound_manager = nullptr;
         }
 
         ~Engine()
         {
             delete map;
             map = nullptr;
+
             delete pacman;
             pacman = nullptr;
+
             delete blinky;
             blinky = nullptr;
+
             delete pinky;
             pinky = nullptr;
+
             delete clyde;
             clyde = nullptr;
+
             delete inky;
             inky = nullptr;
+
             delete greendy;
             greendy = nullptr;
+
             delete friendy;
             friendy = nullptr;
+
             delete apple;
             apple = nullptr;
-            SDL_DestroyTexture(nextLevel);
-            nextLevel = nullptr;
+
+            SDL_DestroyTexture(next_level);
+            next_level = nullptr;
+
             SDL_DestroyTexture(ready);
             ready = nullptr;
-            delete objectTexture;
-            objectTexture = nullptr;
-            delete tickManager;
-            tickManager = nullptr;
-            delete gameManager;
-            gameManager = nullptr;
-            delete soundManager;
-            soundManager = nullptr;
+
+            delete object_texture;
+            object_texture = nullptr;
+
+            delete tick_manager;
+            tick_manager = nullptr;
+
+            delete game_manager;
+            game_manager = nullptr;
+
+            delete sound_manager;
+            sound_manager = nullptr;
         }
 
-        void newGame();
+        void new_game();
 
-        void init(SDL_Renderer* &renderer);
+        void init_game(SDL_Renderer* &renderer);
 
-        void handleEvent(SDL_Event &e , std :: vector<std :: string> &scoreData);
+        void handle_event_engine(SDL_Event &e , std :: vector <std :: string> &score_data);
 
-        void loop(bool &exitToMenu);
+        void loop_game(bool &exit_to_menu);
 
-        void render(SDL_Renderer* &renderer , const std :: vector<std :: string> &scoreData);
+        void render_game(SDL_Renderer* &renderer , const std :: vector <std :: string> &score_data);
 
     private:
+
         Map* map;
         Pacman* pacman = nullptr;
         Ghost* blinky = nullptr;
@@ -88,24 +110,25 @@ class Engine
         Ghost* greendy = nullptr;
         Ghost* friendy = nullptr;
         Item* apple;
-        TextureSrc* objectTexture;
-        TickManager* tickManager;
-        GameManager* gameManager;
-        SoundManager* soundManager;
-        SDL_Texture* nextLevel;
+        TextureSrc* object_texture;
+        TickManager* tick_manager;
+        GameManager* game_manager;
+        SoundManager* sound_manager;
+        SDL_Texture* next_level;
         SDL_Texture* ready;
-        bool runningEGBoard = false;
-        bool eatGreenApple = false;
-        int waitTime = 0;
+        bool running_endgame_board = false;
+        bool eat_green_apple = false;
+        int wait_time = 0;
 
     protected:
-        void respawnObject();
 
-        void ghostMove(Ghost* &ghost);
+        void respawn_object();
 
-        void pacmanMeatGhost(Ghost* &ghost);
+        void ghost_move(Ghost* &ghost);
 
-        void renderGhost(SDL_Renderer* &renderer , Ghost* &ghost , int ghostID);
+        void pacman_meat_ghost(Ghost* &ghost);
+
+        void render_ghost(SDL_Renderer* &renderer , Ghost* &ghost , int ghost_id);
 };
 
 #endif // _GAME_ENGINE_H_

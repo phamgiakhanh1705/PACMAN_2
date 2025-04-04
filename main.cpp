@@ -1,13 +1,14 @@
 #include "Core/Window.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 
     Window* window = new Window();
 
-    window -> initSDL();
+    window -> init_SDL();
 
-    window -> runGame();
+    window -> start_running_game();
 
-    window -> quitSDL();
+    window -> quit_SDL();
     return 0;
 }

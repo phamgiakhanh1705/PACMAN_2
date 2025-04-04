@@ -6,7 +6,7 @@
 	<iostream>
 	<string>
 
-1743357450 source:c:\cp - copy\project game\final_pacman\main.cpp
+1743792011 source:c:\cp - copy\project game\final_pacman\main.cpp
 	"Core/Window.h"
 
 1743761216 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
@@ -51,7 +51,7 @@
 	"base_object.h"
 	<iostream>
 
-1743700395 source:c:\cp - copy\project game\final_pacman\object\item.cpp
+1743792489 source:c:\cp - copy\project game\final_pacman\object\item.cpp
 	"Item.h"
 
 1743662911 c:\cp - copy\project game\final_pacman\object\item.h
@@ -127,13 +127,13 @@
 	"../LogStatus/logstatus.h"
 	<vector>
 
-1743777238 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1743792489 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>
 	<time.h>
 
-1743356749 c:\cp - copy\project game\final_pacman\core\game_engine.h
+1743789028 c:\cp - copy\project game\final_pacman\core\game_engine.h
 	<SDL.h>
 	<SDL_mixer.h>
 	"../Map/map.h"
@@ -145,11 +145,11 @@
 	"../Manager/game_manager.h"
 	"../Manager/Sound_manager.h"
 
-1743758357 source:c:\cp - copy\project game\final_pacman\core\play_state_manager.cpp
+1743794192 source:c:\cp - copy\project game\final_pacman\core\play_state_manager.cpp
 	"play_state_manager.h"
 	<iostream>
 
-1743356818 c:\cp - copy\project game\final_pacman\core\play_state_manager.h
+1743794227 c:\cp - copy\project game\final_pacman\core\play_state_manager.h
 	<string>
 	<vector>
 	"game_engine.h"
@@ -157,11 +157,11 @@
 	"../Menu/button.h"
 	"../Menu/menu.h"
 
-1743758437 source:c:\cp - copy\project game\final_pacman\core\window.cpp
+1743791994 source:c:\cp - copy\project game\final_pacman\core\window.cpp
 	"window.h"
 	"../LogStatus/logstatus.h"
 
-1743356856 c:\cp - copy\project game\final_pacman\core\window.h
+1743791932 c:\cp - copy\project game\final_pacman\core\window.h
 	<SDL.h>
 	<SDL_ttf.h>
 	<SDL_mixer.h>

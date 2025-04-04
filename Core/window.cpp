@@ -6,19 +6,19 @@ Window :: Window()
 {
     window = nullptr;
     renderer = nullptr;
-    playState = nullptr;
-    startMenu = nullptr;
-    runningMenu = false;
+    play_state = nullptr;
+    start_menu = nullptr;
+    menu_running = false;
 }
 
 // Giải phóng bộ nhớ và hủy renderer/window nếu tồn tại
 Window :: ~Window()
 {
-    delete playState;
-    playState = nullptr;
+    delete play_state;
+    play_state = nullptr;
 
-    delete startMenu;
-    startMenu = nullptr;
+    delete start_menu;
+    start_menu = nullptr;
 
     if(renderer != nullptr) {
         SDL_DestroyRenderer(renderer);
@@ -33,106 +33,111 @@ Window :: ~Window()
 
 
 // Khởi tạo SDL
-void Window :: initSDL()
+void Window :: init_SDL()
 {
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         Console -> status(SDL_GetError());
     }
-    else{
+    else {
         // Tạo cửa sổ game: tiểu đề , vị trí , kích thước , chế độ hiển thị
-        window = SDL_CreateWindow(WINDOW_TITTLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        window = SDL_CreateWindow(WINDOW_TITLE.c_str() , SDL_WINDOWPOS_CENTERED , SDL_WINDOWPOS_CENTERED , SCREEN_WIDTH , SCREEN_HEIGHT , SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         Console -> status("Window opened successfully!");
-        Running = true;
+        running = true;
 
-        if(window == nullptr) { // Tạp cửa sổ lỗi
+        if(window == nullptr) { // Tạo cửa sổ lỗi
             Console -> status(SDL_GetError());
         }
-        else{
+        else {
             // Tạo renderer để vẽ lên window
             renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
             Console -> status("Renderer created successfully!");
-            SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-            SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+            SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); // Giúp khi scale hình ảnh thì làm mượt
+            SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT); // Dù resize cửa sổ, vẫn giữ game theo tỉ lệ 960x540, tránh vỡ layout
 
             if(TTF_Init() < 0) Console -> status(TTF_GetError());
             else Console -> status("TTF Ready!");
 
             if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 8, 2048) < 0) Console -> status(Mix_GetError());
             else Console -> status("Audio Ready!");
-            Mix_Volume(-1, MIX_MAX_VOLUME);
+            Mix_Volume(-1, MIX_MAX_VOLUME); // Đặt âm lượng mặc định cho tất cả channel max volume
 
-            freopen("score.txt", "r", stdin);
-            std :: string t = "";
-            for(int i = 0;i < 10;++i){
-                std :: getline(std :: cin, t);
-                highScore.push_back(t);
+            freopen("score.txt" , "r" , stdin);
+            std :: string text = "";
+            for(int i = 0; i < 10; i++){
+                std :: getline(std :: cin , text);
+                highscores.push_back(text);
             }
         }
     }
 }
 
-void Window :: quitSDL()
+void Window :: quit_SDL()
 {
-    SDL_DestroyRenderer(renderer);
-    renderer = nullptr;
     SDL_DestroyWindow(window);
     window = nullptr;
-    Mix_Quit();
+
+    SDL_DestroyRenderer(renderer);
+    renderer = nullptr;
+
     TTF_Quit();
+    Mix_Quit();
+
     atexit(SDL_Quit);
     Console -> status("Successfully exited!");
-    freopen("score.txt", "w", stdout);
-    for(int i = 0;i < 10;++i) std :: cout << highScore[i] << std :: endl;
+    freopen("score.txt" , "w" , stdout);
+    for(int i = 0; i < 10; i++) std :: cout << highscores[i] << '\n';
     return;
 }
 
-void Window :: runGame()
+void Window :: start_running_game()
 {
-    startMenu = new Menu(262 , 170 , startMenuButtonText.size(), 320 , 30);
-    startMenu -> init(renderer, "Assets/Menu Image/Pacman Pause Menu.png", startMenuButtonText);
-    startMenu -> change_running_status();
+    start_menu = new Menu(262 , 170 , (int) start_menu_button_text.size() , 320 , 30);
+    start_menu -> init(renderer , "Assets/Menu Image/Pacman Pause Menu.png" , start_menu_button_text);
+    start_menu -> change_running_status();
 
-    SDL_Event e;
-    runningMenu = true;
-    bool startGame = false;
-    playState = new PlayStateManager();
+    SDL_Event event;
+    menu_running = true;
+    bool start_game = false;
+    play_state = new PlayStateManager();
 
-    while(Running){
-        while(SDL_PollEvent(&e) != 0){
-            if(e.type == SDL_QUIT) Running = false;
-            else{
-                if(runningMenu){
-                    startMenu -> handle_event(e, renderer);
-                    switch(startMenu -> get_menu_status()){
-                        case Menu :: PLAY_BUTTON_PRESSED:
-                            runningMenu = false;
-                            break;
-                        case Menu :: EXIT_BUTTON_PRESSED:
-                            Running = false;
-                            break;
+    while(running) {
+        while(SDL_PollEvent(&event) != 0) {
+            if(event.type == SDL_QUIT) running = false;
+            else {
+                if(menu_running) {
+                    start_menu -> handle_event(event , renderer);
+                    if(start_menu -> get_menu_status() == Menu :: PLAY_BUTTON_PRESSED) {
+                        menu_running = false;
+                    }
+                    if(start_menu -> get_menu_status() == Menu :: EXIT_BUTTON_PRESSED) {
+                        running = false;
                     }
                 }
-                else{
-                    playState -> handleEvent(e, renderer, runningMenu, highScore);
-                    if(runningMenu) startMenu -> return_main_menu();
+                else {
+                    play_state -> handle_event(event , renderer , menu_running , highscores);
+                    if(menu_running) start_menu -> return_main_menu();
                 }
             }
         }
-        if(!runningMenu){
-            if(!startGame){
-                playState -> newGame(renderer);
-                startGame = true;
+        if(!menu_running) {
+            if(!start_game) {
+                play_state -> new_game(renderer);
+                start_game = true;
             }
-            playState -> runGame(runningMenu);
-            if(runningMenu) startMenu -> return_main_menu(), startGame = false;
+            play_state -> run_game(menu_running);
+            if(menu_running) {
+                start_menu -> return_main_menu();
+                start_game = false;
+            }
         }
 
-        SDL_SetRenderDrawColor(renderer, 0 , 0 , 0 , 255);
+        SDL_SetRenderDrawColor(renderer , 0 , 0 , 0 , 255);
         SDL_RenderClear(renderer);
 
-        if(runningMenu)
-            startMenu -> render_menu(renderer, highScore);
-        else playState -> render(renderer, highScore);
+        if(menu_running) {
+            start_menu -> render_menu(renderer , highscores);
+        }
+        else play_state -> render(renderer , highscores);
 
         SDL_RenderPresent(renderer);
     }
