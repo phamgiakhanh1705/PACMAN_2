@@ -9,12 +9,12 @@
 1743357450 source:c:\cp - copy\project game\final_pacman\main.cpp
 	"Core/Window.h"
 
-1743706004 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
+1743761216 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
 	"game_manager.h"
 	<iostream>
 	<string>
 
-1743752396 source:c:\cp - copy\project game\final_pacman\manager\sound_manager.cpp
+1743758245 source:c:\cp - copy\project game\final_pacman\manager\sound_manager.cpp
 	"sound_manager.h"
 	<iostream>
 
@@ -91,7 +91,7 @@
 	<string>
 	"../Manager/text_manager.h"
 
-1743351087 c:\cp - copy\project game\final_pacman\manager\game_manager.h
+1743761216 c:\cp - copy\project game\final_pacman\manager\game_manager.h
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
@@ -100,19 +100,19 @@
 	"text_manager.h"
 	"../Menu/Button.h"
 
-1743353109 source:c:\cp - copy\project game\final_pacman\manager\tick_manager.cpp
+1743779358 source:c:\cp - copy\project game\final_pacman\manager\tick_manager.cpp
 	"tick_manager.h"
 	<iostream>
 
-1743351087 c:\cp - copy\project game\final_pacman\manager\tick_manager.h
+1743777692 c:\cp - copy\project game\final_pacman\manager\tick_manager.h
 	<SDL.h>
 	<stack>
 
-1743705977 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
+1743758290 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
 	"Menu.h"
 	<stdio.h>
 
-1743351097 c:\cp - copy\project game\final_pacman\menu\menu.h
+1743758251 c:\cp - copy\project game\final_pacman\menu\menu.h
 	<SDL.h>
 	<SDL_mixer.h>
 	<SDL_image.h>
@@ -127,7 +127,7 @@
 	"../LogStatus/logstatus.h"
 	<vector>
 
-1743752447 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1743777238 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>
@@ -145,7 +145,7 @@
 	"../Manager/game_manager.h"
 	"../Manager/Sound_manager.h"
 
-1743353882 source:c:\cp - copy\project game\final_pacman\core\play_state_manager.cpp
+1743758357 source:c:\cp - copy\project game\final_pacman\core\play_state_manager.cpp
 	"play_state_manager.h"
 	<iostream>
 
@@ -157,7 +157,7 @@
 	"../Menu/button.h"
 	"../Menu/menu.h"
 
-1743614934 source:c:\cp - copy\project game\final_pacman\core\window.cpp
+1743758437 source:c:\cp - copy\project game\final_pacman\core\window.cpp
 	"window.h"
 	"../LogStatus/logstatus.h"
 

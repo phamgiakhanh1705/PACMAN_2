@@ -1,200 +1,217 @@
 #include "Menu.h"
 #include <stdio.h>
 
-Menu :: Menu(const int baseScrPosX, const int baseScrPosY, const int totalButton, const int buttonWidth, const int buttonHeight)
+Menu :: Menu(const int _base_screen_pos_col , const int _base_screen_pos_row , const int total_button , const int button_width , const int button_height)
 {
-    menuTexture = nullptr;
-    for(int i = 0;i < 3;++i) howToPlayTexture[i] = nullptr;
-    highScoreTexture = nullptr;
-    arrowTexture = nullptr;
-    scoreText = nullptr;
-    arrowHSPos = 0;
-    TOTAL_BUTTON = totalButton;
-    MENU_BUTTON_WIDTH = buttonWidth;
-    MENU_BUTTON_HEIGHT = buttonHeight;
-    this -> baseScrPosX = baseScrPosX;
-    this -> baseScrPosY = baseScrPosY;
+    menu_texture = nullptr;
+    for(int i = 0; i < 3; i++) {
+        how_to_play_texture[i] = nullptr;
+    }
+    high_score_texture = nullptr;
+    arrow_texture = nullptr;
+    score_text = nullptr;
+    arrow_HS_pos = 0;
+    TOTAL_BUTTON = total_button;
+    MENU_BUTTON_WIDTH = button_width;
+    MENU_BUTTON_HEIGHT = button_height;
+    base_screen_pos_col = _base_screen_pos_col;
+    base_screen_pos_row = _base_screen_pos_row;
 }
 
 Menu :: ~Menu()
 {
-    Mix_FreeChunk(navigationSound);
-    Mix_FreeChunk(selectionSound);
+    Mix_FreeChunk(navigation_sound);
+    Mix_FreeChunk(selection_sound);
 
-    SDL_DestroyTexture(menuTexture);
-    menuTexture = nullptr;
-    for(int i = 0;i < 3;++i){
-        SDL_DestroyTexture(howToPlayTexture[i]);
-        howToPlayTexture[i] = nullptr;
-    }
-    SDL_DestroyTexture(highScoreTexture);
-    highScoreTexture = nullptr;
-    SDL_DestroyTexture(arrowTexture);
-    arrowTexture = nullptr;
+    SDL_DestroyTexture(menu_texture);
+    menu_texture = nullptr;
 
-    for(Button* button : menuButton){
-        delete button; button = nullptr;
+    for(int i = 0; i < 3; i++) {
+        SDL_DestroyTexture(how_to_play_texture[i]);
+        how_to_play_texture[i] = nullptr;
     }
-    menuButton.clear();
+
+    SDL_DestroyTexture(high_score_texture);
+    high_score_texture = nullptr;
+
+    SDL_DestroyTexture(arrow_texture);
+    arrow_texture = nullptr;
+
+    for(Button* button : menu_button){
+        delete button;
+        button = nullptr;
+    }
+    menu_button.clear();
 }
 
-void Menu :: render(SDL_Renderer* &renderer, const std :: vector <std :: string> &scoreData)
+void Menu :: render_menu(SDL_Renderer* &renderer , const std :: vector <std :: string> &score_data)
 {
-    if(currentMenuStatus == HOW_TO_PLAY){
-        SDL_RenderCopy(renderer, howToPlayTexture[currentHTPid], nullptr, nullptr);
+    if(current_menu_status == HOW_TO_PLAY) {
+        SDL_RenderCopy(renderer , how_to_play_texture[current_HTP_id] , nullptr , nullptr);
     }
-    else if(currentMenuStatus == HIGH_SCORES){
-        SDL_RenderCopy(renderer, highScoreTexture, nullptr, nullptr);
-        SDL_Rect srcUP = {0 , 0 , 431 , 400} , srcDOWN = {431 , 0 , 431 , 400};
-        SDL_Rect dstUP = {441 - 41 , 85 , 80 , 80} , dstDOWN = {441 - 34 , 385 , 80 , 80};
-        static bool alphaUP = true;
-        if(alphaUP) alphaMod += 2;
-        else alphaMod -= 2;
-        if(alphaMod > 255) alphaUP = false , alphaMod = 254;
-        else if(alphaMod < 1) alphaUP = true , alphaMod = 0;
-        SDL_SetTextureAlphaMod(arrowTexture, alphaMod);
-        SDL_RenderCopy(renderer, arrowTexture, &srcUP, &dstUP);
-        SDL_RenderCopy(renderer, arrowTexture, &srcDOWN, &dstDOWN);
-        for(int i = arrowHSPos;i < arrowHSPos + 7;++i){
-            scoreText -> load_render_text(renderer, scoreData[i], {0 , 0 , 0 , 255});
-            scoreText -> render_text(renderer, 441, 160 + 40 * (i - arrowHSPos), TextManager :: CENTER);
+    else if(current_menu_status == HIGH_SCORES) {
+        SDL_RenderCopy(renderer , high_score_texture , nullptr , nullptr);
+
+        SDL_Rect source_UP = {0 , 0 , 431 , 400} , source_DOWN = {431 , 0 , 431 , 400};
+        SDL_Rect display_UP = {441 - 41 , 85 , 80 , 80} , display_DOWN = {441 - 34 , 385 , 80 , 80};
+
+        static bool alpha_up = true;
+        if(alpha_up) alpha_mod += 2;
+        else alpha_mod -= 2;
+        if(alpha_mod > 255) alpha_up = false , alpha_mod = 254;
+        else if(alpha_mod < 1) alpha_up = true , alpha_mod = 0;
+
+        SDL_SetTextureAlphaMod(arrow_texture , alpha_mod);
+        SDL_RenderCopy(renderer , arrow_texture , &source_UP , &display_UP);
+        SDL_RenderCopy(renderer , arrow_texture , &source_DOWN , &display_DOWN);
+
+        for(int i = arrow_HS_pos; i < arrow_HS_pos + 7; i++) {
+            score_text -> load_render_text(renderer, score_data[i] , {0 , 0 , 0 , 255});
+            score_text -> render_text(renderer , 441 , 160 + 40 * (i - arrow_HS_pos) , TextManager :: CENTER);
         }
     }
-    else{
-        SDL_RenderCopy(renderer, menuTexture, nullptr, nullptr);
-        for(int i = 0;i < TOTAL_BUTTON;++i)
-            menuButton[i] -> render_button(renderer);
-    }
-}
-
-void Menu :: init(SDL_Renderer* &renderer, const std :: string imgPath, std :: vector <std :: string> &buttonText)
-{
-    SDL_Surface* Image = IMG_Load(imgPath.c_str());
-    if(Image == nullptr) console -> status(IMG_GetError());
-    else{
-        menuTexture = SDL_CreateTextureFromSurface(renderer, Image);
-        SDL_FreeSurface(Image);
-        howToPlayTexture[0] = loadImage(renderer, "Assets/Menu Image/How to Play1.png");
-        howToPlayTexture[1] = loadImage(renderer, "Assets/Menu Image/How to Play2.png");
-        howToPlayTexture[2] = loadImage(renderer, "Assets/Menu Image/How to Play3.png");
-        Image = IMG_Load("Assets/Menu Image/High Scores.png");
-        highScoreTexture = loadImage(renderer, "Assets/Menu Image/High Scores.png");
-        arrowTexture = loadImage(renderer, "Assets/Menu Image/arrow-upanddown.png");
-
-        scoreText = new TextManager(28);
-
-        for(int i = 0;i < TOTAL_BUTTON;++i)
-            menuButton.push_back(new Button(MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT, baseScrPosX - MENU_BUTTON_WIDTH / 2, baseScrPosY + (5 + MENU_BUTTON_HEIGHT) * (i - 1)));
-
-        for(int i = 0;i < TOTAL_BUTTON;++i){
-            if(buttonText[i] == "Sound: ON"){
-                if(Mix_Volume(-1 , -1) == 0) buttonText[i] = "Sound: OFF";
-            }
-            menuButton[i] -> load_button(renderer, buttonText[i]);
-            menuButton[i] -> set_status(Button :: BUTTON_OUT);
+    else {
+        SDL_RenderCopy(renderer , menu_texture , nullptr , nullptr);
+        for(int i = 0; i < TOTAL_BUTTON; i++) {
+            menu_button[i] -> render_button(renderer);
         }
-        menuButton[0] -> set_status(Button :: BUTTON_IN);
-        currentButtonID = 0;
-        currentMenuStatus = RUNNING;
     }
 }
 
-void Menu :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer)
+void Menu :: init(SDL_Renderer* &renderer , const std :: string image_path ,  std :: vector <std :: string> &button_text)
 {
-    if(e.type == SDL_KEYDOWN){
-        if(e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_s){
-            Mix_PlayChannel(7, navigationSound, 0);
-            if(currentMenuStatus == HIGH_SCORES){
-                if(arrowHSPos < 3) ++arrowHSPos;
+    SDL_Surface* image = IMG_Load(image_path.c_str());
+    if(image == nullptr) console -> status(IMG_GetError());
+    else {
+        menu_texture = SDL_CreateTextureFromSurface(renderer , image);
+        SDL_FreeSurface(image);
+
+        how_to_play_texture[0] = load_image(renderer , "Assets/Menu Image/How to Play1.png");
+        how_to_play_texture[1] = load_image(renderer , "Assets/Menu Image/How to Play2.png");
+        how_to_play_texture[2] = load_image(renderer , "Assets/Menu Image/How to Play3.png");
+
+        image = IMG_Load("Assets/Menu Image/High Scores.png");
+        high_score_texture = load_image(renderer , "Assets/Menu Image/High Scores.png");
+        arrow_texture = load_image(renderer , "Assets/Menu Image/arrow-upanddown.png");
+
+        score_text = new TextManager(28);
+
+        for(int i = 0; i < TOTAL_BUTTON; i++) {
+            menu_button.push_back(new Button(MENU_BUTTON_WIDTH ,
+                                             MENU_BUTTON_HEIGHT ,
+                                             base_screen_pos_col - MENU_BUTTON_WIDTH / 2 ,
+                                             base_screen_pos_row + (5 + MENU_BUTTON_HEIGHT) * (i - 1)));
+        }
+
+        for(int i = 0; i < TOTAL_BUTTON; i++) {
+            if(button_text[i] == "Sound: ON") {
+                if(Mix_Volume(-1 , -1) == 0) button_text[i] = "Sound: OFF";
             }
-            else{
-                menuButton[currentButtonID] -> set_status(Button :: BUTTON_OUT);
-                (currentButtonID += 1) %= TOTAL_BUTTON;
-                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
+            menu_button[i] -> load_button(renderer , button_text[i]);
+            menu_button[i] -> set_status(Button :: BUTTON_OUT);
+        }
+        menu_button[0] -> set_status(Button :: BUTTON_IN);
+        current_button_id = 0;
+        current_menu_status = RUNNING;
+    }
+}
+
+void Menu :: handle_event(SDL_Event &event, SDL_Renderer* &renderer)
+{
+    if(event.type == SDL_KEYDOWN) {
+        if(event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s){
+            Mix_PlayChannel(7 , navigation_sound , 0);
+            if(current_menu_status == HIGH_SCORES) {
+                if(arrow_HS_pos < 3) arrow_HS_pos++;
+            }
+            else {
+                menu_button[current_button_id] -> set_status(Button :: BUTTON_OUT);
+                (current_button_id += 1) %= TOTAL_BUTTON;
+                menu_button[current_button_id] -> set_status(Button :: BUTTON_IN);
             }
         }
-        else if(e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w){
-            Mix_PlayChannel(7, navigationSound, 0);
-            if(currentMenuStatus == HIGH_SCORES){
-                if(arrowHSPos > 0) --arrowHSPos;
+        else if(event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w) {
+            Mix_PlayChannel(7 , navigation_sound , 0);
+            if(current_menu_status == HIGH_SCORES) {
+                if(arrow_HS_pos > 0) arrow_HS_pos--;
             }
-            else{
-                menuButton[currentButtonID] -> set_status(Button :: BUTTON_OUT);
-                (currentButtonID += TOTAL_BUTTON - 1) %= TOTAL_BUTTON;
-                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
-            }
-        }
-        else if(e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a){
-            Mix_PlayChannel(7, navigationSound, 0);
-            if(currentMenuStatus == HOW_TO_PLAY){
-                if(currentHTPid > 0) --currentHTPid;
+            else {
+                menu_button[current_button_id] -> set_status(Button :: BUTTON_OUT);
+                (current_button_id += TOTAL_BUTTON - 1) %= TOTAL_BUTTON;
+                menu_button[current_button_id] -> set_status(Button :: BUTTON_IN);
             }
         }
-        else if(e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d){
-            Mix_PlayChannel(7, navigationSound, 0);
-            if(currentMenuStatus == HOW_TO_PLAY){
-                if(currentHTPid < 2) ++currentHTPid;
+        else if(event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a) {
+            Mix_PlayChannel(7 , navigation_sound , 0);
+            if(current_menu_status == HOW_TO_PLAY) {
+                if(current_HTP_id > 0) current_HTP_id--;
             }
         }
-        else if(e.key.keysym.sym == SDLK_RETURN){
-            Mix_PlayChannel(7, navigationSound, 0);
-            if(currentMenuStatus == HOW_TO_PLAY || currentMenuStatus == HIGH_SCORES){
-                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
-                currentMenuStatus = RUNNING;
+        else if(event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) {
+            Mix_PlayChannel(7 , navigation_sound , 0);
+            if(current_menu_status == HOW_TO_PLAY) {
+                if(current_HTP_id < 2) current_HTP_id++;
             }
-            else{
-                menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
-                std :: string menuText = menuButton[currentButtonID] -> get_text();
-                if(menuText == "New Game") currentMenuStatus = PLAY_BUTTON_PRESSED;
-                else if(menuText == "Resume") currentMenuStatus = RESUME;
-                else if(menuText == "Exit") currentMenuStatus = EXIT_BUTTON_PRESSED;
-                else if(menuText == "Exit to Start Menu") currentMenuStatus = EXIT_BUTTON_PRESSED;
-                else if(menuText == "Sound: ON"){
-                    menuButton[currentButtonID] -> change_sound_button(renderer);
+        }
+        else if(event.key.keysym.sym == SDLK_RETURN) {
+            Mix_PlayChannel(7 , navigation_sound , 0);
+            if(current_menu_status == HOW_TO_PLAY || current_menu_status == HIGH_SCORES) {
+                menu_button[current_button_id] -> set_status(Button :: BUTTON_IN);
+                current_menu_status = RUNNING;
+            }
+            else {
+                menu_button[current_button_id] -> set_status(Button :: BUTTON_IN);
+                std :: string menu_text = menu_button[current_button_id] -> get_text();
+                if(menu_text == "New Game") current_menu_status = PLAY_BUTTON_PRESSED;
+                else if(menu_text == "Resume") current_menu_status = RESUME;
+                else if(menu_text == "Exit") current_menu_status = EXIT_BUTTON_PRESSED;
+                else if(menu_text == "Exit to Start Menu") current_menu_status = EXIT_BUTTON_PRESSED;
+                else if(menu_text == "Sound: ON") {
+                    menu_button[current_button_id] -> change_sound_button(renderer);
                     Mix_Volume(-1 , 0);
                 }
-                else if(menuText == "Sound: OFF"){
-                    menuButton[currentButtonID] -> change_sound_button(renderer);
+                else if(menu_text == "Sound: OFF") {
+                    menu_button[current_button_id] -> change_sound_button(renderer);
                     Mix_Volume(-1 , MIX_MAX_VOLUME);
                 }
-                else if(menuText == "How to Play"){
-                    currentMenuStatus = HOW_TO_PLAY;
-                    currentHTPid = 0;
+                else if(menu_text == "How to Play") {
+                    current_menu_status = HOW_TO_PLAY;
+                    current_HTP_id = 0;
                 }
-                else if(menuText == "High Scores"){
-                    currentMenuStatus = HIGH_SCORES;
-                    arrowHSPos = 0;
+                else if(menu_text == "High Scores") {
+                    current_menu_status = HIGH_SCORES;
+                    arrow_HS_pos = 0;
                 }
             }
         }
     }
 }
 
-bool Menu :: isRunning() const
+bool Menu :: is_menu_running() const
 {
-    return currentMenuStatus == RUNNING;
+    return current_menu_status == RUNNING;
 }
 
-int Menu :: getStatus() const
+int Menu :: get_menu_status() const
 {
-    return currentMenuStatus;
+    return current_menu_status;
 }
 
-void Menu :: reOpen()
+void Menu :: return_main_menu()
 {
-    currentMenuStatus = RUNNING;
-    menuButton[currentButtonID] -> set_status(Button :: BUTTON_IN);
+    current_menu_status = RUNNING;
+    menu_button[current_button_id] -> set_status(Button :: BUTTON_IN);
 }
 
-void Menu :: changeRunStatus()
+void Menu :: change_running_status()
 {
     running = !running;
 }
 
-SDL_Texture* Menu :: loadImage(SDL_Renderer* &renderer, const std :: string imgPath)
+SDL_Texture* Menu :: load_image(SDL_Renderer* &renderer , const std :: string image_path)
 {
-    SDL_Surface* Image = IMG_Load(imgPath.c_str());
-    SDL_Texture* loadTexture = SDL_CreateTextureFromSurface(renderer, Image);
-    SDL_FreeSurface(Image);
+    SDL_Surface* image = IMG_Load(image_path.c_str());
+    SDL_Texture* loadTexture = SDL_CreateTextureFromSurface(renderer , image);
+    SDL_FreeSurface(image);
     return loadTexture;
 }

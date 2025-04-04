@@ -130,11 +130,11 @@ void SoundManager :: play_sound()
     if(ghost_turn_frighten) Mix_Resume(5);
     else Mix_Pause(5);
 
-    if(ghost_go_home){
+    if(ghost_go_home) {
         Mix_Resume(6);
         if(ghost_turn_frighten) Mix_Pause(5);
     }
-    else{
+    else {
         Mix_Pause(6);
         if(ghost_turn_frighten) Mix_Resume(5);
     }

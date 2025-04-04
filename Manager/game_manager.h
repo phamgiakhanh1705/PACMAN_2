@@ -11,86 +11,94 @@
 #include "text_manager.h"
 #include "../Menu/Button.h"
 
-class GameManager {
+class GameManager
+{
     private:
+
         int level;
         int life;
-        int eatenCoins;
-        int eatenGhost;
+        int eaten_coins;
+        int eaten_ghosts;
         int scores;
+
         int pos = -1;
-        std::string playername = "";
-        int playerDecision;
-        int currentBut;
-        bool newRecord = false;
-        int ghostEatenPosX;
-        int ghostEatenPosY;
+        std :: string player_name = "";
+        int player_decision;
+        int current_button;
+        bool new_record = false;
+
+        int ghost_is_eaten_in_pos_col;
+        int ghost_is_eaten_in_pos_row;
 
         int PINKY_COIN_LIMIT;
         int INKY_COIN_LIMIT;
         int CLYDE_COIN_LIMIT;
 
-        TextManager* levelText;
-        TextManager* liveText;
-        TextManager* scoreText;
-        TextManager* playerName;
+        TextManager* level_text;
+        TextManager* live_text;
+        TextManager* score_text;
+        TextManager* player_NAME;
 
-        SDL_Texture* egBoard;
-        SDL_Texture* hsBoard;
-        Button* yesBut;
-        Button* noBut;
-        Mix_Chunk* navigationSound = Mix_LoadWAV("Assets/Sound/button.wav");
+        SDL_Texture* endgame_board;
+        SDL_Texture* highscores_board;
+        Button* button_yes;
+        Button* button_no;
+        Mix_Chunk* navigation_sound = Mix_LoadWAV("Assets/Sound/button.wav");
+
     protected:
-        SDL_Texture* loadImage(SDL_Renderer* &renderer, const std::string imagePath);
+
+        SDL_Texture* load_image(SDL_Renderer* &renderer , const std :: string image_path);
+
     public:
+
         const int TOTAL_COINS = 244;
-        static const int normalCoin = 26;
-        static const int superCoin = 27;
-        static const int notCoin = 0;
-        static const int pauseGame = 1;
+        static const int NORMAL_COIN = 26;
+        static const int SUPER_COIN = 27;
+        static const int NOT_COIN = 0;
+        static const int PAUSE_GAME = 1;
         static const int AGAIN = 2;
         static const int QUIT  = 3;
         static const int WAITING = 4;
 
         GameManager(SDL_Renderer* &renderer);
-
         ~GameManager();
 
-        void reset();
+        void reset_game();
 
-        void nextLevel();
+        void next_level();
 
-        void eatCoins(const int typeOfCoin);
+        void eat_coin(const int type_of_coin);
 
-        void eatGhost(const int ghostTileX, const int ghostTileY);
+        void eat_ghost(const int ghost_tile_col , const int ghost_tile_row);
 
-        void lostALife();
+        void lost_a_life();
 
-        int getEatenGhostStreak() const;
+        int get_eaten_ghost_streak() const;
 
-        int getEatenGhostPosX() const;
+        int get_eaten_ghost_pos_col() const;
 
-        int getEatenGhostPosY() const;
+        int get_eaten_ghost_pos_row() const;
 
-        int getRemainLife() const;
+        int get_remain_life() const;
 
-        bool clearAllCoins() const;
+        bool eat_all_coins() const;
 
-        int getLevel() const;
+        int get_level() const;
 
-        int getPlayerDecision() const;
+        int get_player_decision() const;
 
-        int getRemainCoin() const;
+        int get_remain_coins() const;
 
-        void handleGhostPos(Ghost* &pinky, Ghost* &inky, Ghost* &clyde, Ghost* &greendy);
+        void handle_ghost_pos(Ghost* &pinky , Ghost* &inky , Ghost* &clyde , Ghost* &greendy);
 
-        void handleEGBoard(SDL_Event &e, std::vector<std::string> &scoreData);
+        void handle_endgame_board(SDL_Event &event , std :: vector <std :: string> &score_data);
 
-        void renderHUD(SDL_Renderer* &renderer);
+        void render_HUD(SDL_Renderer* &renderer);
 
-        void runEGBoard(SDL_Renderer* &renderer);
+        void run_endgame_board(SDL_Renderer* &renderer);
 
-        void checkScoreData(const std::vector<std::string> &scoreData);
+        void check_score_data(const std :: vector <std :: string> &score_data);
+
 };
 
 #endif // GAMEMANAGER_H_

@@ -3,129 +3,132 @@
 
 TickManager :: TickManager()
 {
-    lastTick = SDL_GetTicks();
-    FlastTick = GlastTick = SDL_GetTicks();
-    mode.push(CID(CHASING_MODE , oo));
-    mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-    mode.push(CID(CHASING_MODE , CHASING_TIME));
-    mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-    mode.push(CID(CHASING_MODE , CHASING_TIME));
-    mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-    mode.push(CID(CHASING_MODE , CHASING_TIME));
-    mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
+    last_tick = SDL_GetTicks();
+    flash_tick = glast_tick = SDL_GetTicks();
+    current_mode.push(CID(CHASING_MODE , inf));
+    current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+    current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+    current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+    current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+    current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+    current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+    current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
 }
 
-bool TickManager :: isScatteringTime() const
+bool TickManager :: is_scatter_time() const
 {
-    return mode.top().first == SCATTERING_MODE;
+    return current_mode.top().first == SCATTER_MODE;
 }
 
-bool TickManager :: isFrightenTime() const
+bool TickManager :: is_frighten_time() const
 {
-    return mode.top().first == FRIGHTEN_MODE;
+    return current_mode.top().first == FRIGHTEN_MODE;
 }
 
-double TickManager :: remainFrightenTime() const
+double TickManager :: remain_frighten_time() const
 {
-    return FRIGHTEN_TIME - (SDL_GetTicks() - lastTick) / 1000.0;
+    return FRIGHTEN_TIME - (SDL_GetTicks() - last_tick) / 1000.0;
 }
 
-bool TickManager :: isFriendyChaseTime() const
+bool TickManager :: is_friendy_chase_time() const
 {
-    double timePass = (SDL_GetTicks() - FlastTick) / 1000.0;
-    return (timePass <= FRIENDY_CHASE_TIME);
+    double time_pass = (SDL_GetTicks() - flash_tick) / 1000.0;
+    return (time_pass <= FRIENDY_CHASE_TIME);
 }
 
-bool TickManager :: isGreendyChaseTime() const
+bool TickManager :: is_greeny_chase_time() const
 {
-    double timePass = (SDL_GetTicks() - GlastTick) / 1000.0;
-    return (timePass <= GREENDY_CHASE_TIME);
+    double time_pass = (SDL_GetTicks() - glast_tick) / 1000.0;
+    return (time_pass <= GREENDY_CHASE_TIME);
 }
 
-void TickManager :: friendyStartChasePacman()
+void TickManager :: friendy_start_chase_pacman()
 {
-    FlastTick = SDL_GetTicks();
+    flash_tick = SDL_GetTicks();
 }
 
-void TickManager :: greendyStartChasePacman()
+void TickManager :: greendy_start_chase_pacman()
 {
-    GlastTick = SDL_GetTicks();
+    glast_tick = SDL_GetTicks();
 }
 
-bool TickManager :: pauseTick(const bool status)
+bool TickManager :: pause_tick(const bool status)
 {
     return pause = status;
 }
 
-void TickManager :: updateStatus()
+void TickManager :: update_status()
 {
     if(pause == true){
-        lastTick = SDL_GetTicks();
+        last_tick = SDL_GetTicks();
         return;
     }
-    double timePass = (SDL_GetTicks() - lastTick) / 1000.0;
-    if(!mode.empty()){
-        if(timePass > mode.top().second && mode.top().second != oo){
-            mode.pop(); lastTick = SDL_GetTicks();
+    double time_pass = (SDL_GetTicks() - last_tick) / 1000.0;
+    if((int) current_mode.size() > 0){
+        if(time_pass > current_mode.top().second && current_mode.top().second != inf){
+            last_tick = SDL_GetTicks();
+            current_mode.pop();
         }
     }
 }
 
-void TickManager :: stablizeFPS()
+void TickManager :: stablize_FPS()
 {
-    if(SDL_GetTicks() - lastFrame < 1000 / FPS){
-        SDL_Delay(1000 / FPS + lastFrame - SDL_GetTicks());
+    if(SDL_GetTicks() - last_frame < 1000 / FPS){
+        SDL_Delay(1000 / FPS + last_frame - SDL_GetTicks());
     }
-    lastFrame = SDL_GetTicks();
+    last_frame = SDL_GetTicks();
 }
 
-void TickManager :: setFrightenTime()
+void TickManager :: set_frighten_time()
 {
-    lastStatus = mode.top().first;
-    mode.pop();
-    if(lastStatus == CHASING_MODE)
-        mode.push(CID(CHASING_MODE , CHASING_TIME - (SDL_GetTicks() - lastTick)));
-    else if(lastStatus == SCATTERING_MODE)
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME - (SDL_GetTicks() - lastTick)));
-    mode.push(CID(FRIGHTEN_MODE , FRIGHTEN_TIME));
-    lastTick = SDL_GetTicks();
+    last_status = current_mode.top().first;
+    current_mode.pop();
+    if(last_status == CHASING_MODE) {
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME - (SDL_GetTicks() - last_tick)));
+    }
+    else if(last_status == SCATTER_MODE) {
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME - (SDL_GetTicks() - last_tick)));
+    }
+    current_mode.push(CID(FRIGHTEN_MODE , FRIGHTEN_TIME));
+    last_tick = SDL_GetTicks();
 }
 
-void TickManager :: resetTick(const int level)
+void TickManager :: reset_tick(const int current_level)
 {
-    while(!mode.empty()) mode.pop();
-    if(level == 1){
-        mode.push(CID(CHASING_MODE , oo));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
+    while((int) current_mode.size() > 0) current_mode.pop();
+    if(current_level == 1) {
+        current_mode.push(CID(CHASING_MODE , inf));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
         FRIGHTEN_TIME = 5.0;
     }
-    else if(level < 5){
-        mode.push(CID(CHASING_MODE , oo));
-        mode.push(CID(SCATTERING_MODE , 1.0));
-        mode.push(CID(CHASING_MODE , 1033.0));
-        mode.push(CID(SCATTERING_MODE , 5.0));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
+    else if(current_level < 5) {
+        current_mode.push(CID(CHASING_MODE , inf));
+        current_mode.push(CID(SCATTER_MODE , 1.0));
+        current_mode.push(CID(CHASING_MODE , 1033.0));
+        current_mode.push(CID(SCATTER_MODE , 5.0));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
         FRIGHTEN_TIME = 3.0;
     }
-    else{
-        mode.push(CID(CHASING_MODE , oo));
-        mode.push(CID(SCATTERING_MODE , 1.0));
-        mode.push(CID(CHASING_MODE , 1037.0));
-        mode.push(CID(SCATTERING_MODE , 5.0));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
-        mode.push(CID(CHASING_MODE , CHASING_TIME));
-        mode.push(CID(SCATTERING_MODE , SCATTERING_TIME));
+    else {
+        current_mode.push(CID(CHASING_MODE , inf));
+        current_mode.push(CID(SCATTER_MODE , 1.0));
+        current_mode.push(CID(CHASING_MODE , 1037.0));
+        current_mode.push(CID(SCATTER_MODE , 5.0));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
+        current_mode.push(CID(CHASING_MODE , CHASING_TIME));
+        current_mode.push(CID(SCATTER_MODE , SCATTER_TIME));
         FRIGHTEN_TIME = 1.0;
     }
-    lastTick = SDL_GetTicks();
+    last_tick = SDL_GetTicks();
 }

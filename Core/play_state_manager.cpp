@@ -42,7 +42,7 @@ void PlayStateManager :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer, bool
 {
     if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE){
         runPauseMenu = true;
-        pauseMenu -> reOpen();
+        pauseMenu -> return_main_menu();
         while(!muteChannel.empty()) muteChannel.pop_back();
         for(int channel = 1;channel <= 8;++channel){
             if(Mix_Paused(channel) == 0){
@@ -53,8 +53,8 @@ void PlayStateManager :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer, bool
     }
     else{
         if(runPauseMenu){
-            pauseMenu -> handleEvent(e, renderer);
-            switch(pauseMenu -> getStatus()){
+            pauseMenu -> handle_event(e, renderer);
+            switch(pauseMenu -> get_menu_status()){
                 case Menu :: RESUME:
                     runPauseMenu = false;
                     for(int channel : muteChannel) Mix_Resume(channel);
@@ -75,6 +75,6 @@ void PlayStateManager :: handleEvent(SDL_Event &e, SDL_Renderer* &renderer, bool
 
 void PlayStateManager :: render(SDL_Renderer* &renderer, const std :: vector <std :: string> &scoreData)
 {
-    if(runPauseMenu) pauseMenu -> render(renderer, scoreData);
+    if(runPauseMenu) pauseMenu -> render_menu(renderer, scoreData);
     else engine -> render(renderer, scoreData);
 }

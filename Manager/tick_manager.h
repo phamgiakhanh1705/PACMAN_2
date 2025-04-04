@@ -6,56 +6,61 @@
 #include <SDL.h>
 #include <stack>
 
-typedef std::pair<const int, double> CID;
+typedef std :: pair <const int , double> CID;
 
-class TickManager {
+class TickManager
+{
     private:
-        Uint32 lastTick;
-        Uint32 FlastTick;
-        Uint32 GlastTick;
-        Uint32 lastFrame = 0;
 
-        std::stack<CID> mode;
+        Uint32 last_tick;
+        Uint32 flash_tick;
+        Uint32 glast_tick;
+        Uint32 last_frame = 0;
 
-        int lastStatus;
+        std :: stack <CID> current_mode;
+
+        int last_status;
         bool pause;
         double FRIGHTEN_TIME = 5.0;
-        double SCATTERING_TIME = 7.0;
+        double SCATTER_TIME = 7.0;
         double CHASING_TIME = 20.0;
+
     public:
+
         const int FPS = 60;
         const double FRIENDY_CHASE_TIME = 3.0;
         const double GREENDY_CHASE_TIME = 2.0;
         const int FRIGHTEN_MODE = 0;
-        const int SCATTERING_MODE = 1;
+        const int SCATTER_MODE = 1;
         const int CHASING_MODE = 2;
-        const double oo = -1;
+        const double inf = -1;
 
         TickManager();
+        ~TickManager() {};
 
-        double remainFrightenTime() const;
+        double remain_frighten_time() const;
 
-        bool isFrightenTime() const;
+        bool is_frighten_time() const;
 
-        bool isScatteringTime() const;
+        bool is_scatter_time() const;
 
-        bool isFriendyChaseTime() const;
+        bool is_friendy_chase_time() const;
 
-        bool isGreendyChaseTime() const;
+        bool is_greeny_chase_time() const;
 
-        void friendyStartChasePacman();
+        void friendy_start_chase_pacman();
 
-        void greendyStartChasePacman();
+        void greendy_start_chase_pacman();
 
-        void setFrightenTime();
+        void set_frighten_time();
 
-        void resetTick(const int level);
+        void reset_tick(const int current_level);
 
-        void updateStatus();
+        void update_status();
 
-        void stablizeFPS();
+        void stablize_FPS();
 
-        bool pauseTick(const bool status);
+        bool pause_tick(const bool status);
 };
 
 #endif // TIMEMANAGER_H_

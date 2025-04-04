@@ -90,7 +90,7 @@ void Window :: runGame()
 {
     startMenu = new Menu(262 , 170 , startMenuButtonText.size(), 320 , 30);
     startMenu -> init(renderer, "Assets/Menu Image/Pacman Pause Menu.png", startMenuButtonText);
-    startMenu -> changeRunStatus();
+    startMenu -> change_running_status();
 
     SDL_Event e;
     runningMenu = true;
@@ -102,8 +102,8 @@ void Window :: runGame()
             if(e.type == SDL_QUIT) Running = false;
             else{
                 if(runningMenu){
-                    startMenu -> handleEvent(e, renderer);
-                    switch(startMenu -> getStatus()){
+                    startMenu -> handle_event(e, renderer);
+                    switch(startMenu -> get_menu_status()){
                         case Menu :: PLAY_BUTTON_PRESSED:
                             runningMenu = false;
                             break;
@@ -114,7 +114,7 @@ void Window :: runGame()
                 }
                 else{
                     playState -> handleEvent(e, renderer, runningMenu, highScore);
-                    if(runningMenu) startMenu -> reOpen();
+                    if(runningMenu) startMenu -> return_main_menu();
                 }
             }
         }
@@ -124,14 +124,14 @@ void Window :: runGame()
                 startGame = true;
             }
             playState -> runGame(runningMenu);
-            if(runningMenu) startMenu -> reOpen(), startGame = false;
+            if(runningMenu) startMenu -> return_main_menu(), startGame = false;
         }
 
         SDL_SetRenderDrawColor(renderer, 0 , 0 , 0 , 255);
         SDL_RenderClear(renderer);
 
         if(runningMenu)
-            startMenu -> render(renderer, highScore);
+            startMenu -> render_menu(renderer, highScore);
         else playState -> render(renderer, highScore);
 
         SDL_RenderPresent(renderer);
