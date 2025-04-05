@@ -5,6 +5,11 @@ const std :: pair <int , int> Map :: INVALID_POINT = {-1 , -1};
 const std :: pair <int , int> Map :: PORTAL_1_TILE_ID = {0 , 14};
 const std :: pair <int , int> Map :: PORTAL_2_TILE_ID = {27 , 14};
 
+const int Map :: UP = 0;
+const int Map :: RIGHT = 1;
+const int Map :: DOWN = 2;
+const int Map :: LEFT = 3;
+
 const int drow[] = {-1 , 0 , 1 , 0};
 const int dcol[] = {0 , 1 , 0 , -1};
 
@@ -292,3 +297,6 @@ void Map :: calc_distance()
         }
     }
 }
+
+int Map :: get_map_width() const { return MAP_WIDTH; }
+int Map :: get_map_height() const { return MAP_HEIGHT; }

@@ -41,10 +41,10 @@ class Map
     public:
 
         // Các hướng đi
-        static const int UP = 0;
-        static const int RIGHT = 1;
-        static const int DOWN = 2;
-        static const int LEFT = 3;
+        static const int UP;
+        static const int RIGHT;
+        static const int DOWN;
+        static const int LEFT;
 
         static const std :: pair <int , int> INVALID_POINT;
         static const std :: pair <int , int> PORTAL_1_TILE_ID;
@@ -65,6 +65,9 @@ class Map
         int get_distance(std :: pair <int , int> begin , std :: pair <int , int> end , int start_direction);
         // Trả về ngã rẽ gần nhất nếu đi từ ô (x,y) với hướng đi direction
         std :: pair <int , int> get_nearest_cross_tile_id(int x , int y , int direction) const;
+
+        int get_map_width() const;
+        int get_map_height() const;
 
         // Kiểm tra xem ô này có phải là tường không
         bool is_wall(std :: pair <int , int> tile_id);

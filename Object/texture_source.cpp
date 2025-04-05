@@ -1,6 +1,6 @@
 #include "texture_source.h"
 
-TextureSrc :: TextureSrc()
+Texture_Source :: Texture_Source()
 {
     tile_texture = nullptr;
     entity_texture = nullptr;
@@ -9,7 +9,7 @@ TextureSrc :: TextureSrc()
     for(int i = 0; i < 7; i++) ghost_frame[i] = 0;
 }
 
-TextureSrc :: ~TextureSrc()
+Texture_Source :: ~Texture_Source()
 {
     if(tile_texture) {
         SDL_DestroyTexture(tile_texture);
@@ -29,7 +29,7 @@ TextureSrc :: ~TextureSrc()
     for(int i = 0; i < 7; i++) ghost_frame[i] = 0;
 }
 
-bool TextureSrc :: is_pacman_dead()
+bool Texture_Source :: is_pacman_dead()
 {
     if(pacman_frame == 109) {
         pacman_frame = 0;
@@ -38,7 +38,7 @@ bool TextureSrc :: is_pacman_dead()
     return false;
 }
 
-void TextureSrc :: load_tile_texture(SDL_Renderer* &renderer) {
+void Texture_Source :: load_tile_texture(SDL_Renderer* &renderer) {
     SDL_Surface* image = IMG_Load("Assets/Entity Image/Pacman Tile Labyrinth.png");
 
     if(image == nullptr) {
@@ -65,12 +65,12 @@ void TextureSrc :: load_tile_texture(SDL_Renderer* &renderer) {
     image = nullptr;
 }
 
-void TextureSrc :: render_tile_texture(SDL_Renderer* &renderer , int tile_id , SDL_Rect* display_rect)
+void Texture_Source :: render_tile_texture(SDL_Renderer* &renderer , int tile_id , SDL_Rect* display_rect)
 {
     SDL_RenderCopy(renderer , tile_texture , &tile_sprite[tile_id] , display_rect);
 }
 
-void TextureSrc :: load_pacman_and_ghost_texture(SDL_Renderer* &renderer)
+void Texture_Source :: load_pacman_and_ghost_texture(SDL_Renderer* &renderer)
 {
     SDL_Surface* image = IMG_Load("Assets/Entity Image/Pacman and Ghost Texture.png");
 
@@ -188,7 +188,7 @@ void TextureSrc :: load_pacman_and_ghost_texture(SDL_Renderer* &renderer)
     image = nullptr;
 }
 
-void TextureSrc :: render_pacman_texture(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , int status)
+void Texture_Source :: render_pacman_texture(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , int status)
 {
     SDL_Rect source_rect , display_rect;
     display_rect = {screen_pos_col - 7 + 217 , screen_pos_row - 7 , ENTITY_SIZE , ENTITY_SIZE};
@@ -218,7 +218,7 @@ void TextureSrc :: render_pacman_texture(SDL_Renderer* &renderer , int screen_po
     SDL_RenderCopy(renderer , entity_texture , &source_rect , &display_rect);
 }
 
-void TextureSrc :: render_ghost_texture(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , int ghost_id , int status)
+void Texture_Source :: render_ghost_texture(SDL_Renderer* &renderer , int screen_pos_col , int screen_pos_row , int ghost_id , int status)
 {
     SDL_Rect source_rect , display_rect;
     display_rect = {screen_pos_col - 7 + 217 , screen_pos_row - 7 , ENTITY_SIZE , ENTITY_SIZE};
@@ -253,7 +253,7 @@ void TextureSrc :: render_ghost_texture(SDL_Renderer* &renderer , int screen_pos
     SDL_RenderCopy(renderer , entity_texture , &source_rect , &display_rect);
 }
 
-void TextureSrc :: render_ghost_score(SDL_Renderer* &renderer , const int eaten_ghost_pos_col , const int eaten_ghost_pos_row , const int eaten_ghost_streak)
+void Texture_Source :: render_ghost_score(SDL_Renderer* &renderer , const int eaten_ghost_pos_col , const int eaten_ghost_pos_row , const int eaten_ghost_streak)
 {
     SDL_Rect source_rect , display_rect;
 

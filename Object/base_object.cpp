@@ -7,8 +7,8 @@ Object :: Object(int _tile_col , int _tile_row , int _speed_col , int _speed_row
     tile_col = _tile_col;
     tile_row = _tile_row;
 
-    if(speed_col != 0) speed_col = _speed_col;
-    if(speed_row != 0) speed_row = _speed_row;
+    if(_speed_col != 0) speed_col = _speed_col;
+    if(_speed_row != 0) speed_row = _speed_row;
 
     screen_pos_col = tile_col * TILE_SIZE + TILE_SIZE / 2;
     screen_pos_row = tile_row * TILE_SIZE;

@@ -18,10 +18,6 @@ class Engine
 {
     public:
 
-        static const int UP = 0;
-        static const int RIGHT = 1;
-        static const int DOWN = 2;
-        static const int LEFT = 3;
         static const int TILE_SIZE = 16;
 
         Engine()
@@ -110,7 +106,7 @@ class Engine
         Ghost* greendy = nullptr;
         Ghost* friendy = nullptr;
         Item* apple;
-        TextureSrc* object_texture;
+        Texture_Source* object_texture;
         TickManager* tick_manager;
         GameManager* game_manager;
         SoundManager* sound_manager;

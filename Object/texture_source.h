@@ -8,7 +8,7 @@
 #include "../LogStatus/logstatus.h"
 #include <vector>
 
-class TextureSrc
+class Texture_Source
 {
     public:
 
@@ -33,8 +33,8 @@ class TextureSrc
         static const int TILE_SIZE = 16;
         static const int ENTITY_SIZE = 30;
 
-        TextureSrc();
-        ~TextureSrc();
+        Texture_Source();
+        ~Texture_Source();
 
         bool is_pacman_dead();
 
@@ -52,7 +52,7 @@ class TextureSrc
 
     private:
 
-        log_status* Console = new log_status("TextureSrc");
+        log_status* Console = new log_status("Texture_Source");
 
         SDL_Texture* tile_texture;
         SDL_Rect tile_sprite[32];

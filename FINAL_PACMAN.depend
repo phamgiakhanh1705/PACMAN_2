@@ -9,7 +9,7 @@
 1743792011 source:c:\cp - copy\project game\final_pacman\main.cpp
 	"Core/Window.h"
 
-1743761216 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
+1743804838 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
 	"game_manager.h"
 	<iostream>
 	<string>
@@ -23,18 +23,18 @@
 	<vector>
 	"../LogStatus/logstatus.h"
 
-1743616431 source:c:\cp - copy\project game\final_pacman\map\map.cpp
+1743796196 source:c:\cp - copy\project game\final_pacman\map\map.cpp
 	"Map.h"
 	<queue>
 
-1743615168 c:\cp - copy\project game\final_pacman\map\map.h
+1743824452 c:\cp - copy\project game\final_pacman\map\map.h
 	"../LogStatus/logstatus.h"
 	<fstream>
 	<iostream>
 	<algorithm>
 	<vector>
 
-1743624938 source:c:\cp - copy\project game\final_pacman\object\base_object.cpp
+1743809073 source:c:\cp - copy\project game\final_pacman\object\base_object.cpp
 	"base_object.h"
 	<iostream>
 	<cmath>
@@ -68,7 +68,7 @@
 	"base_object.h"
 	<stack>
 
-1743707007 source:c:\cp - copy\project game\final_pacman\object\texture_source.cpp
+1743808134 source:c:\cp - copy\project game\final_pacman\object\texture_source.cpp
 	"texture_source.h"
 
 1743151383 c:\cp - copy\project game\final_pacman\object\texture_screen.h
@@ -91,7 +91,7 @@
 	<string>
 	"../Manager/text_manager.h"
 
-1743761216 c:\cp - copy\project game\final_pacman\manager\game_manager.h
+1743804831 c:\cp - copy\project game\final_pacman\manager\game_manager.h
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
@@ -108,11 +108,11 @@
 	<SDL.h>
 	<stack>
 
-1743758290 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
+1743805031 source:c:\cp - copy\project game\final_pacman\menu\menu.cpp
 	"Menu.h"
 	<stdio.h>
 
-1743758251 c:\cp - copy\project game\final_pacman\menu\menu.h
+1743805031 c:\cp - copy\project game\final_pacman\menu\menu.h
 	<SDL.h>
 	<SDL_mixer.h>
 	<SDL_image.h>
@@ -121,19 +121,19 @@
 	"../LogStatus/logstatus.h"
 	"Button.h"
 
-1743700679 c:\cp - copy\project game\final_pacman\object\texture_source.h
+1743808125 c:\cp - copy\project game\final_pacman\object\texture_source.h
 	<SDL.h>
 	<SDL_image.h>
 	"../LogStatus/logstatus.h"
 	<vector>
 
-1743792489 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1743824389 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>
 	<time.h>
 
-1743789028 c:\cp - copy\project game\final_pacman\core\game_engine.h
+1743824162 c:\cp - copy\project game\final_pacman\core\game_engine.h
 	<SDL.h>
 	<SDL_mixer.h>
 	"../Map/map.h"
@@ -157,7 +157,7 @@
 	"../Menu/button.h"
 	"../Menu/menu.h"
 
-1743791994 source:c:\cp - copy\project game\final_pacman\core\window.cpp
+1743794247 source:c:\cp - copy\project game\final_pacman\core\window.cpp
 	"window.h"
 	"../LogStatus/logstatus.h"
 
