@@ -34,7 +34,9 @@ class TickManager
         const double inf = -1;
 
         TickManager();
-        ~TickManager() {};
+        ~TickManager() {
+            while((int) current_mode.size() > 0) current_mode.pop();
+        };
 
         double remain_frighten_time() const;
 

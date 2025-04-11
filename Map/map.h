@@ -17,7 +17,8 @@ class Map
         static const int MAP_WIDTH = 28; // Chiều cao của map
         const std :: string MAP_FILE = "Map/map.txt"; // Chứa dữ liệu của bản đồ gốc
 
-        static const int NORMAL_COIN = 26;
+        // Các giá trị của các obj trên map
+        static const int NORMAL_COIN = 26; 
         static const int SUPER_COIN = 27;
         static const int EMPTY_COIN = 30;
 
@@ -46,15 +47,14 @@ class Map
         static const int DOWN;
         static const int LEFT;
 
-        static const std :: pair <int , int> INVALID_POINT;
-        static const std :: pair <int , int> PORTAL_1_TILE_ID;
-        static const std :: pair <int , int> PORTAL_2_TILE_ID;
+        static const std :: pair <int , int> INVALID_POINT;     // Điểm không tồn tại
+        static const std :: pair <int , int> PORTAL_1_TILE_ID;  // vị trí của cổng dịch chuyển 1
+        static const std :: pair <int , int> PORTAL_2_TILE_ID;  // vị trí của cổng dịch chuyển 2
 
         Map();
-
         ~Map() {
-            console = nullptr;
             delete console;
+            console = nullptr;
         }
 
         // Trả về giá trị tại ô đó, xem ô đó là loại nào(wall,coin,...)
@@ -66,6 +66,7 @@ class Map
         // Trả về ngã rẽ gần nhất nếu đi từ ô (x,y) với hướng đi direction
         std :: pair <int , int> get_nearest_cross_tile_id(int x , int y , int direction) const;
 
+        // Trả về kích thước của map
         int get_map_width() const;
         int get_map_height() const;
 
@@ -77,6 +78,7 @@ class Map
         bool can_change_direction(int x , int y , int new_direction);
         // Kiểm tra xem cạnh ngã rẽ có phải là tường với hướng đi new_direction không
         bool is_beside_cross_is_wall(std :: pair <int , int> cross , int new_direction);
+        
         // Khôi phục lại bản đồ trạng thái ban đầu (dùng khi chơi lại)
         void map_reset();
 

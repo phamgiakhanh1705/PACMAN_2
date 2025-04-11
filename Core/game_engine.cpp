@@ -25,7 +25,7 @@ void Engine :: init_game(SDL_Renderer* &renderer)
     srand(time(nullptr)); // phục vụ cho hàm rand
     new_game(); // Bắt đầu game mới
 
-    // Load ảnh thông báo "nect level"
+    // Load ảnh thông báo "next level"
     SDL_Surface* image = IMG_Load("Assets/Menu Image/nextlevel.png");
     next_level = SDL_CreateTextureFromSurface(renderer , image);
     SDL_FreeSurface(image);
@@ -50,26 +50,20 @@ void Engine :: new_game()
     delete blinky;
     blinky = new Ghost(12 , 11 , false);
 
-
-
     delete pinky;
     pinky = new Ghost(13 , 14 , true);
-
 
     delete inky;
     inky = new Ghost(11 , 14 , true);
 
-
     delete clyde;
     clyde = new Ghost(15 , 14 , true);
 
-
-    sound_manager -> insert_playlist(SoundManager :: START); // ơhát nhạc bắt đầu
+    sound_manager -> insert_playlist(SoundManager :: START); // phát nhạc bắt đầu
     tick_manager -> reset_tick(game_manager -> get_level()); // reset thời gian của ghost
     tick_manager -> pause_tick(true); // tạm dừng ghost di chuyển
     running_endgame_board = false; // xóa bảng kết thúc
 }
-
 
 void Engine :: respawn_object()
 {
@@ -495,10 +489,10 @@ void Engine :: loop_game(bool &exit_to_menu)
     }
 
       // Điều chỉnh âm thanh di chuyển theo số lượng coin còn lại
-    int remainCoin = game_manager -> get_remain_coins();
-    if(remainCoin < 50) sound_manager -> insert_playlist(SoundManager :: MOVE_3);
-    else if(remainCoin < 100) sound_manager -> insert_playlist(SoundManager :: MOVE_2);
-    else if(remainCoin < 150) sound_manager -> insert_playlist(SoundManager :: MOVE_1);
+    int remain_coin = game_manager -> get_remain_coins();
+    if(remain_coin < 50) sound_manager -> insert_playlist(SoundManager :: MOVE_3);
+    else if(remain_coin < 100) sound_manager -> insert_playlist(SoundManager :: MOVE_2);
+    else if(remain_coin < 150) sound_manager -> insert_playlist(SoundManager :: MOVE_1);
     else sound_manager -> insert_playlist(SoundManager :: MOVE_0);
 
     // Kiểm tra ăn coin
