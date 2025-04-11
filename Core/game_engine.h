@@ -8,7 +8,6 @@
 #include "../Map/map.h"
 #include "../Object/pacman.h"
 #include "../Object/ghost.h"
-#include "../Object/item.h"
 #include "../Object/texture_source.h"
 #include "../Manager/tick_manager.h"
 #include "../Manager/game_manager.h"
@@ -28,9 +27,6 @@ class Engine
             pinky = nullptr;
             clyde = nullptr;
             inky = nullptr;
-            greendy = nullptr;
-            friendy = nullptr;
-            apple = nullptr;
             object_texture = nullptr;
             tick_manager = nullptr;
             game_manager = nullptr;
@@ -57,15 +53,6 @@ class Engine
             delete inky;
             inky = nullptr;
 
-            delete greendy;
-            greendy = nullptr;
-
-            delete friendy;
-            friendy = nullptr;
-
-            delete apple;
-            apple = nullptr;
-
             SDL_DestroyTexture(next_level);
             next_level = nullptr;
 
@@ -89,7 +76,7 @@ class Engine
 
         void init_game(SDL_Renderer* &renderer);
 
-        void handle_event_engine(SDL_Event &e , std :: vector <std :: string> &score_data);
+        void handle_event_engine(SDL_Event &event , std :: vector <std :: string> &score_data);
 
         void loop_game(bool &exit_to_menu);
 
@@ -103,9 +90,6 @@ class Engine
         Ghost* pinky = nullptr;
         Ghost* inky = nullptr;
         Ghost* clyde = nullptr;
-        Ghost* greendy = nullptr;
-        Ghost* friendy = nullptr;
-        Item* apple;
         Texture_Source* object_texture;
         TickManager* tick_manager;
         GameManager* game_manager;
@@ -113,7 +97,6 @@ class Engine
         SDL_Texture* next_level;
         SDL_Texture* ready;
         bool running_endgame_board = false;
-        bool eat_green_apple = false;
         int wait_time = 0;
 
     protected:

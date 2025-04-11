@@ -145,12 +145,11 @@ void GameManager :: next_level()
     else PINKY_COIN_LIMIT = INKY_COIN_LIMIT = CLYDE_COIN_LIMIT = 0;
 }
 
-void GameManager :: handle_ghost_pos(Ghost* &pinky , Ghost* &inky , Ghost* &clyde , Ghost* &greendy)
+void GameManager :: handle_ghost_pos(Ghost* &pinky , Ghost* &inky , Ghost* &clyde)
 {
     if(pinky -> is_ghost_in_cage() && eaten_coins >= PINKY_COIN_LIMIT) pinky -> ghost_respawn(Ghost :: GHOST_START_TILE_COL , Ghost :: GHOST_START_TILE_ROW , false);
     if(inky  -> is_ghost_in_cage() && eaten_coins >=  INKY_COIN_LIMIT) inky  -> ghost_respawn(Ghost :: GHOST_START_TILE_COL , Ghost :: GHOST_START_TILE_ROW , false);
     if(clyde -> is_ghost_in_cage() && eaten_coins >= CLYDE_COIN_LIMIT) clyde -> ghost_respawn(Ghost :: GHOST_START_TILE_COL , Ghost :: GHOST_START_TILE_ROW , false);
-    if(get_remain_coins() < 100 && greendy != nullptr && greendy -> is_ghost_in_cage()) greendy -> ghost_respawn(Ghost :: GHOST_START_TILE_COL , Ghost :: GHOST_START_TILE_ROW , false);
 }
 
 void GameManager :: render_HUD(SDL_Renderer* &renderer)

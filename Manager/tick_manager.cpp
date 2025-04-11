@@ -30,28 +30,6 @@ double TickManager :: remain_frighten_time() const
     return FRIGHTEN_TIME - (SDL_GetTicks() - last_tick) / 1000.0;
 }
 
-bool TickManager :: is_friendy_chase_time() const
-{
-    double time_pass = (SDL_GetTicks() - flash_tick) / 1000.0;
-    return (time_pass <= FRIENDY_CHASE_TIME);
-}
-
-bool TickManager :: is_greeny_chase_time() const
-{
-    double time_pass = (SDL_GetTicks() - glast_tick) / 1000.0;
-    return (time_pass <= GREENDY_CHASE_TIME);
-}
-
-void TickManager :: friendy_start_chase_pacman()
-{
-    flash_tick = SDL_GetTicks();
-}
-
-void TickManager :: greendy_start_chase_pacman()
-{
-    glast_tick = SDL_GetTicks();
-}
-
 bool TickManager :: pause_tick(const bool status)
 {
     return pause = status;

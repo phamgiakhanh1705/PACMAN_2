@@ -49,7 +49,7 @@ void Window :: init_SDL()
         }
         else {
             // Tạo renderer để vẽ lên window
-            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            renderer = SDL_CreateRenderer(window , -1 , SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
             Console -> status("Renderer created successfully!");
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); // Giúp khi scale hình ảnh thì làm mượt
             SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT); // Dù resize cửa sổ, vẫn giữ game theo tỉ lệ 960x540, tránh vỡ layout
@@ -57,13 +57,13 @@ void Window :: init_SDL()
             if(TTF_Init() < 0) Console -> status(TTF_GetError());
             else Console -> status("TTF Ready!");
 
-            if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 8, 2048) < 0) Console -> status(Mix_GetError());
+            if(Mix_OpenAudio(44100 , MIX_DEFAULT_FORMAT , 8 , 2048) < 0) Console -> status(Mix_GetError());
             else Console -> status("Audio Ready!");
-            Mix_Volume(-1, MIX_MAX_VOLUME); // Đặt âm lượng mặc định cho tất cả channel max volume
+            Mix_Volume(-1 , MIX_MAX_VOLUME); // Đặt âm lượng mặc định cho tất cả channel max volume
 
             freopen("score.txt" , "r" , stdin);
             std :: string text = "";
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < 10; i++) {
                 std :: getline(std :: cin , text);
                 highscores.push_back(text);
             }

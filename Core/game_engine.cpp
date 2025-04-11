@@ -23,7 +23,6 @@ void Engine :: init_game(SDL_Renderer* &renderer)
     sound_manager -> load_sound();
 
     srand(time(nullptr)); // phục vụ cho hàm rand
-    apple = new Item(renderer , "Assets/Entity Image/greenapple.png"); // Tạo táo xanh
     new_game(); // Bắt đầu game mới
 
     // Load ảnh thông báo "nect level"
@@ -48,37 +47,22 @@ void Engine :: new_game()
     pacman = new Pacman();
 
     // xóa và tạo mới ghost
-        delete blinky;
-        blinky = new Ghost(12 , 11 , false);
+    delete blinky;
+    blinky = new Ghost(12 , 11 , false);
 
 
 
-        delete pinky;
-        pinky = new Ghost(13 , 14 , true);
+    delete pinky;
+    pinky = new Ghost(13 , 14 , true);
 
 
-        delete inky;
-        inky = new Ghost(11 , 14 , true);
+    delete inky;
+    inky = new Ghost(11 , 14 , true);
 
 
-        delete clyde;
-        clyde = new Ghost(15 , 14 , true);
+    delete clyde;
+    clyde = new Ghost(15 , 14 , true);
 
-    // ghost greendy xuất hiện từ level 1
-    if(game_manager -> get_level() >= 5)
-    {
-        apple -> spawn_at(1 , 1);
-        delete greendy;
-        greendy = new Ghost(12 , 15 , true);
-    }
-
-    // ghost friendy xuất hiện từ level 2
-    if(game_manager -> get_level() >= 10)
-    {
-        delete friendy;
-        friendy = new Ghost(14 , 11 , false);
-
-    }
 
     sound_manager -> insert_playlist(SoundManager :: START); // ơhát nhạc bắt đầu
     tick_manager -> reset_tick(game_manager -> get_level()); // reset thời gian của ghost
@@ -105,18 +89,6 @@ void Engine :: respawn_object()
 
     delete clyde;
     clyde = new Ghost(15 , 14 , true);
-
-    if(greendy != nullptr)
-    {
-        delete greendy;
-        greendy = new Ghost(12 , 15 , true);
-    }
-    if(friendy != nullptr)
-    {
-        delete friendy;
-        friendy = new Ghost(14 , 11 , false);
-    }
-
 
     sound_manager -> reset_sound(); // reset lại âm thanh
     tick_manager -> pause_tick(false); // cho phép ghost tiếp tục di chuyển
@@ -224,9 +196,6 @@ void Engine :: render_game(SDL_Renderer* &renderer , const std :: vector <std ::
         }
     }
 
-    // vẽ apple nếu level >= 5 và nó chưa bị ăn
-    if(game_manager -> get_level() >= 5 && !apple -> is_destroyed()) apple -> render_item(renderer);
-
     if(!running_endgame_board) // nếu bảng kết thúc đang hiển thị
     {
         int current_direction = -1; // hướng đi hiện tại của pacman
@@ -240,8 +209,6 @@ void Engine :: render_game(SDL_Renderer* &renderer , const std :: vector <std ::
             render_ghost(renderer , pinky , Texture_Source :: PINKY);
             render_ghost(renderer , inky , Texture_Source :: INKY);
             render_ghost(renderer , clyde , Texture_Source :: CLYDE);
-            if(greendy != nullptr) render_ghost(renderer , greendy , Texture_Source :: GREENDY);
-            if(friendy != nullptr) render_ghost(renderer , friendy , Texture_Source :: FRIENDY);
 
             // Hiển thị chữ ready nếu dang phát kênh 2
             if(Mix_Playing(2))
@@ -354,8 +321,8 @@ void Engine :: ghost_move(Ghost* &ghost)
     {
         if(map -> is_tile_cross(ghost_tile_col , ghost_tile_row)) // nếu cái ô đó là ngã rẽ
         {
-            // nếu ghost đang sợ hãi hoặc là friendy nhưng chưa được phép đuổi pacman
-            if(ghost -> is_ghost_frighten() || (ghost == friendy && !tick_manager -> is_friendy_chase_time()))
+            // nếu ghost đang sợ hãi
+            if(ghost -> is_ghost_frighten())
             {
                 // ghost chọn random hướng có thể đi (trừ hướng hiện tại)
                 std :: stack <int> which_dir;
@@ -455,13 +422,6 @@ void Engine :: ghost_move(Ghost* &ghost)
             ghost -> set_dead(false);
             sound_manager -> insert_playlist(SoundManager :: REVIVAL_GHOST);
         }
-        else if(ghost == greendy) // greendy khi mục tiêu là ăn táo
-        {
-            tick_manager -> greendy_start_chase_pacman(); // bắt đầu đuổi pacman
-            ghost -> reset_object_tile(ghost_tile_col , ghost_tile_row); // reset vị trí tile
-            apple -> destroy_item(); // xóa táo khỏi map
-            eat_green_apple = true; // đã ăn táo
-        }
     }
     // kiểm tra va chạm giữa pacman và ghost
     pacman_meat_ghost(ghost);
@@ -558,8 +518,6 @@ void Engine :: loop_game(bool &exit_to_menu)
             if(!pinky  -> is_dead()) pinky  -> set_ghost_frighten(true);
             if(!inky   -> is_dead()) inky   -> set_ghost_frighten(true);
             if(!clyde  -> is_dead()) clyde  -> set_ghost_frighten(true);
-            if(greendy != nullptr && !greendy -> is_dead()) greendy -> set_ghost_frighten(true);
-            if(friendy != nullptr) tick_manager -> friendy_start_chase_pacman();
         }
     }
 
@@ -571,7 +529,6 @@ void Engine :: loop_game(bool &exit_to_menu)
         pinky  -> set_ghost_frighten(false);
         inky   -> set_ghost_frighten(false);
         clyde  -> set_ghost_frighten(false);
-        if(greendy != nullptr) greendy -> set_ghost_frighten(false);
     }
 
     // Cập nhật trạng thái scatter cho các ghost chính
@@ -580,21 +537,6 @@ void Engine :: loop_game(bool &exit_to_menu)
     pinky  -> set_ghost_scatter(scatter);
     inky   -> set_ghost_scatter(scatter);
     clyde  -> set_ghost_scatter(scatter);
-
-    // Quản lý apple và ghost Greendy
-    if(!tick_manager -> is_greeny_chase_time())
-    {
-        eat_green_apple = false;
-    }
-    else if(apple -> is_destroyed())
-    {
-        // Nếu đã ăn táo → spawn táo mới tại 1 trong 4 góc
-        int r = rand() % 4;
-        if(r == 0) apple -> spawn_at(1 , 1);
-        else if(r == 1) apple -> spawn_at(26 , 1);
-        else if(r == 2) apple -> spawn_at(26 , 29);
-        else apple -> spawn_at(1 , 29);
-    }
 
     // Cập nhật hướng di chuyển cho từng ghost dựa theo trạng thái và AI riêng
     pacman_screen_pos_col = pacman -> get_screen_pos_col();
@@ -637,20 +579,6 @@ void Engine :: loop_game(bool &exit_to_menu)
             else clyde -> set_ghost_destination(pacman_tile_col , pacman_tile_row);
         }
         else clyde -> set_ghost_destination(Ghost :: DEFAULT_CLYDE_TILE_COL , Ghost :: DEFAULT_CLYDE_TILE_ROW);
-
-        // Greendy: nếu chưa ăn táo → đuổi táo, sau khi ăn → đuổi Pacman
-        if(greendy != nullptr)
-        {
-            if(greendy -> is_dead()) greendy -> set_ghost_destination(13 , 11);
-            else if(!eat_green_apple) greendy -> set_ghost_destination(apple -> get_tile_col() , apple -> get_tile_row());
-            else if(!greendy -> is_ghost_frighten()) greendy -> set_ghost_destination(pacman_tile_col , pacman_tile_row , 2);
-        }
-
-        // Friendy: chỉ đuổi Pacman trong thời gian giới hạn
-        if(friendy != nullptr && tick_manager -> is_friendy_chase_time())
-        {
-            friendy -> set_ghost_destination(pacman_tile_col , pacman_tile_row , 1);
-        }
     }
 
     // Di chuyển Pacman qua cổng nếu cần
@@ -661,11 +589,9 @@ void Engine :: loop_game(bool &exit_to_menu)
     ghost_move(pinky);
     ghost_move(inky);
     ghost_move(clyde);
-    ghost_move(greendy);
-    ghost_move(friendy);
 
     // Kiểm tra điều kiện mở lồng ghost
-    game_manager -> handle_ghost_pos(pinky , inky , clyde , greendy);
+    game_manager -> handle_ghost_pos(pinky , inky , clyde);
 
     // Nếu ăn hết coin thì chuẩn bị qua màn
     if(game_manager -> eat_all_coins())

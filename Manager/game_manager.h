@@ -89,7 +89,7 @@ class GameManager
 
         int get_remain_coins() const;
 
-        void handle_ghost_pos(Ghost* &pinky , Ghost* &inky , Ghost* &clyde , Ghost* &greendy);
+        void handle_ghost_pos(Ghost* &pinky , Ghost* &inky , Ghost* &clyde);
 
         void handle_endgame_board(SDL_Event &event , std :: vector <std :: string> &score_data);
 

@@ -25,10 +25,8 @@ class Texture_Source
         static const int PINKY = 1;
         static const int INKY = 2;
         static const int CLYDE = 3;
-        static const int GREENDY = 4;
-        static const int FRIENDY = 5;
         static const int GHOST_SPIRIT = 6;
-        static const int TOTAL_GHOST = 6;
+        static const int TOTAL_GHOST = 4;
 
         static const int TILE_SIZE = 16;
         static const int ENTITY_SIZE = 30;

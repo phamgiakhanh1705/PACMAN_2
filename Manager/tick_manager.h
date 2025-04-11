@@ -28,8 +28,6 @@ class TickManager
     public:
 
         const int FPS = 60;
-        const double FRIENDY_CHASE_TIME = 3.0;
-        const double GREENDY_CHASE_TIME = 2.0;
         const int FRIGHTEN_MODE = 0;
         const int SCATTER_MODE = 1;
         const int CHASING_MODE = 2;
@@ -43,14 +41,6 @@ class TickManager
         bool is_frighten_time() const;
 
         bool is_scatter_time() const;
-
-        bool is_friendy_chase_time() const;
-
-        bool is_greeny_chase_time() const;
-
-        void friendy_start_chase_pacman();
-
-        void greendy_start_chase_pacman();
 
         void set_frighten_time();
 
