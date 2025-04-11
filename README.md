@@ -134,12 +134,5 @@ Pacman/
 
 ---
 
-
-- SDL2 Library
-- Âm thanh từ [freesound.org](https://freesound.org)
-- Ý tưởng và nền tảng từ repo [pvonsite/Pacman](https://github.com/pvonsite/Pacman)
-
----
-
 > Mọi đóng góp, nhận xét hoặc bản mở rộng xin hãy để lại Issue hoặc Pull Request trên GitHub!
 
