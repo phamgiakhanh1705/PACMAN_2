@@ -253,4 +253,4 @@ int GameManager :: get_remain_life() const { return life; }
 int GameManager :: get_level() const { return level; }
 int GameManager :: get_player_decision() const { return player_decision; }
 int GameManager :: get_remain_coins() const { return TOTAL_COINS - eaten_coins; }
-bool GameManager :: eat_all_coins() const { return eaten_coins == 10; }
+bool GameManager :: eat_all_coins() const { return eaten_coins == TOTAL_COINS; }

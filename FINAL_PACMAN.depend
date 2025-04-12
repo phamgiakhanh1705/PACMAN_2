@@ -9,7 +9,7 @@
 1743792011 source:c:\cp - copy\project game\final_pacman\main.cpp
 	"Core/Window.h"
 
-1744388191 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
+1744389714 source:c:\cp - copy\project game\final_pacman\manager\game_manager.cpp
 	"game_manager.h"
 	<iostream>
 	<string>
@@ -27,7 +27,7 @@
 	"Map.h"
 	<queue>
 
-1744388116 c:\cp - copy\project game\final_pacman\map\map.h
+1744389714 c:\cp - copy\project game\final_pacman\map\map.h
 	"../LogStatus/logstatus.h"
 	<fstream>
 	<iostream>
@@ -104,7 +104,7 @@
 	"tick_manager.h"
 	<iostream>
 
-1744364253 c:\cp - copy\project game\final_pacman\manager\tick_manager.h
+1744389714 c:\cp - copy\project game\final_pacman\manager\tick_manager.h
 	<SDL.h>
 	<stack>
 
@@ -127,7 +127,7 @@
 	"../LogStatus/logstatus.h"
 	<vector>
 
-1744388101 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
+1744389714 source:c:\cp - copy\project game\final_pacman\core\game_engine.cpp
 	"game_engine.h"
 	<limits>
 	<random>
